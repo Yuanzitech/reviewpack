@@ -3,11 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
-from rich.console import Console
-
-from reviewpack.analyzer import analyze_reviewpack_input
-from reviewpack.config import load_config
-from reviewpack.models import ReviewpackInput
+from rich.console import_from_gitfrom rich.console import Console
+from reviewpack.models import PullRequestInfo, ReviewpackInput
 from reviewpack.renderers import write_reviewpack_outputs
 
 app = typer.Typer(
@@ -50,14 +47,79 @@ def from_fixture(
     result = analyze_reviewpack_input(reviewpack_input, reviewpack_config)
     write_reviewpack_outputs(result, output)
 
-    console.print("[green]Reviewpack generated successfully.[/green]")
-    console.print(f"Output directory: {output}")
-    console.print("")
-    console.print("Generated files:")
-    console.print(f"- {output / 'pr-summary.md'}")
-    console.print(f"- {output / 'risk-checklist.md'}")
-    console.print(f"- {output / 'ai-review-prompt.md'}")
-    console.print(f"- {output / 'reviewpack.json'}")
+    print_success(output)
+
+
+@app.command("local")
+def local(
+    base: str = typer.Option(
+        "main",
+        "--base",
+        "-b",
+        help="Base git ref used for local diff.",
+    ),
+    head: str = typer.Option(
+        "HEAD",
+        "--head",
+        help="Head git ref used for local diff.",
+    ),
+    repo: Path = typer.Option(
+        Path("."),
+        "--repo",
+        help="Path to the local git repository.",
+    ),
+    output: Path = typer.Option(
+        Path(".reviewpack"),
+        "--output",
+        "-o",
+        help="Directory where Reviewpack output files will be written.",
+    ),
+    config: Path | None = typer.Option(
+        None,
+        "--config",
+        "-c",
+        help="Optional path to a .reviewpack.yml config file.",
+    ),
+    title: str = typer.Option(
+        "Local git diff",
+        "--title",
+        help="Title used in the generated review pack.",
+    ),
+    author: str = typer.Option(
+        "local",
+        "--author",
+        help="Author label used in the generated review pack.",
+    ),
+) -> None:
+    """Generate a review context pack from a local git diff."""
+
+    reviewpack_config = load_config(config)
+
+    try:
+        changed_files = collect_changed_files_from_git(
+            base=base,
+            head=head,
+            repo_path=repo,
+        )
+    except RuntimeError as error:
+        console.print(f"[red]Failed to collect local git diff:[/red] {error}")
+        raise typer.Exit(code=1) from error
+
+    reviewpack_input = ReviewpackInput(
+        pr=PullRequestInfo(
+            title=title,
+            author=author,
+        ),
+        changed_files=changed_files,
+    )
+
+    result = analyze_reviewpack_input(reviewpack_input, reviewpack_config)
+    result.metadata["mode"] = "local_git"
+    result.metadata["network_used"] = False
+    result.metadata["ai_used"] = False
+
+    write_reviewpack_outputs(result, output)
+    print_success(output)
 
 
 @app.command("version")
@@ -69,5 +131,21 @@ def version() -> None:
     console.print(__version__)
 
 
+def print_success(output: Path) -> None:
+    """Print generated output paths."""
+
+    console.print("[green]Reviewpack generated successfully.[/green]")
+    console.print(f"Output directory: {output}")
+    console.print("")
+    console.print("Generated files:")
+    console.print(f"- {output / 'pr-summary.md'}")
+    console.print(f"- {output / 'risk-checklist.md'}")
+    console.print(f"- {output / 'ai-review-prompt.md'}")
+    console.print(f"- {output / 'reviewpack.json'}")
+
+
 if __name__ == "__main__":
     app()
+
+from reviewpack.analyzer import analyze_reviewpack_input
+from reviewpack.config import load_config
