@@ -2,7 +2,12 @@ name: CI
 
 on:
   push:
- test:    branches:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -33,7 +38,3 @@ on:
       - name: Run tests
         run: |
           pytest
-      - main
-  pull_request:
-
-jobs:
