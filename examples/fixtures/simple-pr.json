@@ -1,0 +1,35 @@
+{
+  "pr": {
+    "title": "Add token refresh support",
+    "author": "alice",
+    "url": "https://github.com/octo-org/example-repo/pull/123",
+    "description": "This pull request updates authentication token refresh behavior and adds dependency changes."
+  },
+  "changed_files": [
+    {
+      "path": "src/auth/token.py",
+      "additions": 120,
+      "deletions": 32
+    },
+    {
+      "path": "src/auth/session.py",
+      "additions": 80,
+      "deletions": 18
+    },
+    {
+      "path": "package.json",
+      "additions": 4,
+      "deletions": 2
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "additions": 10,
+      "deletions": 4
+    },
+    {
+      "path": "README.md",
+      "additions": 12,
+      "deletions": 3
+    }
+  ]
+}
