@@ -58,11 +58,11 @@ build-backend = "hatchling.build"
 packages = ["reviewpack"]
 
 [tool.ruff]
-line-length = 100
+line-length = 120
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B"]
+select = ["E", "F", "UP", "B"]
 ignore = []
 
 [tool.pytest.ini_options]
