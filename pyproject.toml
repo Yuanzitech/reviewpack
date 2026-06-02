@@ -46,13 +46,16 @@ dev = [
 reviewpack = "reviewpack.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/Yuanzitech/reviewpack"
-Repository = "https://github.com/Yuanzitech/reviewpack"
-Issues = "https://github.com/Yuanzitech/reviewpack/issues"
+Homepage = "https://github.com/yourname/reviewpack"
+Repository = "https://github.com/yourname/reviewpack"
+Issues = "https://github.com/yourname/reviewpack/issues"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.26.0"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["reviewpack"]
 
 [tool.ruff]
 line-length = 100
