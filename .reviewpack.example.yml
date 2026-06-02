@@ -1,0 +1,37 @@
+# Example Reviewpack configuration.
+#
+# Copy this file to .reviewpack.yml and adjust it for your repository.
+#
+# Reviewpack is local-first and privacy-first by default.
+# This example does not enable network access or AI usage.
+
+risk_paths_high:
+  - "src/auth/**"
+  - "src/security/**"
+  - "src/payment/**"
+
+test_paths:
+  - "tests/**"
+  - "__tests__/**"
+  - "test/**"
+
+docs_paths:
+  - "README.md"
+  - "docs/**"
+
+large_pr:
+  changed_files: 20
+  changed_lines: 800
+
+privacy:
+  include_branch_name: false
+  include_commit_messages: false
+  include_diff_snippets: false
+  include_file_paths: true
+  redact_secrets: true
+
+ai:
+  enabled: false
+  provider: null
+  model: null
+  max_input_chars: 12000
