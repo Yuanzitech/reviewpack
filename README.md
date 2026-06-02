@@ -26,11 +26,11 @@ Reviewpack prepares that context before review starts.
 
 Direct AI review:
 
-PR diff -> AI -> review comments
+    PR diff -> AI -> review comments
 
 Reviewpack workflow:
 
-PR data -> local analysis -> structured context pack -> human reviewer or AI assistant
+    PR data -> local analysis -> structured context pack -> human reviewer or AI assistant
 
 ## Privacy-first by default
 
@@ -50,6 +50,45 @@ Planned privacy controls include:
 - Redaction for common secret-like values
 - Local-first review pack generation
 
+## Current status
+
+Reviewpack is in early development.
+
+The current milestone supports local fixture-based input and generates a structured review context pack without network access or AI calls.
+
+## Install for local development
+
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -e ".[dev]"
+
+On Windows PowerShell:
+
+    python -m venv .venv
+    .venv\Scripts\Activate.ps1
+    pip install -e ".[dev]"
+
+## Usage
+
+Generate a review pack from the example fixture:
+
+    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
+
+This generates:
+
+    .reviewpack/pr-summary.md
+    .reviewpack/risk-checklist.md
+    .reviewpack/ai-review-prompt.md
+    .reviewpack/reviewpack.json
+
+Use an optional config file:
+
+    reviewpack from-fixture examples/fixtures/simple-pr.json --config .reviewpack.example.yml --output .reviewpack
+
+Show the installed version:
+
+    reviewpack version
+
 ## What Reviewpack generates
 
 A review pack may include:
@@ -65,37 +104,12 @@ A review pack may include:
 - AI-ready review prompt
 - Machine-readable JSON output
 
-Example output directory:
+## Documentation
 
-.reviewpack/
-  pr-summary.md
-  risk-checklist.md
-  ai-review-prompt.md
-  reviewpack.json
-
-## Current status
-
-Reviewpack is in early development.
-
-The first milestone is a local-only CLI that reads fixture data and generates a structured review context pack without network access or AI calls.
-
-## Planned CLI
-
-Initial local fixture mode:
-
-reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
-
-Future GitHub pull request mode:
-
-reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack
-
-Future local git mode:
-
-reviewpack local --base main --head feature-branch --output .reviewpack
-
-Future optional AI mode:
-
-reviewpack github https://github.com/owner/repo/pull/123 --ai
+- Usage guide: docs/usage.md
+- Privacy model: docs/privacy.md
+- Design notes: docs/design.md
+- Examples guide: examples/README.md
 
 ## Roadmap
 
