@@ -1,60 +1,137 @@
-# Draft Release Notes: Reviewpack v0.1.0
+# Reviewpack v0.1.0
 
-This is a draft release notes document for the first public milestone of Reviewpack.
+Reviewpack v0.1.0 is the first public milestone of Reviewpack.
 
-## Summary
-
-Reviewpack v0.1.0 introduces a privacy-first foundation for AI-assisted pull request review.
-
-This first milestone focuses on local-first workflows, structured review context generation, and explicit privacy boundaries.
+Reviewpack is a privacy-first context generator for AI-assisted pull request review. It helps maintainers prepare structured, reusable review context before involving a human reviewer or an AI coding assistant.
 
 ## Highlights
 
-### Structured review context packs
+### Privacy-first review context packs
 
-Reviewpack can generate:
+Reviewpack generates structured context packs for pull request review while avoiding over-collection by default.
+
+The current release can generate:
 
 - PR summary
 - Risk checklist
 - AI-ready review prompt
-- JSON artifact
+- AI input preview
+- Machine-readable JSON artifact
 
 ### Multiple input modes
 
-Reviewpack currently supports:
+Reviewpack v0.1.0 supports three input modes:
 
 - Fixture input
 - Local git diff input
 - GitHub pull request metadata input
 
-### Privacy-first defaults
+Example commands:
 
-Reviewpack is designed to avoid over-collection by default.
+    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
 
-Current defaults avoid:
+    reviewpack local --base main --head HEAD --output .reviewpack
 
-- Raw diff upload
-- Full source code upload
-- Branch name collection for AI context
-- Commit message collection for AI context
-- AI provider usage by default
+    reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack
 
-### AI input preview
+### AI-ready, not AI-required
 
-Reviewpack can generate a local AI input preview so maintainers can inspect context before using any external AI tool.
+Reviewpack does not require AI to be useful.
+
+It can generate an AI-ready review prompt locally without calling any AI provider.
+
+It can also generate an AI input preview:
+
+    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack --preview-ai-input
+
+The preview helps maintainers inspect what kind of context may be prepared before any future AI provider integration is used.
+
+### Local-first workflows
+
+Fixture mode and local git diff mode run locally.
+
+They do not require:
+
+- Network access
+- GitHub tokens
+- AI provider tokens
+- External services
+
+### GitHub PR metadata mode
+
+Reviewpack can fetch GitHub pull request metadata and changed file statistics from the GitHub API.
+
+The GitHub mode currently collects:
+
+- Pull request title
+- Pull request author
+- Pull request description
+- Pull request URL
+- Changed file paths
+- Added line counts
+- Deleted line counts
+
+It does not collect raw diffs or full source code by default.
+
+### Privacy and safety foundations
+
+This release includes:
+
+- Privacy model documentation
+- Security policy
+- Best-effort secret redaction helper
+- AI input preview documentation
+- Integration principles
+- Release checklist with privacy review items
 
 ### Open source project foundations
 
-This milestone also includes:
+This release includes:
 
-- Tests
-- CI
-- Contribution guide
+- README
+- Simplified Chinese README
+- Changelog
+- Contributing guide
 - Security policy
 - Issue templates
 - Pull request template
-- Release checklist
 - Documentation set
+- Examples
+- Tests
+- GitHub Actions CI
+
+## What's included
+
+### CLI commands
+
+- `reviewpack from-fixture`
+- `reviewpack local`
+- `reviewpack github`
+- `reviewpack version`
+
+### Generated files
+
+Reviewpack can generate:
+
+    .reviewpack/pr-summary.md
+    .reviewpack/risk-checklist.md
+    .reviewpack/ai-review-prompt.md
+    .reviewpack/ai-input-preview.md
+    .reviewpack/reviewpack.json
+
+### Documentation
+
+Key documentation includes:
+
+- `docs/usage.md`
+- `docs/privacy.md`
+- `docs/design.md`
+- `docs/local-git.md`
+- `docs/github.md`
+- `docs/ai-preview.md`
+- `docs/integrations.md`
+- `docs/roadmap.md`
+- `docs/release-checklist.md`
 
 ## Why this release matters
 
@@ -88,5 +165,15 @@ Planned next steps include:
 - Better review artifacts
 - Better GitHub workflow support
 - Optional AI provider integration
+- GitHub Actions integration
 - More maintainer-focused automation
-``
+
+## Privacy notes
+
+Reviewpack v0.1.0 is designed with privacy-first defaults.
+
+By default, Reviewpack does not send code, raw diffs, branch names, commit messages, environment variables, repository secrets, or terminal information to AI providers.
+
+GitHub mode uses network access only to fetch explicitly requested pull request metadata and changed file statistics from the GitHub API.
+
+AI provider calls are not included in this release.
