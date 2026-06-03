@@ -8,11 +8,16 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Nothing yet.
+- Release note hints output
+- Release note hints renderer
+- Release note hints tests
+- Release note hints documentation
 
 ### Changed
 
-- Nothing yet.
+- README now documents release note hints output
+- CLI output now lists `release-note-hints.md`
+- Reviewpack output now includes `release-note-hints.md` by default
 
 ### Fixed
 
