@@ -22,6 +22,37 @@ Direct AI review often starts from raw diffs. That can miss important project-le
 
 Reviewpack prepares that context before review starts.
 
+## Quick Start
+
+Install for local development:
+
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -e ".[dev]"
+
+Generate a review pack from the example fixture:
+
+    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
+
+Generate a review pack with AI input preview:
+
+    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack --preview-ai-input
+
+Open the generated files:
+
+    .reviewpack/pr-summary.md
+    .reviewpack/risk-checklist.md
+    .reviewpack/ai-review-prompt.md
+    .reviewpack/reviewpack.json
+
+## Example Output
+
+Example PR summary:
+
+    examples/output/pr-summary.example.md
+
+This gives a quick view of the type of structured review context Reviewpack produces.
+
 ## Core idea
 
 Direct AI review:
@@ -31,6 +62,22 @@ Direct AI review:
 Reviewpack workflow:
 
     PR data -> local analysis -> structured context pack -> human reviewer or AI assistant
+
+## Supported input modes
+
+Reviewpack currently supports:
+
+- Fixture input
+- Local git diff input
+- GitHub pull request metadata input
+
+Examples:
+
+    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
+
+    reviewpack local --base main --head HEAD --output .reviewpack
+
+    reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack
 
 ## Privacy-first by default
 
@@ -54,70 +101,6 @@ Current privacy-oriented features include:
 - No branch name upload by default
 - No commit message upload by default
 - Local-first review pack generation where possible
-
-## Current status
-
-Reviewpack is in early development.
-
-The current milestone supports:
-
-- Local fixture-based input
-- Local git diff input
-- GitHub PR metadata input
-- Structured Markdown and JSON output
-- Optional AI input preview generation
-- Secret-like value redaction in preview text
-- No AI calls by default
-
-## Install for local development
-
-    python -m venv .venv
-    source .venv/bin/activate
-    pip install -e ".[dev]"
-
-On Windows PowerShell:
-
-    python -m venv .venv
-    .venv\Scripts\Activate.ps1
-    pip install -e ".[dev]"
-
-## Usage
-
-Generate a review pack from the example fixture:
-
-    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
-
-Generate a review pack with AI input preview:
-
-    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack --preview-ai-input
-
-Generate a review pack from local git diff:
-
-    reviewpack local --base main --head HEAD --output .reviewpack
-
-Generate local git diff output with AI input preview:
-
-    reviewpack local --base main --head HEAD --output .reviewpack --preview-ai-input
-
-Generate a review pack from a GitHub pull request:
-
-    reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack
-
-Generate GitHub output with AI input preview:
-
-    reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack --preview-ai-input
-
-Use a GitHub token:
-
-    REVIEWPACK_GITHUB_TOKEN=YOUR_TOKEN reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack
-
-Use an optional config file:
-
-    reviewpack from-fixture examples/fixtures/simple-pr.json --config .reviewpack.example.yml --output .reviewpack
-
-Show the installed version:
-
-    reviewpack version
 
 ## What Reviewpack generates
 
@@ -143,6 +126,20 @@ Example output directory:
     .reviewpack/ai-input-preview.md
     .reviewpack/reviewpack.json
 
+## Current status
+
+Reviewpack is in early development.
+
+The current milestone supports:
+
+- Local fixture-based input
+- Local git diff input
+- GitHub PR metadata input
+- Structured Markdown and JSON output
+- Optional AI input preview generation
+- Secret-like value redaction in preview text
+- No AI calls by default
+
 ## Documentation
 
 - Usage guide: docs/usage.md
@@ -152,41 +149,33 @@ Example output directory:
 - GitHub support: docs/github.md
 - AI input preview: docs/ai-preview.md
 - Integration principles: docs/integrations.md
+- Roadmap: docs/roadmap.md
+- Release checklist: docs/release-checklist.md
 - Examples guide: examples/README.md
 
 ## Roadmap
 
-### v0.1.0
+High-level roadmap:
 
-- Local fixture input
-- Deterministic rule-based analysis
-- Markdown review pack output
-- JSON artifact output
-- No network access
-- No AI calls
-- Basic tests and CI
+- v0.1.x: polish core local workflows
+- v0.2.x: improve privacy-aware AI preview and configuration
+- v0.3.x: strengthen GitHub pull request workflows
+- v0.4.x: add GitHub Actions integration and maintainer automation
 
-### v0.2.0
+Detailed roadmap:
 
-- .reviewpack.yml configuration
-- Local git diff mode
-- AI input preview file
-- Best-effort secret redaction
-- More risk rules
+    docs/roadmap.md
 
-### v0.3.0
+## Why this project exists
 
-- GitHub PR URL support
-- GitHub metadata collection
-- GitHub token support
-- Optional AI provider skeleton
+Reviewpack exists because AI-assisted review is only as good as the context it receives.
 
-### v0.4.0
+Instead of replacing maintainers, Reviewpack helps maintainers prepare better review context:
 
-- GitHub Action integration
-- Optional PR comment mode
-- Release note hints
-- More maintainer workflow automation
+- locally when possible
+- explicitly when network access is needed
+- inspectably before any AI provider is involved
+- with privacy-aware defaults
 
 ## Non-goals
 
