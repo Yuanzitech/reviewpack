@@ -8,6 +8,12 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- AI input preview generation through `--preview-ai-input`
+- Local AI input preview renderer
+- Best-effort secret redaction helper
+- Tests for AI input preview rendering
+- Tests for secret redaction behavior
+- AI input preview documentation
 - Local git diff mode through `reviewpack local`
 - Local git numstat parser
 - Tests for local git diff parsing
@@ -26,6 +32,8 @@ This project follows a simple changelog format during early development.
 
 ### Changed
 
+- Expanded README with AI input preview usage
+- Expanded CLI output to include optional AI input preview file
 - Expanded README with installation, usage, and documentation links
 - CI now opts into Node.js 24 for GitHub Actions
 - Ruff configuration relaxed for early Typer-based CLI development
