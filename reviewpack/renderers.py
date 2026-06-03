@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from reviewpack.models import ReviewpackResult, RiskLevel
+from reviewpack.release_notes import render_release_note_hints
 
 
 def risk_icon(level: RiskLevel) -> str:
@@ -77,7 +78,6 @@ def render_pr_summary(result: ReviewpackResult) -> str:
     lines.append("- Network access was not used.")
     lines.append("- AI was not used.")
     lines.append("- Branch names, commit messages, and terminal environment variables were not collected.")
-
     lines.append("")
 
     return "\n".join(lines)
@@ -177,7 +177,6 @@ def render_ai_review_prompt(result: ReviewpackResult) -> str:
     lines.append("3. Missing or weak test coverage, if any.")
     lines.append("4. Documentation or release-note concerns, if any.")
     lines.append("5. Specific questions the maintainer should ask before merging.")
-
     lines.append("")
 
     return "\n".join(lines)
@@ -192,6 +191,7 @@ def write_reviewpack_outputs(result: ReviewpackResult, output_dir: str | Path) -
     (target_dir / "pr-summary.md").write_text(render_pr_summary(result), encoding="utf-8")
     (target_dir / "risk-checklist.md").write_text(render_risk_checklist(result), encoding="utf-8")
     (target_dir / "ai-review-prompt.md").write_text(render_ai_review_prompt(result), encoding="utf-8")
+    (target_dir / "release-note-hints.md").write_text(render_release_note_hints(result), encoding="utf-8")
 
     json_text = json.dumps(
         result.model_dump(mode="json"),
