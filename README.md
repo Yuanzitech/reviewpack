@@ -34,9 +34,11 @@ Reviewpack workflow:
 
 ## Privacy-first by default
 
-Reviewpack runs locally by default.
+Reviewpack runs locally by default for fixture and local git workflows.
 
-By default, it does not send code, diffs, branch names, commit messages, environment variables, repository metadata, or terminal information to any external service.
+By default, it does not send code, diffs, branch names, commit messages, environment variables, repository metadata, or terminal information to any external AI service.
+
+GitHub mode uses network access only to fetch explicitly requested pull request metadata and changed file statistics from the GitHub API.
 
 AI features, when added, will be optional and explicit. Users will be able to control what context is sent to an AI provider.
 
@@ -44,13 +46,14 @@ Current privacy-oriented features include:
 
 - Local fixture mode
 - Local git diff mode
+- GitHub PR metadata mode
 - AI-ready prompt generation without AI calls
 - AI input preview without AI calls
 - Best-effort secret redaction for preview text
 - No raw diff upload by default
 - No branch name upload by default
 - No commit message upload by default
-- Local-first review pack generation
+- Local-first review pack generation where possible
 
 ## Current status
 
@@ -60,10 +63,10 @@ The current milestone supports:
 
 - Local fixture-based input
 - Local git diff input
+- GitHub PR metadata input
 - Structured Markdown and JSON output
 - Optional AI input preview generation
 - Secret-like value redaction in preview text
-- No network access by default
 - No AI calls by default
 
 ## Install for local development
@@ -95,6 +98,18 @@ Generate a review pack from local git diff:
 Generate local git diff output with AI input preview:
 
     reviewpack local --base main --head HEAD --output .reviewpack --preview-ai-input
+
+Generate a review pack from a GitHub pull request:
+
+    reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack
+
+Generate GitHub output with AI input preview:
+
+    reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack --preview-ai-input
+
+Use a GitHub token:
+
+    REVIEWPACK_GITHUB_TOKEN=YOUR_TOKEN reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack
 
 Use an optional config file:
 
@@ -134,7 +149,9 @@ Example output directory:
 - Privacy model: docs/privacy.md
 - Design notes: docs/design.md
 - Local git diff mode: docs/local-git.md
+- GitHub support: docs/github.md
 - AI input preview: docs/ai-preview.md
+- Integration principles: docs/integrations.md
 - Examples guide: examples/README.md
 
 ## Roadmap
@@ -160,9 +177,9 @@ Example output directory:
 ### v0.3.0
 
 - GitHub PR URL support
+- GitHub metadata collection
 - GitHub token support
 - Optional AI provider skeleton
-- OpenAI provider support as opt-in
 
 ### v0.4.0
 
