@@ -8,11 +8,13 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Nothing yet.
+- Trusted publishing guide
+- TestPyPI runbook
 
 ### Changed
 
-- Nothing yet.
+- Expanded PyPI publishing notes with trusted publishing and TestPyPI runbook links
+- Expanded PyPI release checklist with trusted publishing and TestPyPI setup checks
 
 ### Fixed
 
