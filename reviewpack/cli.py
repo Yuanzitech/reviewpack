@@ -9,6 +9,7 @@ from reviewpack.ai_preview import write_ai_input_preview
 from reviewpack.analyzer import analyze_reviewpack_input
 from reviewpack.config import load_config
 from reviewpack.git import collect_changed_files_from_git
+from reviewpack.github_client import GitHubAPIError, collect_reviewpack_input_from_github_url
 from reviewpack.models import PullRequestInfo, ReviewpackInput
 from reviewpack.renderers import write_reviewpack_outputs
 
@@ -134,6 +135,58 @@ def local(
     result = analyze_reviewpack_input(reviewpack_input, reviewpack_config)
     result.metadata["mode"] = "local_git"
     result.metadata["network_used"] = False
+    result.metadata["ai_used"] = False
+
+    write_reviewpack_outputs(result, output)
+
+    if preview_ai_input:
+        write_ai_input_preview(result, output)
+
+    print_success(output, preview_ai_input=preview_ai_input)
+
+
+@app.command("github")
+def github(
+    pr_url: str = typer.Argument(
+        ...,
+        help="GitHub pull request URL.",
+    ),
+    output: Path = typer.Option(
+        Path(".reviewpack"),
+        "--output",
+        "-o",
+        help="Directory where Reviewpack output files will be written.",
+    ),
+    config: Path | None = typer.Option(
+        None,
+        "--config",
+        "-c",
+        help="Optional path to a .reviewpack.yml config file.",
+    ),
+    token: str | None = typer.Option(
+        None,
+        "--token",
+        help="Optional GitHub token. Prefer REVIEWPACK_GITHUB_TOKEN for local use.",
+    ),
+    preview_ai_input: bool = typer.Option(
+        False,
+        "--preview-ai-input",
+        help="Generate a local AI input preview file without calling an AI provider.",
+    ),
+) -> None:
+    """Generate a review context pack from GitHub PR metadata."""
+
+    reviewpack_config = load_config(config)
+
+    try:
+        reviewpack_input = collect_reviewpack_input_from_github_url(pr_url, token=token)
+    except (ValueError, GitHubAPIError) as error:
+        console.print(f"[red]Failed to collect GitHub pull request data:[/red] {error}")
+        raise typer.Exit(code=1) from error
+
+    result = analyze_reviewpack_input(reviewpack_input, reviewpack_config)
+    result.metadata["mode"] = "github"
+    result.metadata["network_used"] = True
     result.metadata["ai_used"] = False
 
     write_reviewpack_outputs(result, output)
