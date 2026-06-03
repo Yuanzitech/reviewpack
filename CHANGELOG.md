@@ -8,7 +8,10 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Nothing yet.
+- Installation guide
+- PyPI publishing notes
+- Package build workflow
+- Package metadata tests
 
 ### Changed
 
