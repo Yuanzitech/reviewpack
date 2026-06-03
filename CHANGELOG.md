@@ -8,21 +8,37 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Installed wheel smoke test in package workflow
-- Wheel installation smoke test documentation
+- Nothing yet.
+
+### Changed
+
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## v0.3.0 - 2026-06-03
+
+### Added
+
 - Installation guide
 - PyPI publishing notes
 - Package build workflow
 - Package metadata tests
+- Installed wheel smoke test in package workflow
+- Wheel installation smoke test documentation
 
 ### Changed
 
+- Package version bumped to 0.3.0
+- CLI version bumped to 0.3.0
 - README now links to installation documentation
 - Package workflow now verifies that the installed wheel exposes a working `reviewpack` CLI
 
 ### Fixed
 
-- Nothing yet.
+- Nothing.
 
 ## v0.2.0 - 2026-06-03
 
