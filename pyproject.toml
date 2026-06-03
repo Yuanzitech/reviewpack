@@ -46,9 +46,9 @@ dev = [
 reviewpack = "reviewpack.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/yourname/reviewpack"
-Repository = "https://github.com/yourname/reviewpack"
-Issues = "https://github.com/yourname/reviewpack/issues"
+Homepage = "https://github.com/Yuanzitech/reviewpack"
+Repository = "https://github.com/Yuanzitech/reviewpack"
+Issues = "https://github.com/Yuanzitech/reviewpack/issues"
 
 [build-system]
 requires = ["hatchling>=1.26.0"]
@@ -64,7 +64,6 @@ target-version = "py310"
 [tool.ruff.lint]
 select = ["E", "F", "UP", "B"]
 ignore = ["B008"]
-
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
