@@ -17,7 +17,12 @@ Reviewpack is not published to PyPI yet. This checklist should be used when prep
 - [ ] Confirm installation docs are accurate
 - [ ] Confirm no secrets or private data are committed
 - [ ] Confirm package name availability on PyPI
+- [ ] Confirm package name availability on TestPyPI
+- [ ] Confirm GitHub `testpypi` environment exists
+- [ ] Confirm GitHub `pypi` environment exists
+- [ ] Confirm TestPyPI trusted publishing is configured, if used
 - [ ] Confirm PyPI trusted publishing is configured, if used
+- [ ] Confirm TestPyPI runbook has been reviewed
 - [ ] Confirm TestPyPI publishing has been tested, if applicable
 
 ## Version consistency
@@ -42,9 +47,39 @@ The package workflow should verify:
 - Installed CLI can run `reviewpack from-fixture`
 - Expected output files are generated
 
+## Trusted publishing verification
+
+If using trusted publishing, confirm:
+
+- Repository owner is correct
+- Repository name is correct
+- Workflow name is `publish.yml`
+- GitHub environment name matches package index configuration
+- `testpypi` environment is used for TestPyPI
+- `pypi` environment is used for PyPI
+- Publish workflow has `id-token: write`
+
+Expected trusted publisher values for TestPyPI:
+
+    Repository owner: Yuanzitech
+    Repository name: reviewpack
+    Workflow name: publish.yml
+    Environment name: testpypi
+
+Expected trusted publisher values for PyPI:
+
+    Repository owner: Yuanzitech
+    Repository name: reviewpack
+    Workflow name: publish.yml
+    Environment name: pypi
+
 ## TestPyPI verification
 
 Before publishing to PyPI, consider publishing to TestPyPI first.
+
+Use:
+
+    docs/testpypi-runbook.md
 
 After TestPyPI publishing, verify installation in a clean environment:
 
