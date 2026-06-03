@@ -1,7 +1,12 @@
 from reviewpack.git import parse_numstat, parse_numstat_line
 
 
-def test_parse_numstat_line_for_text_file() -> None changed_file.additions == 12def test_parse_numstat_line_for_text_file() -> None:
+def test_parse_numstat_line_for_text_file() -> None:
+    changed_file = parse_numstat_line("12\t3\tsrc/app.py")
+
+    assert changed_file is not None
+    assert changed_file.path == "src/app.py"
+    assert changed_file.additions == 12
     assert changed_file.deletions == 3
 
 
@@ -33,7 +38,3 @@ def test_parse_numstat_parses_multiple_files() -> None:
     assert files[0].path == "src/app.py"
     assert files[1].path == "tests/test_app.py"
     assert files[2].path == "assets/logo.png"
-    changed_file = parse_numstat_line("12\t3\tsrc/app.py")
-
-    assert changed_file is not None
-    assert changed_file.path == "src/app.py"
