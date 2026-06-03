@@ -5,6 +5,7 @@ from pathlib import Path
 import typer
 from rich.console import Console
 
+from reviewpack.ai_preview import write_ai_input_preview
 from reviewpack.analyzer import analyze_reviewpack_input
 from reviewpack.config import load_config
 from reviewpack.git import collect_changed_files_from_git
@@ -37,6 +38,11 @@ def from_fixture(
         "-c",
         help="Optional path to a .reviewpack.yml config file.",
     ),
+    preview_ai_input: bool = typer.Option(
+        False,
+        "--preview-ai-input",
+        help="Generate a local AI input preview file without calling an AI provider.",
+    ),
 ) -> None:
     """Generate a review context pack from a local fixture JSON file."""
 
@@ -51,7 +57,10 @@ def from_fixture(
     result = analyze_reviewpack_input(reviewpack_input, reviewpack_config)
     write_reviewpack_outputs(result, output)
 
-    print_success(output)
+    if preview_ai_input:
+        write_ai_input_preview(result, output)
+
+    print_success(output, preview_ai_input=preview_ai_input)
 
 
 @app.command("local")
@@ -94,6 +103,11 @@ def local(
         "--author",
         help="Author label used in the generated review pack.",
     ),
+    preview_ai_input: bool = typer.Option(
+        False,
+        "--preview-ai-input",
+        help="Generate a local AI input preview file without calling an AI provider.",
+    ),
 ) -> None:
     """Generate a review context pack from a local git diff."""
 
@@ -123,7 +137,11 @@ def local(
     result.metadata["ai_used"] = False
 
     write_reviewpack_outputs(result, output)
-    print_success(output)
+
+    if preview_ai_input:
+        write_ai_input_preview(result, output)
+
+    print_success(output, preview_ai_input=preview_ai_input)
 
 
 @app.command("version")
@@ -135,7 +153,7 @@ def version() -> None:
     console.print(__version__)
 
 
-def print_success(output: Path) -> None:
+def print_success(output: Path, preview_ai_input: bool = False) -> None:
     """Print generated output paths."""
 
     console.print("[green]Reviewpack generated successfully.[/green]")
@@ -146,6 +164,9 @@ def print_success(output: Path) -> None:
     console.print(f"- {output / 'risk-checklist.md'}")
     console.print(f"- {output / 'ai-review-prompt.md'}")
     console.print(f"- {output / 'reviewpack.json'}")
+
+    if preview_ai_input:
+        console.print(f"- {output / 'ai-input-preview.md'}")
 
 
 if __name__ == "__main__":
