@@ -217,6 +217,7 @@ def print_success(output: Path, preview_ai_input: bool = False) -> None:
     console.print(f"- {output / 'risk-checklist.md'}")
     console.print(f"- {output / 'ai-review-prompt.md'}")
     console.print(f"- {output / 'release-note-hints.md'}")
+    console.print(f"- {output / 'reviewer-checklist.md'}")
     console.print(f"- {output / 'reviewpack.json'}")
 
     if preview_ai_input:

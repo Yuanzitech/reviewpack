@@ -9,7 +9,7 @@ Privacy-first context packs for AI-assisted pull request review.
 
 Reviewpack helps open-source maintainers and engineering teams prepare structured, reusable context before reviewing a pull request with a human reviewer or an AI coding assistant.
 
-It is not another noisy AI reviewer. Reviewpack is a context layer: it collects pull request metadata, changed files, test signals, documentation signals, dependency signals, risk indicators, release note hints, and review focus areas into a clear review pack.
+It is not another noisy AI reviewer. Reviewpack is a context layer: it collects pull request metadata, changed files, test signals, documentation signals, dependency signals, risk indicators, release note hints, reviewer checklist items, and review focus areas into a clear review pack.
 
 ## Why Reviewpack?
 
@@ -50,6 +50,7 @@ Open the generated files:
     .reviewpack/risk-checklist.md
     .reviewpack/ai-review-prompt.md
     .reviewpack/release-note-hints.md
+    .reviewpack/reviewer-checklist.md
     .reviewpack/reviewpack.json
 
 ## GitHub Action
@@ -144,6 +145,7 @@ Current privacy-oriented features include:
 - AI-ready prompt generation without AI calls
 - AI input preview without AI calls
 - Release note hints without AI calls
+- Reviewer checklist without AI calls
 - Best-effort secret redaction for preview text
 - No raw diff upload by default
 - No branch name upload by default
@@ -162,6 +164,7 @@ A review pack may include:
 - Dependency impact
 - CI and configuration impact
 - Release note hints
+- Reviewer checklist
 - Suggested review focus
 - AI-ready review prompt
 - AI input preview
@@ -173,6 +176,7 @@ Example output directory:
     .reviewpack/risk-checklist.md
     .reviewpack/ai-review-prompt.md
     .reviewpack/release-note-hints.md
+    .reviewpack/reviewer-checklist.md
     .reviewpack/ai-input-preview.md
     .reviewpack/reviewpack.json
 
@@ -188,6 +192,7 @@ The current milestone supports:
 - GitHub Action artifact output
 - Structured Markdown and JSON output
 - Release note hints
+- Reviewer checklist
 - Optional AI input preview generation
 - Secret-like value redaction in preview text
 - No AI calls by default
@@ -202,6 +207,7 @@ The current milestone supports:
 - GitHub Action: docs/github-action.md
 - AI input preview: docs/ai-preview.md
 - Release note hints: docs/release-note-hints.md
+- Reviewer checklist: docs/reviewer-checklist.md
 - Integration principles: docs/integrations.md
 - Roadmap: docs/roadmap.md
 - Release checklist: docs/release-checklist.md

@@ -8,6 +8,10 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Reviewer checklist output
+- Reviewer checklist renderer
+- Reviewer checklist tests
+- Reviewer checklist documentation
 - GitHub Action metadata
 - GitHub Action usage guide
 - GitHub Action workflow example
@@ -19,9 +23,12 @@ This project follows a simple changelog format during early development.
 
 ### Changed
 
+- README now documents reviewer checklist output
 - README now documents GitHub Action usage
 - README now documents release note hints output
+- CLI output now lists `reviewer-checklist.md`
 - CLI output now lists `release-note-hints.md`
+- Reviewpack output now includes `reviewer-checklist.md` by default
 - Reviewpack output now includes `release-note-hints.md` by default
 
 ### Fixed
