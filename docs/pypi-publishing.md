@@ -19,13 +19,26 @@ Reviewpack already has:
 - Package build workflow
 - Installed wheel smoke tests
 - Manual publishing workflow
+- Trusted publishing guidance
+- TestPyPI runbook
 
 Reviewpack does not yet have:
 
 - PyPI project publication
+- TestPyPI project publication
 - PyPI trusted publishing configuration
+- TestPyPI trusted publishing configuration
 - `pip install reviewpack` availability
 - `pipx install reviewpack` availability
+
+## Key documents
+
+Publishing-related documents:
+
+- `docs/pypi-release-checklist.md`
+- `docs/testpypi.md`
+- `docs/testpypi-runbook.md`
+- `docs/trusted-publishing.md`
 
 ## Build package locally
 
@@ -113,11 +126,12 @@ Recommended flow:
 3. Update CHANGELOG
 4. Merge after CI and Package workflows pass
 5. Create GitHub release tag
-6. Run Publish workflow with `dry-run: true`
-7. Run Publish workflow for TestPyPI with `dry-run: false`
-8. Verify TestPyPI installation
-9. Run Publish workflow for PyPI with `dry-run: false`
-10. Verify PyPI installation
+6. Confirm trusted publishing setup
+7. Run Publish workflow with `dry-run: true`
+8. Run Publish workflow for TestPyPI with `dry-run: false`
+9. Verify TestPyPI installation
+10. Run Publish workflow for PyPI with `dry-run: false`
+11. Verify PyPI installation
 
 ## TestPyPI
 
@@ -126,10 +140,15 @@ TestPyPI should be used before the first real PyPI publish when possible.
 See:
 
     docs/testpypi.md
+    docs/testpypi-runbook.md
 
 ## PyPI trusted publishing
 
 Trusted publishing is preferred over long-lived API tokens.
+
+See:
+
+    docs/trusted-publishing.md
 
 A future PyPI project should be configured to trust the GitHub repository and publishing workflow.
 
@@ -143,6 +162,20 @@ The workflow uses OIDC permissions:
     permissions:
       id-token: write
 
+## GitHub environments
+
+Expected GitHub environments:
+
+    testpypi
+    pypi
+
+Recommended environment protection:
+
+- Required reviewers for `pypi`
+- Optional required reviewers for `testpypi`
+- Clear environment names matching publishing workflow configuration
+- No long-lived tokens unless token-based publishing is intentionally used
+
 ## Version consistency
 
 Before publishing, confirm that these versions match:
@@ -154,9 +187,9 @@ Before publishing, confirm that these versions match:
 
 Example:
 
-    GitHub tag: v0.3.0
-    pyproject.toml: version = "0.3.0"
-    reviewpack/__init__.py: __version__ = "0.3.0"
+    GitHub tag: v0.4.0
+    pyproject.toml: version = "0.4.0"
+    reviewpack/__init__.py: __version__ = "0.4.0"
 
 ## Token handling
 
