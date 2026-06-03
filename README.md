@@ -9,7 +9,7 @@ Privacy-first context packs for AI-assisted pull request review.
 
 Reviewpack helps open-source maintainers and engineering teams prepare structured, reusable context before reviewing a pull request with a human reviewer or an AI coding assistant.
 
-It is not another noisy AI reviewer. Reviewpack is a context layer: it collects pull request metadata, changed files, test signals, documentation signals, dependency signals, risk indicators, and review focus areas into a clear review pack.
+It is not another noisy AI reviewer. Reviewpack is a context layer: it collects pull request metadata, changed files, test signals, documentation signals, dependency signals, risk indicators, release note hints, and review focus areas into a clear review pack.
 
 ## Why Reviewpack?
 
@@ -23,6 +23,7 @@ Direct AI review often starts from raw diffs. That can miss important project-le
 - Did dependencies change?
 - Is the pull request too large?
 - Does the change affect CI, configuration, or release behavior?
+- Should this PR be mentioned in release notes?
 - What should a maintainer focus on first?
 
 Reviewpack prepares that context before review starts.
@@ -48,6 +49,7 @@ Open the generated files:
     .reviewpack/pr-summary.md
     .reviewpack/risk-checklist.md
     .reviewpack/ai-review-prompt.md
+    .reviewpack/release-note-hints.md
     .reviewpack/reviewpack.json
 
 ## Example Output
@@ -101,6 +103,7 @@ Current privacy-oriented features include:
 - GitHub PR metadata mode
 - AI-ready prompt generation without AI calls
 - AI input preview without AI calls
+- Release note hints without AI calls
 - Best-effort secret redaction for preview text
 - No raw diff upload by default
 - No branch name upload by default
@@ -118,6 +121,7 @@ A review pack may include:
 - Documentation impact
 - Dependency impact
 - CI and configuration impact
+- Release note hints
 - Suggested review focus
 - AI-ready review prompt
 - AI input preview
@@ -128,6 +132,7 @@ Example output directory:
     .reviewpack/pr-summary.md
     .reviewpack/risk-checklist.md
     .reviewpack/ai-review-prompt.md
+    .reviewpack/release-note-hints.md
     .reviewpack/ai-input-preview.md
     .reviewpack/reviewpack.json
 
@@ -141,6 +146,7 @@ The current milestone supports:
 - Local git diff input
 - GitHub PR metadata input
 - Structured Markdown and JSON output
+- Release note hints
 - Optional AI input preview generation
 - Secret-like value redaction in preview text
 - No AI calls by default
@@ -153,6 +159,7 @@ The current milestone supports:
 - Local git diff mode: docs/local-git.md
 - GitHub support: docs/github.md
 - AI input preview: docs/ai-preview.md
+- Release note hints: docs/release-note-hints.md
 - Integration principles: docs/integrations.md
 - Roadmap: docs/roadmap.md
 - Release checklist: docs/release-checklist.md
