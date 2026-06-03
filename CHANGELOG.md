@@ -8,6 +8,8 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Simplified Chinese README
+- Language links in README
 - Public roadmap
 - Draft release notes for v0.1.0
 - Example PR summary output

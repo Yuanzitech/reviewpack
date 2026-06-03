@@ -2,6 +2,11 @@
 
 Privacy-first context packs for AI-assisted pull request review.
 
+## Language
+
+- English: README.md
+- 简体中文: README.zh-CN.md
+
 Reviewpack helps open-source maintainers and engineering teams prepare structured, reusable context before reviewing a pull request with a human reviewer or an AI coding assistant.
 
 It is not another noisy AI reviewer. Reviewpack is a context layer: it collects pull request metadata, changed files, test signals, documentation signals, dependency signals, risk indicators, and review focus areas into a clear review pack.
