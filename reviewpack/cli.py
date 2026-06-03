@@ -3,7 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
-from rich.console import_from_gitfrom rich.console import Console
+from rich.console import Console
+
+from reviewpack.analyzer import analyze_reviewpack_input
+from reviewpack.config import load_config
+from reviewpack.git import collect_changed_files_from_git
 from reviewpack.models import PullRequestInfo, ReviewpackInput
 from reviewpack.renderers import write_reviewpack_outputs
 
@@ -146,6 +150,3 @@ def print_success(output: Path) -> None:
 
 if __name__ == "__main__":
     app()
-
-from reviewpack.analyzer import analyze_reviewpack_input
-from reviewpack.config import load_config
