@@ -8,6 +8,12 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Contributing guide
+- Security policy
+- Bug report issue template
+- Feature request issue template
+- Pull request template
+- Release checklist
 - GitHub API metadata collector
 - `reviewpack github` command
 - Optional GitHub token support
@@ -40,6 +46,7 @@ This project follows a simple changelog format during early development.
 
 ### Changed
 
+- Updated project URLs to https://github.com/Yuanzitech/reviewpack
 - Expanded README with GitHub metadata workflow
 - Expanded GitHub documentation with metadata mode
 - Expanded README with AI input preview usage
