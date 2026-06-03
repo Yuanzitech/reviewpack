@@ -8,6 +8,20 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Nothing yet.
+
+### Changed
+
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## v0.2.0 - 2026-06-03
+
+### Added
+
 - Reviewer checklist output
 - Reviewer checklist renderer
 - Reviewer checklist tests
@@ -23,6 +37,8 @@ This project follows a simple changelog format during early development.
 
 ### Changed
 
+- Package version bumped to 0.2.0
+- CLI version bumped to 0.2.0
 - README now documents reviewer checklist output
 - README now documents GitHub Action usage
 - README now documents release note hints output
@@ -33,7 +49,7 @@ This project follows a simple changelog format during early development.
 
 ### Fixed
 
-- Nothing yet.
+- Nothing.
 
 ## v0.1.0 - 2026-06-03
 
