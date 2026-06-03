@@ -62,4 +62,3 @@ def test_is_github_pr_url_returns_true_for_valid_url() -> None:
 
 def test_is_github_pr_url_returns_false_for_invalid_url() -> None:
     assert is_github_pr_url("https://github.com/octo-org/example-repo/issues/123") is False
-``
