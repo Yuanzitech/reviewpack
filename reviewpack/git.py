@@ -20,11 +20,10 @@ def parse_numstat_value(value: str) -> int:
 
 
 def parse_numstat_line(line: str) -> ChangedFile | None:
-    """Parse one line of git diff --numstat output.
+    """Parse one line of git diff numstat output.
 
     Expected format:
-
-    additions<TAB>deletions<TAB>path
+    additions, deletions, path separated by tab characters.
     """
 
     parts = line.rstrip("\n").split("\t")
@@ -44,7 +43,7 @@ def parse_numstat_line(line: str) -> ChangedFile | None:
 
 
 def parse_numstat(text: str) -> list[ChangedFile]:
-    """Parse git diff --numstat output into changed files."""
+    """Parse git diff numstat output into changed files."""
 
     files: list[ChangedFile] = []
 
