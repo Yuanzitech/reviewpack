@@ -8,6 +8,20 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Nothing yet.
+
+### Changed
+
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## v0.4.0 - 2026-06-03
+
+### Added
+
 - Manual PyPI publishing workflow
 - PyPI release checklist
 - TestPyPI verification guide
@@ -15,11 +29,13 @@ This project follows a simple changelog format during early development.
 
 ### Changed
 
+- Package version bumped to 0.4.0
+- CLI version bumped to 0.4.0
 - Expanded PyPI publishing notes with manual workflow and TestPyPI guidance
 
 ### Fixed
 
-- Nothing yet.
+- Nothing.
 
 ## v0.3.0 - 2026-06-03
 
