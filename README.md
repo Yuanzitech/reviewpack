@@ -40,21 +40,31 @@ By default, it does not send code, diffs, branch names, commit messages, environ
 
 AI features, when added, will be optional and explicit. Users will be able to control what context is sent to an AI provider.
 
-Planned privacy controls include:
+Current privacy-oriented features include:
 
-- AI disabled by default
+- Local fixture mode
+- Local git diff mode
+- AI-ready prompt generation without AI calls
+- AI input preview without AI calls
+- Best-effort secret redaction for preview text
 - No raw diff upload by default
 - No branch name upload by default
 - No commit message upload by default
-- Optional AI input preview
-- Redaction for common secret-like values
 - Local-first review pack generation
 
 ## Current status
 
 Reviewpack is in early development.
 
-The current milestone supports local fixture-based input and generates a structured review context pack without network access or AI calls.
+The current milestone supports:
+
+- Local fixture-based input
+- Local git diff input
+- Structured Markdown and JSON output
+- Optional AI input preview generation
+- Secret-like value redaction in preview text
+- No network access by default
+- No AI calls by default
 
 ## Install for local development
 
@@ -74,12 +84,17 @@ Generate a review pack from the example fixture:
 
     reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
 
-This generates:
+Generate a review pack with AI input preview:
 
-    .reviewpack/pr-summary.md
-    .reviewpack/risk-checklist.md
-    .reviewpack/ai-review-prompt.md
-    .reviewpack/reviewpack.json
+    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack --preview-ai-input
+
+Generate a review pack from local git diff:
+
+    reviewpack local --base main --head HEAD --output .reviewpack
+
+Generate local git diff output with AI input preview:
+
+    reviewpack local --base main --head HEAD --output .reviewpack --preview-ai-input
 
 Use an optional config file:
 
@@ -102,13 +117,24 @@ A review pack may include:
 - CI and configuration impact
 - Suggested review focus
 - AI-ready review prompt
+- AI input preview
 - Machine-readable JSON output
+
+Example output directory:
+
+    .reviewpack/pr-summary.md
+    .reviewpack/risk-checklist.md
+    .reviewpack/ai-review-prompt.md
+    .reviewpack/ai-input-preview.md
+    .reviewpack/reviewpack.json
 
 ## Documentation
 
 - Usage guide: docs/usage.md
 - Privacy model: docs/privacy.md
 - Design notes: docs/design.md
+- Local git diff mode: docs/local-git.md
+- AI input preview: docs/ai-preview.md
 - Examples guide: examples/README.md
 
 ## Roadmap
@@ -127,8 +153,9 @@ A review pack may include:
 
 - .reviewpack.yml configuration
 - Local git diff mode
-- More risk rules
 - AI input preview file
+- Best-effort secret redaction
+- More risk rules
 
 ### v0.3.0
 
