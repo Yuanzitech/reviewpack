@@ -52,6 +52,42 @@ Open the generated files:
     .reviewpack/release-note-hints.md
     .reviewpack/reviewpack.json
 
+## GitHub Action
+
+Reviewpack can run in GitHub Actions and upload the generated review pack as a workflow artifact.
+
+Example workflow:
+
+    name: Reviewpack
+
+    on:
+      pull_request:
+
+    jobs:
+      reviewpack:
+        runs-on: ubuntu-latest
+
+        permissions:
+          contents: read
+          pull-requests: read
+
+        steps:
+          - name: Check out repository
+            uses: actions/checkout@v4
+
+          - name: Run Reviewpack
+            uses: Yuanzitech/reviewpack@v0.1.0
+            with:
+              mode: github
+              pr-url: ${{ github.event.pull_request.html_url }}
+              github-token: ${{ github.token }}
+
+The first GitHub Action integration does not post PR comments or call AI providers. It generates `.reviewpack/` locally in the workflow and uploads it as an artifact.
+
+See:
+
+    docs/github-action.md
+
 ## Example Output
 
 Example PR summary:
@@ -77,6 +113,7 @@ Reviewpack currently supports:
 - Fixture input
 - Local git diff input
 - GitHub pull request metadata input
+- GitHub Action input
 
 Examples:
 
@@ -94,6 +131,8 @@ By default, it does not send code, diffs, branch names, commit messages, environ
 
 GitHub mode uses network access only to fetch explicitly requested pull request metadata and changed file statistics from the GitHub API.
 
+The GitHub Action integration generates workflow-local artifacts and does not call AI providers.
+
 AI features, when added, will be optional and explicit. Users will be able to control what context is sent to an AI provider.
 
 Current privacy-oriented features include:
@@ -101,6 +140,7 @@ Current privacy-oriented features include:
 - Local fixture mode
 - Local git diff mode
 - GitHub PR metadata mode
+- GitHub Action artifact mode
 - AI-ready prompt generation without AI calls
 - AI input preview without AI calls
 - Release note hints without AI calls
@@ -145,6 +185,7 @@ The current milestone supports:
 - Local fixture-based input
 - Local git diff input
 - GitHub PR metadata input
+- GitHub Action artifact output
 - Structured Markdown and JSON output
 - Release note hints
 - Optional AI input preview generation
@@ -158,6 +199,7 @@ The current milestone supports:
 - Design notes: docs/design.md
 - Local git diff mode: docs/local-git.md
 - GitHub support: docs/github.md
+- GitHub Action: docs/github-action.md
 - AI input preview: docs/ai-preview.md
 - Release note hints: docs/release-note-hints.md
 - Integration principles: docs/integrations.md
