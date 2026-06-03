@@ -8,6 +8,10 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- GitHub Action metadata
+- GitHub Action usage guide
+- GitHub Action workflow example
+- GitHub Action metadata tests
 - Release note hints output
 - Release note hints renderer
 - Release note hints tests
@@ -15,6 +19,7 @@ This project follows a simple changelog format during early development.
 
 ### Changed
 
+- README now documents GitHub Action usage
 - README now documents release note hints output
 - CLI output now lists `release-note-hints.md`
 - Reviewpack output now includes `release-note-hints.md` by default
