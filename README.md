@@ -36,6 +36,10 @@ Install for local development:
     source .venv/bin/activate
     pip install -e ".[dev]"
 
+For detailed installation options, see:
+
+    docs/installation.md
+
 Generate a review pack from the example fixture:
 
     reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
@@ -199,6 +203,7 @@ The current milestone supports:
 
 ## Documentation
 
+- Installation guide: docs/installation.md
 - Usage guide: docs/usage.md
 - Privacy model: docs/privacy.md
 - Design notes: docs/design.md
