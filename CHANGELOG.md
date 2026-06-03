@@ -8,11 +8,14 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Nothing yet.
+- Manual PyPI publishing workflow
+- PyPI release checklist
+- TestPyPI verification guide
+- Publish workflow metadata tests
 
 ### Changed
 
-- Nothing yet.
+- Expanded PyPI publishing notes with manual workflow and TestPyPI guidance
 
 ### Fixed
 
