@@ -8,6 +8,10 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- GitHub pull request URL parser
+- GitHub URL parser tests
+- GitHub integration guide
+- Integration principles documentation
 - AI input preview generation through `--preview-ai-input`
 - Local AI input preview renderer
 - Best-effort secret redaction helper
