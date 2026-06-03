@@ -8,6 +8,9 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Public roadmap
+- Draft release notes for v0.1.0
+- Example PR summary output
 - Contributing guide
 - Security policy
 - Bug report issue template
@@ -46,6 +49,7 @@ This project follows a simple changelog format during early development.
 
 ### Changed
 
+- Improved README quick start and public launch messaging
 - Updated project URLs to https://github.com/Yuanzitech/reviewpack
 - Expanded README with GitHub metadata workflow
 - Expanded GitHub documentation with metadata mode
