@@ -8,6 +8,20 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Nothing yet.
+
+### Changed
+
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## v0.1.0 - 2026-06-03
+
+### Added
+
 - Simplified Chinese README
 - Language links in README
 - Public roadmap
