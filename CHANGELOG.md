@@ -8,6 +8,10 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- GitHub API metadata collector
+- `reviewpack github` command
+- Optional GitHub token support
+- GitHub metadata collector tests
 - GitHub pull request URL parser
 - GitHub URL parser tests
 - GitHub integration guide
@@ -36,6 +40,8 @@ This project follows a simple changelog format during early development.
 
 ### Changed
 
+- Expanded README with GitHub metadata workflow
+- Expanded GitHub documentation with metadata mode
 - Expanded README with AI input preview usage
 - Expanded CLI output to include optional AI input preview file
 - Expanded README with installation, usage, and documentation links
