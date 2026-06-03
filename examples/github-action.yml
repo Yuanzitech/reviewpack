@@ -1,0 +1,28 @@
+name: Reviewpack
+
+on:
+  pull_request:
+
+jobs:
+  reviewpack:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run Reviewpack
+        uses: Yuanzitech/reviewpack@v0.1.0
+        with:
+          mode: github
+          pr-url: ${{ github.event.pull_request.html_url }}
+          github-token: ${{ github.token }}
+          preview-ai-input: "true"
+
+      - name: Show generated files
+        run: |
+          find .reviewpack -maxdepth 1 -type f -print
