@@ -58,4 +58,3 @@ def test_write_ai_input_preview_creates_file(tmp_path) -> None:
 
     markdown = output_path.read_text(encoding="utf-8")
     assert "# AI Input Preview" in markdown
-``
