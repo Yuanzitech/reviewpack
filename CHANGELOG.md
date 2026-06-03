@@ -8,6 +8,8 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Installed wheel smoke test in package workflow
+- Wheel installation smoke test documentation
 - Installation guide
 - PyPI publishing notes
 - Package build workflow
@@ -15,7 +17,8 @@ This project follows a simple changelog format during early development.
 
 ### Changed
 
-- Nothing yet.
+- README now links to installation documentation
+- Package workflow now verifies that the installed wheel exposes a working `reviewpack` CLI
 
 ### Fixed
 
