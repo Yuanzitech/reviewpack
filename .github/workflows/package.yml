@@ -51,11 +51,6 @@ jobs:
           with zipfile.ZipFile(wheel) as archive:
               names = archive.namelist()
 
-          required_prefixes = [
-              "reviewpack/",
-              "reviewpack-",
-          ]
-
           if not any(name.startswith("reviewpack/") for name in names):
               raise SystemExit("Wheel does not contain the reviewpack package.")
 
@@ -70,3 +65,25 @@ jobs:
 
           print("Wheel contents look reasonable.")
           PY
+
+      - name: Smoke test installed wheel
+        run: |
+          python -m venv .smoke
+          . .smoke/bin/activate
+          python -m pip install --upgrade pip
+
+          WHEEL_FILE="$(ls dist/*.whl | head -n 1)"
+          echo "Installing $WHEEL_FILE"
+          python -m pip install "$WHEEL_FILE"
+
+          reviewpack version
+          reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack-smoke
+
+          test -f .reviewpack-smoke/pr-summary.md
+          test -f .reviewpack-smoke/risk-checklist.md
+          test -f .reviewpack-smoke/reviewer-checklist.md
+          test -f .reviewpack-smoke/release-note-hints.md
+          test -f .reviewpack-smoke/ai-review-prompt.md
+          test -f .reviewpack-smoke/reviewpack.json
+
+          echo "Installed wheel smoke test passed."
