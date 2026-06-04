@@ -8,13 +8,11 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Trusted publishing guide
-- TestPyPI runbook
+- TestPyPI installation verification workflow
 
 ### Changed
 
-- Expanded PyPI publishing notes with trusted publishing and TestPyPI runbook links
-- Expanded PyPI release checklist with trusted publishing and TestPyPI setup checks
+- Expanded TestPyPI documentation with installation verification workflow instructions
 
 ### Fixed
 
