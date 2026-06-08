@@ -2,106 +2,7 @@ from __future__ import annotations
 
 from fnmatch import fnmatch
 
-from reviewpack.config import ReviewpackConfig
-from reviewpack.models import (
-    ChangeStats,
-    ChangedFile,
-    FileCategory,
-    ReviewFocusItem,
-    RiskLevel,
-    RiskSignal,
-)
-
-
-def matches_path_pattern(file_path: str, pattern: str) -> bool:
-    """Return whether a file path matches a configured pattern.
-
-    Supported pattern styles:
-    - Directory prefix: docs/
-    - Exact file name: pyproject.toml
-    - Glob: **/*.md or src/**/*.py
-    """
-
-    normalized_path = file_path.replace("\\", "/")
-    normalized_pattern = pattern.replace("\\", "/")
-
-    if not normalized_pattern:
-        return False
-
-    if "*" in normalized_pattern:
-        return fnmatch(normalized_path, normalized_pattern)
-
-    if normalized_pattern.endswith("/"):
-        return normalized_path.startswith(normalized_pattern)
-
-    return normalized_path == normalized_pattern or normalized_path.startswith(f"{normalized_pattern}/")
-
-
-def matches_any_pattern(file_path: str, patterns: list[str]) -> bool:
-    """Return whether a file path matches any configured pattern."""
-
-    return any(matches_path_pattern(file_path, pattern) for pattern in patterns)
-
-
-def categorize_file(path: str, config: ReviewpackConfig | None = None) -> FileCategory:
-    """Categorize a changed file path."""
-
-    reviewpack_config = config or ReviewpackConfig()
-    normalized_path = path.replace("\\", "/")
-    lower_path = normalized_path.lower()
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.tests):
-        return FileCategory.TEST
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.docs):
-        return FileCategory.DOCS
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.dependencies):
-        return FileCategory.DEPENDENCY
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.ci):
-        return FileCategory.CI
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.infrastructure):
-        return FileCategory.INFRA
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.config):
-        return FileCategory.CONFIG
-
-    if lower_path.endswith((".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".kt", ".rb", ".php")):
-        return FileCategory.SOURCE
-
-    return FileCategory.UNKNOWN
-
-
-def classify_changed_files(
-    changed_files: list[ChangedFile],
-    config: ReviewpackConfig | None = None,
-) -> list[ChangedFile]:
-    """Return changed files with categories assigned from configured rules."""
-
-    reviewpack_config = config or ReviewpackConfig()
-    classified_files: list[ChangedFile] = []
-
-    for changed_file in changed_files:
-        category = changed_file.category
-
-        if category == FileCategory.UNKNOWN:
-            category = categorize_file(changed_file.path, reviewpack_config)
-
-        classified_files.append(
-            ChangedFile(
-                path=changed_file.path,
-                additions=changed_file.additions,
-                deletions=changed_file.deletions,
-                category=category,
-            )
-        )
-
-    return classified_files
-
-
-def compute_change_stats(changed_files: list[ChangedFile]) -> ChangeStats:
+from reviewpack.configStats:from reviewpack.config import ReviewpackConfig
     """Compute aggregate change statistics."""
 
     stats = ChangeStats(
@@ -224,7 +125,7 @@ def detect_risk_signals(
         signals.append(
             RiskSignal(
                 level=RiskLevel.HIGH,
-                title="Configured high-risk path changed",
+                title="High-risk area changed",
                 message="This PR changes paths configured as high risk in Reviewpack configuration.",
                 files=high_risk_files,
             )
@@ -307,3 +208,99 @@ def suggest_review_focus(
         )
 
     return focus_items
+from reviewpack.models import (
+    ChangeStats,
+    ChangedFile,
+    FileCategory,
+    ReviewFocusItem,
+    RiskLevel,
+    RiskSignal,
+)
+
+
+def matches_path_pattern(file_path: str, pattern: str) -> bool:
+    """Return whether a file path matches a configured pattern.
+
+    Supported pattern styles:
+    - Directory prefix: docs/
+    - Exact file name: pyproject.toml
+    - Glob: **/*.md or src/**/*.py
+    """
+
+    normalized_path = file_path.replace("\\", "/")
+    normalized_pattern = pattern.replace("\\", "/")
+
+    if not normalized_pattern:
+        return False
+
+    if "*" in normalized_pattern:
+        return fnmatch(normalized_path, normalized_pattern)
+
+    if normalized_pattern.endswith("/"):
+        return normalized_path.startswith(normalized_pattern)
+
+    return normalized_path == normalized_pattern or normalized_path.startswith(f"{normalized_pattern}/")
+
+
+def matches_any_pattern(file_path: str, patterns: list[str]) -> bool:
+    """Return whether a file path matches any configured pattern."""
+
+    return any(matches_path_pattern(file_path, pattern) for pattern in patterns)
+
+
+def categorize_file(path: str, config: ReviewpackConfig | None = None) -> FileCategory:
+    """Categorize a changed file path."""
+
+    reviewpack_config = config or ReviewpackConfig()
+    normalized_path = path.replace("\\", "/")
+    lower_path = normalized_path.lower()
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.tests):
+        return FileCategory.TEST
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.docs):
+        return FileCategory.DOCS
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.dependencies):
+        return FileCategory.DEPENDENCY
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.ci):
+        return FileCategory.CI
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.infrastructure):
+        return FileCategory.INFRA
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.config):
+        return FileCategory.CONFIG
+
+    if lower_path.endswith((".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".kt", ".rb", ".php")):
+        return FileCategory.SOURCE
+
+    return FileCategory.UNKNOWN
+
+
+def classify_changed_files(
+    changed_files: list[ChangedFile],
+    config: ReviewpackConfig | None = None,
+) -> list[ChangedFile]:
+    """Return changed files with categories assigned from configured rules."""
+
+    reviewpack_config = config or ReviewpackConfig()
+    classified_files: list[ChangedFile] = []
+
+    for changed_file in changed_files:
+        category = changed_file.category
+
+        if category == FileCategory.UNKNOWN:
+            category = categorize_file(changed_file.path, reviewpack_config)
+
+        classified_files.append(
+            ChangedFile(
+                path=changed_file.path,
+                additions=changed_file.additions,
+                deletions=changed_file.deletions,
+                category=category,
+            )
+        )
+
+    return classified_files
