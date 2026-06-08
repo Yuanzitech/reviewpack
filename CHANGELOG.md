@@ -8,13 +8,17 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Project status document
+- GitHub Action local mode example
 
 ### Changed
 
-- Roadmap updated after v0.5.0
-- README now links to project status and updated roadmap
-- Simplified Chinese README now links to project status and updated roadmap
+- GitHub Action now prints clearer next-step guidance after generation
+- GitHub Action artifact upload now includes hidden Reviewpack output directories
+- GitHub Action documentation now explains artifact download and AI handoff usage
+- GitHub Action examples updated to v0.5.0
+- README now explains GitHub Action artifact usage
+- Simplified Chinese README now explains GitHub Action artifact usage
+- GitHub Action metadata tests now cover next-step guidance and hidden artifact uploads
 
 ### Fixed
 
