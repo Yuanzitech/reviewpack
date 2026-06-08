@@ -1,12 +1,84 @@
 # Installation
 
-Reviewpack is currently an early-stage CLI tool.
+Reviewpack is available on PyPI.
 
-This document explains current and planned installation options.
+## Install from PyPI
 
-## Current recommended installation
+Install Reviewpack:
 
-Until Reviewpack is published to PyPI, install it from source.
+    pip install reviewpack
+
+Verify installation:
+
+    reviewpack version
+
+Generate a demo review pack:
+
+    reviewpack demo
+
+Reviewpack writes output to `.reviewpack/` by default.
+
+## First-run workflow
+
+Recommended first-run workflow:
+
+    pip install reviewpack
+    reviewpack demo
+    reviewpack handoff
+
+The `demo` command does not require users to create fixture files manually.
+
+It generates a synthetic review pack for first-run exploration.
+
+## GitHub pull request workflow
+
+If you already have a GitHub pull request URL:
+
+    reviewpack github https://github.com/owner/repo/pull/123
+
+Public repositories usually do not require a token.
+
+Private repositories or rate-limited usage may require:
+
+    REVIEWPACK_GITHUB_TOKEN=YOUR_TOKEN reviewpack github https://github.com/owner/repo/pull/123
+
+## Local development workflow
+
+If you are working in a local git repository:
+
+    reviewpack local
+
+By default, Reviewpack writes files to:
+
+    .reviewpack/
+
+## Fixture workflow
+
+Fixture mode is still available:
+
+    reviewpack from-fixture simple-pr.json
+
+The fixture file must already exist.
+
+For first-time usage, prefer:
+
+    reviewpack demo
+
+## AI handoff
+
+After generating a review pack, run:
+
+    reviewpack handoff
+
+Then ask your AI assistant:
+
+    Please read .reviewpack/ai-handoff.md and follow it.
+
+If the AI assistant cannot access local files, upload or paste:
+
+    .reviewpack/ai-review-prompt.md
+
+## Install from source for development
 
 Clone the repository:
 
@@ -22,13 +94,13 @@ Install Reviewpack in editable mode:
 
     pip install -e ".[dev]"
 
-Show the installed version:
+Run tests:
 
-    reviewpack version
+    pytest
 
-Run the example fixture:
+Run lint checks:
 
-    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
+    ruff check .
 
 ## Windows PowerShell
 
@@ -37,13 +109,13 @@ Create and activate a virtual environment:
     python -m venv .venv
     .venv\Scripts\Activate.ps1
 
-Install Reviewpack:
+Install from PyPI:
+
+    pip install reviewpack
+
+Or install from source:
 
     pip install -e ".[dev]"
-
-Run the example fixture:
-
-    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
 
 ## Install from a built wheel
 
@@ -68,71 +140,4 @@ Install the generated wheel in a clean environment:
 Verify the CLI:
 
     reviewpack version
-    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack-smoke
-
-Expected smoke test output files:
-
-    .reviewpack-smoke/pr-summary.md
-    .reviewpack-smoke/risk-checklist.md
-    .reviewpack-smoke/reviewer-checklist.md
-    .reviewpack-smoke/release-note-hints.md
-    .reviewpack-smoke/ai-review-prompt.md
-    .reviewpack-smoke/reviewpack.json
-
-## GitHub Action usage
-
-Reviewpack can also run in GitHub Actions.
-
-See:
-
-    docs/github-action.md
-
-Example workflow:
-
-    examples/github-action.yml
-
-## Future PyPI installation
-
-Reviewpack is not yet published to PyPI.
-
-After PyPI publishing is ready, the intended installation command will be:
-
-    pip install reviewpack
-
-For isolated CLI installation, pipx may be recommended:
-
-    pipx install reviewpack
-
-## Verify installation
-
-After installation, run:
-
-    reviewpack version
-
-You can also run:
-
-    reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack
-
-Expected output files include:
-
-    .reviewpack/pr-summary.md
-    .reviewpack/risk-checklist.md
-    .reviewpack/reviewer-checklist.md
-    .reviewpack/release-note-hints.md
-    .reviewpack/ai-review-prompt.md
-    .reviewpack/reviewpack.json
-
-If `--preview-ai-input` is enabled, Reviewpack also writes:
-
-    .reviewpack/ai-input-preview.md
-
-## Current limitations
-
-Current source installation requires:
-
-- Python 3.10 or newer
-- pip
-- git, for cloning the repository
-- network access during dependency installation
-
-PyPI publishing is planned for a future release.
+    reviewpack demo
