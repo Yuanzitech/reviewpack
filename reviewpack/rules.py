@@ -2,7 +2,43 @@ from __future__ import annotations
 
 from fnmatch import fnmatch
 
-from reviewpack.configStats:from reviewpack.config import ReviewpackConfig
+ized_path, reviewpack_config.paths.config):from reviewpack.config import ReviewpackConfig
+        return FileCategory.CONFIG
+
+    if lower_path.endswith((".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".kt", ".rb", ".php")):
+        return FileCategory.SOURCE
+
+    return FileCategory.UNKNOWN
+
+
+def classify_changed_files(
+    changed_files: list[ChangedFile],
+    config: ReviewpackConfig | None = None,
+) -> list[ChangedFile]:
+    """Return changed files with categories assigned from configured rules."""
+
+    reviewpack_config = config or ReviewpackConfig()
+    classified_files: list[ChangedFile] = []
+
+    for changed_file in changed_files:
+        category = changed_file.category
+
+        if category == FileCategory.UNKNOWN:
+            category = categorize_file(changed_file.path, reviewpack_config)
+
+        classified_files.append(
+            ChangedFile(
+                path=changed_file.path,
+                additions=changed_file.additions,
+                deletions=changed_file.deletions,
+                category=category,
+            )
+        )
+
+    return classified_files
+
+
+def compute_change_stats(changed_files: list[ChangedFile]) -> ChangeStats:
     """Compute aggregate change statistics."""
 
     stats = ChangeStats(
@@ -270,37 +306,3 @@ def categorize_file(path: str, config: ReviewpackConfig | None = None) -> FileCa
     if matches_any_pattern(normalized_path, reviewpack_config.paths.infrastructure):
         return FileCategory.INFRA
 
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.config):
-        return FileCategory.CONFIG
-
-    if lower_path.endswith((".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".kt", ".rb", ".php")):
-        return FileCategory.SOURCE
-
-    return FileCategory.UNKNOWN
-
-
-def classify_changed_files(
-    changed_files: list[ChangedFile],
-    config: ReviewpackConfig | None = None,
-) -> list[ChangedFile]:
-    """Return changed files with categories assigned from configured rules."""
-
-    reviewpack_config = config or ReviewpackConfig()
-    classified_files: list[ChangedFile] = []
-
-    for changed_file in changed_files:
-        category = changed_file.category
-
-        if category == FileCategory.UNKNOWN:
-            category = categorize_file(changed_file.path, reviewpack_config)
-
-        classified_files.append(
-            ChangedFile(
-                path=changed_file.path,
-                additions=changed_file.additions,
-                deletions=changed_file.deletions,
-                category=category,
-            )
-        )
-
-    return classified_files
