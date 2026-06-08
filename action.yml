@@ -102,6 +102,34 @@ runs:
           exit 1
         fi
 
+    - name: Show Reviewpack next steps
+      shell: bash
+      run: |
+        OUTPUT="${{ inputs.output }}"
+        ARTIFACT_NAME="${{ inputs.artifact-name }}"
+
+        echo "Reviewpack generated output in: $OUTPUT"
+        echo ""
+        echo "Important files:"
+        echo "- $OUTPUT/pr-summary.md"
+        echo "- $OUTPUT/risk-checklist.md"
+        echo "- $OUTPUT/reviewer-checklist.md"
+        echo "- $OUTPUT/release-note-hints.md"
+        echo "- $OUTPUT/ai-handoff.md"
+        echo "- $OUTPUT/ai-context.md"
+        echo "- $OUTPUT/ai-review-prompt.md"
+        echo "- $OUTPUT/reviewpack.json"
+        echo ""
+        echo "AI handoff:"
+        echo "Ask your AI assistant to read:"
+        echo "  $OUTPUT/ai-handoff.md"
+        echo ""
+        echo "If your AI assistant cannot read workflow files, upload:"
+        echo "  $OUTPUT/ai-context.md"
+        echo ""
+        echo "If artifact upload is enabled, download the artifact named:"
+        echo "  $ARTIFACT_NAME"
+
     - name: Upload Reviewpack artifact
       if: ${{ inputs.upload-artifact == 'true' }}
       uses: actions/upload-artifact@v4
@@ -109,3 +137,4 @@ runs:
         name: ${{ inputs.artifact-name }}
         path: ${{ inputs.output }}
         if-no-files-found: error
+        include-hidden-files: true

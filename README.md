@@ -130,11 +130,30 @@ Example workflow:
               pr-url: ${{ github.event.pull_request.html_url }}
               github-token: ${{ github.token }}
 
-The first GitHub Action integration does not post PR comments or call AI providers. It generates `.reviewpack/` locally in the workflow and uploads it as an artifact.
+By default, the action uploads a workflow artifact named:
+
+    reviewpack-output
+
+After the workflow finishes, download the artifact from the GitHub Actions run.
+
+Recommended files:
+
+    pr-summary.md
+    reviewer-checklist.md
+    risk-checklist.md
+    release-note-hints.md
+    ai-handoff.md
+    ai-context.md
+
+The GitHub Action does not post PR comments or call AI providers by default.
 
 See:
 
     docs/github-action.md
+
+Local mode example:
+
+    examples/github-action-local.yml
 
 ## What Reviewpack generates
 

@@ -1,4 +1,4 @@
-name: Reviewpack
+name: Reviewpack Local Mode
 
 on:
   pull_request:
@@ -9,18 +9,19 @@ jobs:
 
     permissions:
       contents: read
-      pull-requests: read
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Run Reviewpack
+      - name: Run Reviewpack in local mode
         uses: Yuanzitech/reviewpack@v0.5.0
         with:
-          mode: github
-          pr-url: ${{ github.event.pull_request.html_url }}
-          github-token: ${{ github.token }}
+          mode: local
+          base: main
+          head: HEAD
           preview-ai-input: "true"
 
       - name: Show generated files

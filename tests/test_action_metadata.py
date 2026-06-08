@@ -51,7 +51,7 @@ def test_action_metadata_defaults_to_github_mode() -> None:
     assert inputs["upload-artifact"]["default"] == "true"
 
 
-def test_action_metadata_has_install_and_run_steps() -> None:
+def test_action_metadata_has_expected_steps() -> None:
     data = load_action_metadata()
     steps = data["runs"]["steps"]
     step_names = {step["name"] for step in steps}
@@ -59,4 +59,35 @@ def test_action_metadata_has_install_and_run_steps() -> None:
     assert "Set up Python" in step_names
     assert "Install Reviewpack" in step_names
     assert "Run Reviewpack" in step_names
+    assert "Show Reviewpack next steps" in step_names
     assert "Upload Reviewpack artifact" in step_names
+
+
+def test_action_metadata_uploads_hidden_reviewpack_outputs() -> None:
+    data = load_action_metadata()
+    steps = data["runs"]["steps"]
+
+    upload_steps = [step for step in steps if step["name"] == "Upload Reviewpack artifact"]
+
+    assert len(upload_steps) == 1
+
+    upload_step = upload_steps[0]
+    upload_with = upload_step["with"]
+
+    assert upload_with["if-no-files-found"] == "error"
+    assert upload_with["include-hidden-files"] is True
+
+
+def test_action_metadata_next_steps_mentions_handoff_files() -> None:
+    data = load_action_metadata()
+    steps = data["runs"]["steps"]
+
+    guidance_steps = [step for step in steps if step["name"] == "Show Reviewpack next steps"]
+
+    assert len(guidance_steps) == 1
+
+    run_text = guidance_steps[0]["run"]
+
+    assert "ai-handoff.md" in run_text
+    assert "ai-context.md" in run_text
+    assert "reviewpack-output" in run_text or "ARTIFACT_NAME" in run_text
