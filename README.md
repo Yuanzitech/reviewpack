@@ -124,7 +124,7 @@ Example workflow:
             uses: actions/checkout@v4
 
           - name: Run Reviewpack
-            uses: Yuanzitech/reviewpack@v0.4.0
+            uses: Yuanzitech/reviewpack@v0.5.0
             with:
               mode: github
               pr-url: ${{ github.event.pull_request.html_url }}
@@ -216,6 +216,7 @@ Current privacy-oriented features include:
 
 ## Documentation
 
+- Project status: docs/status.md
 - Installation guide: docs/installation.md
 - Commands guide: docs/commands.md
 - Usage guide: docs/usage.md
@@ -245,9 +246,9 @@ Reviewpack workflow:
 
 ## Current status
 
-Reviewpack is in early development.
+Reviewpack is a PyPI-published early product.
 
-The current milestone supports:
+It currently supports:
 
 - PyPI installation
 - Demo mode
@@ -263,6 +264,30 @@ The current milestone supports:
 - Optional AI input preview generation
 - Secret-like value redaction in preview text
 - No AI calls by default
+
+Recommended first-run workflow:
+
+    pip install reviewpack
+    reviewpack demo
+    reviewpack handoff
+
+For a detailed status overview, see:
+
+    docs/status.md
+
+## Roadmap
+
+Near-term roadmap:
+
+- v0.6.x: GitHub Action UX, configuration, and artifact quality
+- v0.7.x: Config-driven workflows
+- v0.8.x: Review artifact quality improvements
+- v0.9.x: GitHub PR workflow enrichment
+- v1.0.0: Stable CLI and artifact contract
+
+Detailed roadmap:
+
+    docs/roadmap.md
 
 ## Non-goals
 
