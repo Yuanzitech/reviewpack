@@ -1,0 +1,203 @@
+# Project Status
+
+This document summarizes the current status of Reviewpack after the v0.5.0 release.
+
+Reviewpack is an early-stage, PyPI-published, privacy-first CLI and GitHub Action for generating structured pull request review context.
+
+## Current stage
+
+Reviewpack is currently a usable early product.
+
+It is no longer only a prototype or repository-local tool.
+
+Reviewpack currently supports:
+
+- PyPI installation
+- CLI usage
+- GitHub Action usage
+- Demo mode for first-run experience
+- Local git diff analysis
+- GitHub pull request metadata analysis
+- Fixture-based input for tests and integrations
+- Structured Markdown output
+- Machine-readable JSON output
+- AI handoff files without calling AI providers
+- TestPyPI and PyPI installation verification workflows
+
+## Installation status
+
+Reviewpack is available on PyPI:
+
+    pip install reviewpack
+
+Recommended first-run workflow:
+
+    reviewpack demo
+    reviewpack handoff
+    reviewpack guide
+
+Reviewpack writes output to `.reviewpack/` by default.
+
+## Current CLI commands
+
+Reviewpack currently includes:
+
+    reviewpack demo
+    reviewpack github
+    reviewpack local
+    reviewpack from-fixture
+    reviewpack handoff
+    reviewpack guide
+    reviewpack version
+
+Command-level help is available through:
+
+    reviewpack --help
+    reviewpack demo --help
+    reviewpack github --help
+    reviewpack local --help
+    reviewpack from-fixture --help
+
+## Current output files
+
+A Reviewpack output directory may include:
+
+    .reviewpack/pr-summary.md
+    .reviewpack/risk-checklist.md
+    .reviewpack/reviewer-checklist.md
+    .reviewpack/release-note-hints.md
+    .reviewpack/ai-review-prompt.md
+    .reviewpack/ai-handoff.md
+    .reviewpack/ai-context.md
+    .reviewpack/reviewpack.json
+
+If AI input preview is enabled, Reviewpack also writes:
+
+    .reviewpack/ai-input-preview.md
+
+## Recommended workflows
+
+### First-time users
+
+    pip install reviewpack
+    reviewpack demo
+    reviewpack handoff
+
+### GitHub pull request review
+
+    reviewpack github https://github.com/owner/repo/pull/123
+    reviewpack handoff
+
+Public repositories usually do not require a token.
+
+Private repositories or rate-limited usage may require:
+
+    REVIEWPACK_GITHUB_TOKEN=YOUR_TOKEN reviewpack github https://github.com/owner/repo/pull/123
+
+### Local development before opening a PR
+
+    reviewpack local
+    reviewpack handoff
+
+### GitHub Actions
+
+Reviewpack can run in pull request workflows and upload generated review packs as artifacts.
+
+See:
+
+    docs/github-action.md
+
+## AI handoff status
+
+Reviewpack does not call AI providers by default.
+
+Instead, Reviewpack generates local files that users can inspect and choose to share.
+
+Recommended AI handoff order:
+
+1. If the AI assistant can read local workspace files, ask it to read `.reviewpack/ai-handoff.md`.
+2. If the AI assistant cannot read local files but can accept one uploaded file, upload `.reviewpack/ai-context.md`.
+3. If only copy and paste is available, use `.reviewpack/ai-review-prompt.md`.
+
+## Privacy status
+
+Reviewpack is privacy-first by default.
+
+Current defaults:
+
+- No AI provider calls by default
+- No raw diff upload by default
+- No full source code upload by default
+- No branch name collection for AI context by default
+- No commit message collection for AI context by default
+- No token storage
+- No token logging
+- Local-first workflows where possible
+
+GitHub mode uses network access to fetch explicitly requested pull request metadata and changed file statistics from the GitHub API.
+
+## Publishing and verification status
+
+Reviewpack has:
+
+- CI workflow
+- Package build workflow
+- Publish workflow
+- TestPyPI install verification workflow
+- PyPI install verification workflow
+
+The package workflow verifies:
+
+- Distribution build
+- Package metadata checks
+- Wheel contents
+- Installed wheel CLI smoke test
+
+The PyPI install workflow verifies:
+
+- Installation from PyPI
+- `reviewpack version`
+- `reviewpack guide`
+- `reviewpack demo`
+- `reviewpack handoff`
+- Expected output files
+- AI input preview output
+
+## Current limitations
+
+Reviewpack does not currently include:
+
+- Direct AI provider integration
+- Automatic PR comments
+- Raw diff analysis
+- IDE plugin integration
+- MCP server integration
+- Automatic approval or merge
+- Stable 1.0 artifact contract
+
+These are intentionally not part of the current default workflow.
+
+## Current product maturity
+
+Reviewpack is best described as:
+
+    Early product / public OSS developer tool
+
+It is suitable for:
+
+- Trying Reviewpack locally
+- Generating PR review context
+- Preparing AI handoff artifacts
+- Using GitHub Action artifact output
+- Experimenting with maintainer review workflows
+
+It is not yet a stable 1.0 product.
+
+Before 1.0, Reviewpack should further improve:
+
+- GitHub Action UX
+- Configuration support
+- Output artifact quality
+- GitHub PR metadata enrichment
+- Optional PR comment mode
+- JSON schema and artifact stability
