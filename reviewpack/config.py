@@ -3,11 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field
-
-
-class OutputConfig(BaseModel):
-    """Configure which Reviewpack output artifacts should be generated."""
+from pydantic import Base generated."""from pydantic import BaseModel, Field
 
     pr_summary: bool = True
     risk_checklist: bool = True
@@ -24,7 +20,15 @@ class RiskConfig(BaseModel):
 
     large_pr_files: int = 20
     large_pr_lines: int = 500
-    high_risk_paths: list[str] = Field(default_factory=list)
+    high_risk_paths: list[str] = Field(
+        default_factory=lambda: [
+            "src/auth/",
+            "auth/",
+            "security/",
+            ".github/workflows/",
+            "pyproject.toml",
+        ]
+    )
 
 
 class PathConfig(BaseModel):
@@ -125,3 +129,6 @@ def load_config(config_path: str | Path | None = None) -> ReviewpackConfig:
         raise ValueError(f"Reviewpack config must be a YAML mapping: {path}")
 
     return ReviewpackConfig.model_validate(raw_data)
+
+
+class OutputConfig(BaseModel):
