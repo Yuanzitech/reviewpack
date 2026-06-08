@@ -8,16 +8,17 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- PyPI installation verification workflow
+- Project status document
 
 ### Changed
 
-- TestPyPI installation verification workflow now uploads hidden `.reviewpack-*` output directories
-- Installation guide now documents PyPI and TestPyPI install verification workflows
+- Roadmap updated after v0.5.0
+- README now links to project status and updated roadmap
+- Simplified Chinese README now links to project status and updated roadmap
 
 ### Fixed
 
-- Fixed TestPyPI install verification artifact upload for hidden Reviewpack output directories
+- Nothing yet.
 
 ## v0.5.0 - 2026-06-08
 
