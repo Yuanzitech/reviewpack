@@ -2,7 +2,70 @@ from __future__ import annotations
 
 from fnmatch import fnmatch
 
-ized_path, reviewpack_config.paths.config):from reviewpack.config import ReviewpackConfig
+from reviewpack.config import ReviewpackConfig
+from reviewpack.models import (
+    ChangeStats,
+    ChangedFile,
+    FileCategory,
+    ReviewFocusItem,
+    RiskLevel,
+    RiskSignal,
+)
+
+
+def matches_path_pattern(file_path: str, pattern: str) -> bool:
+    """Return whether a file path matches a configured pattern.
+
+    Supported pattern styles:
+    - Directory prefix: docs/
+    - Exact file name: pyproject.toml
+    - Glob: **/*.md or src/**/*.py
+    """
+
+    normalized_path = file_path.replace("\\", "/")
+    normalized_pattern = pattern.replace("\\", "/")
+
+    if not normalized_pattern:
+        return False
+
+    if "*" in normalized_pattern:
+        return fnmatch(normalized_path, normalized_pattern)
+
+    if normalized_pattern.endswith("/"):
+        return normalized_path.startswith(normalized_pattern)
+
+    return normalized_path == normalized_pattern or normalized_path.startswith(f"{normalized_pattern}/")
+
+
+def matches_any_pattern(file_path: str, patterns: list[str]) -> bool:
+    """Return whether a file path matches any configured pattern."""
+
+    return any(matches_path_pattern(file_path, pattern) for pattern in patterns)
+
+
+def categorize_file(path: str, config: ReviewpackConfig | None = None) -> FileCategory:
+    """Categorize a changed file path."""
+
+    reviewpack_config = config or ReviewpackConfig()
+    normalized_path = path.replace("\\", "/")
+    lower_path = normalized_path.lower()
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.tests):
+        return FileCategory.TEST
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.docs):
+        return FileCategory.DOCS
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.dependencies):
+        return FileCategory.DEPENDENCY
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.ci):
+        return FileCategory.CI
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.infrastructure):
+        return FileCategory.INFRA
+
+    if matches_any_pattern(normalized_path, reviewpack_config.paths.config):
         return FileCategory.CONFIG
 
     if lower_path.endswith((".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".kt", ".rb", ".php")):
@@ -244,65 +307,3 @@ def suggest_review_focus(
         )
 
     return focus_items
-from reviewpack.models import (
-    ChangeStats,
-    ChangedFile,
-    FileCategory,
-    ReviewFocusItem,
-    RiskLevel,
-    RiskSignal,
-)
-
-
-def matches_path_pattern(file_path: str, pattern: str) -> bool:
-    """Return whether a file path matches a configured pattern.
-
-    Supported pattern styles:
-    - Directory prefix: docs/
-    - Exact file name: pyproject.toml
-    - Glob: **/*.md or src/**/*.py
-    """
-
-    normalized_path = file_path.replace("\\", "/")
-    normalized_pattern = pattern.replace("\\", "/")
-
-    if not normalized_pattern:
-        return False
-
-    if "*" in normalized_pattern:
-        return fnmatch(normalized_path, normalized_pattern)
-
-    if normalized_pattern.endswith("/"):
-        return normalized_path.startswith(normalized_pattern)
-
-    return normalized_path == normalized_pattern or normalized_path.startswith(f"{normalized_pattern}/")
-
-
-def matches_any_pattern(file_path: str, patterns: list[str]) -> bool:
-    """Return whether a file path matches any configured pattern."""
-
-    return any(matches_path_pattern(file_path, pattern) for pattern in patterns)
-
-
-def categorize_file(path: str, config: ReviewpackConfig | None = None) -> FileCategory:
-    """Categorize a changed file path."""
-
-    reviewpack_config = config or ReviewpackConfig()
-    normalized_path = path.replace("\\", "/")
-    lower_path = normalized_path.lower()
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.tests):
-        return FileCategory.TEST
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.docs):
-        return FileCategory.DOCS
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.dependencies):
-        return FileCategory.DEPENDENCY
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.ci):
-        return FileCategory.CI
-
-    if matches_any_pattern(normalized_path, reviewpack_config.paths.infrastructure):
-        return FileCategory.INFRA
-
