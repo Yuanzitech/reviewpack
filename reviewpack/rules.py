@@ -233,7 +233,10 @@ def detect_risk_signals(
     return signals
 
 
-def suggest_review_focus(changed_files: list[ChangedFile], risk_signals: list[RiskSignal]) -> list[ReviewFocusItem]:
+def suggest_review_focus(
+    changed_files: list[ChangedFile],
+    risk_signals: list[RiskSignal],
+) -> list[ReviewFocusItem]:
     """Suggest high-level review focus items."""
 
     categories = {changed_file.category for changed_file in changed_files}
