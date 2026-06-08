@@ -39,4 +39,5 @@ def test_demo_output_writes_expected_files(tmp_path) -> None:
     assert (tmp_path / "release-note-hints.md").exists()
     assert (tmp_path / "ai-review-prompt.md").exists()
     assert (tmp_path / "ai-handoff.md").exists()
+    assert (tmp_path / "ai-context.md").exists()
     assert (tmp_path / "reviewpack.json").exists()
