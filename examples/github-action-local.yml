@@ -1,0 +1,29 @@
+name: Reviewpack Local Mode
+
+on:
+  pull_request:
+
+jobs:
+  reviewpack:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Reviewpack in local mode
+        uses: Yuanzitech/reviewpack@v0.5.0
+        with:
+          mode: local
+          base: main
+          head: HEAD
+          preview-ai-input: "true"
+
+      - name: Show generated files
+        run: |
+          find .reviewpack -maxdepth 1 -type f -print
