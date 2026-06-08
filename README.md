@@ -100,6 +100,47 @@ For CLI options:
     reviewpack github --help
     reviewpack local --help
 
+## Configuration
+
+Reviewpack can be configured with:
+
+    .reviewpack.yml
+
+Configuration is optional.
+
+If no configuration file is present, Reviewpack uses privacy-first defaults.
+
+Example:
+
+    outputs:
+      ai_context: true
+      ai_handoff: true
+      reviewer_checklist: true
+      release_note_hints: true
+
+    risk:
+      large_pr_files: 20
+      large_pr_lines: 500
+      high_risk_paths:
+        - .github/workflows/
+        - pyproject.toml
+
+    paths:
+      docs:
+        - docs/
+        - README.md
+      tests:
+        - tests/
+
+Use a custom config file:
+
+    reviewpack demo --config path/to/reviewpack.yml
+
+See:
+
+    docs/configuration.md
+    examples/.reviewpack.yml
+
 ## GitHub Action
 
 Reviewpack can run in GitHub Actions and upload the generated review pack as a workflow artifact.
@@ -222,6 +263,10 @@ Current privacy-oriented features include:
 - Local git diff mode
 - GitHub PR metadata mode
 - GitHub Action artifact mode
+- Configurable output generation
+- Configurable risk thresholds
+- Configurable high-risk paths
+- Configurable path classification
 - AI-ready prompt generation without AI calls
 - AI handoff without AI calls
 - AI context bundle without AI calls
@@ -238,6 +283,7 @@ Current privacy-oriented features include:
 - Project status: docs/status.md
 - Installation guide: docs/installation.md
 - Commands guide: docs/commands.md
+- Configuration guide: docs/configuration.md
 - Usage guide: docs/usage.md
 - Privacy model: docs/privacy.md
 - Design notes: docs/design.md
@@ -276,6 +322,7 @@ It currently supports:
 - GitHub PR metadata input
 - GitHub Action artifact output
 - Structured Markdown and JSON output
+- Configurable rules and outputs
 - Reviewer checklist
 - Release note hints
 - AI handoff
