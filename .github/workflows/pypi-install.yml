@@ -1,0 +1,72 @@
+name: PyPI Install
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-version:
+        description: Reviewpack version to install from PyPI.
+        required: true
+        default: "0.5.0"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Reviewpack from PyPI
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "reviewpack==${{ inputs.package-version }}"
+
+      - name: Verify CLI version
+        run: |
+          reviewpack version
+
+      - name: Run Reviewpack guide
+        run: |
+          reviewpack guide
+
+      - name: Run Reviewpack demo
+        run: |
+          reviewpack demo --output .reviewpack-pypi
+
+      - name: Verify generated outputs
+        run: |
+          test -f .reviewpack-pypi/pr-summary.md
+          test -f .reviewpack-pypi/risk-checklist.md
+          test -f .reviewpack-pypi/reviewer-checklist.md
+          test -f .reviewpack-pypi/release-note-hints.md
+          test -f .reviewpack-pypi/ai-review-prompt.md
+          test -f .reviewpack-pypi/ai-handoff.md
+          test -f .reviewpack-pypi/ai-context.md
+          test -f .reviewpack-pypi/reviewpack.json
+
+      - name: Run Reviewpack handoff
+        run: |
+          reviewpack handoff --output .reviewpack-pypi
+
+      - name: Run Reviewpack with AI input preview
+        run: |
+          reviewpack demo --output .reviewpack-pypi-ai --preview-ai-input
+
+      - name: Verify AI input preview output
+        run: |
+          test -f .reviewpack-pypi-ai/ai-input-preview.md
+
+      - name: Upload verification outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: pypi-install-verification
+          path: |
+            .reviewpack-pypi/
+            .reviewpack-pypi-ai/
+          if-no-files-found: error
+          include-hidden-files: true
