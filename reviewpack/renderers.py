@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from reviewpack.ai_context import render_ai_context
 from reviewpack.ai_handoff import render_ai_handoff
 from reviewpack.models import ReviewpackResult, RiskLevel
 from reviewpack.release_notes import render_release_note_hints
@@ -195,6 +196,7 @@ def write_reviewpack_outputs(result: ReviewpackResult, output_dir: str | Path) -
     (target_dir / "release-note-hints.md").write_text(render_release_note_hints(result), encoding="utf-8")
     (target_dir / "ai-review-prompt.md").write_text(render_ai_review_prompt(result), encoding="utf-8")
     (target_dir / "ai-handoff.md").write_text(render_ai_handoff(result), encoding="utf-8")
+    (target_dir / "ai-context.md").write_text(render_ai_context(result), encoding="utf-8")
 
     json_text = json.dumps(
         result.model_dump(mode="json"),
