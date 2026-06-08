@@ -1,21 +1,6 @@
 from __future__ import annotations
 
-from pathlib import Path_path = default_pathfrom pathlib import Path
-
-    path = Path(config_path)
-
-    if not path.exists():
-        return ReviewpackConfig()
-
-    raw_data = yaml.safe_load(path.read_text(encoding="utf-8"))
-
-    if raw_data is None:
-        return ReviewpackConfig()
-
-    if not isinstance(raw_data, dict):
-        raise ValueError(f"Reviewpack config must be a YAML mapping: {path}")
-
-    return ReviewpackConfig.model_validate(raw_data)
+from pathlib import Path
 
 import yaml
 from pydantic import BaseModel, Field
@@ -132,3 +117,19 @@ def load_config(config_path: str | Path | None = None) -> ReviewpackConfig:
         default_path = Path(".reviewpack.yml")
         if not default_path.exists():
             return ReviewpackConfig()
+        config_path = default_path
+
+    path = Path(config_path)
+
+    if not path.exists():
+        return ReviewpackConfig()
+
+    raw_data = yaml.safe_load(path.read_text(encoding="utf-8"))
+
+    if raw_data is None:
+        return ReviewpackConfig()
+
+    if not isinstance(raw_data, dict):
+        raise ValueError(f"Reviewpack config must be a YAML mapping: {path}")
+
+    return ReviewpackConfig.model_validate(raw_data)
