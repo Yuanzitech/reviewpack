@@ -5,9 +5,11 @@ from pathlib import Path
 import typer
 from rich.console import Console
 
+from reviewpack.ai_handoff import render_handoff_terminal_text
 from reviewpack.ai_preview import write_ai_input_preview
 from reviewpack.analyzer import analyze_reviewpack_input
 from reviewpack.config import load_config
+from reviewpack.demo import build_demo_reviewpack_input
 from reviewpack.git import collect_changed_files_from_git
 from reviewpack.github_client import GitHubAPIError, collect_reviewpack_input_from_github_url
 from reviewpack.models import PullRequestInfo, ReviewpackInput
@@ -19,6 +21,36 @@ app = typer.Typer(
 )
 
 console = Console()
+
+
+@app.command("demo")
+def demo(
+    output: Path = typer.Option(
+        Path(".reviewpack"),
+        "--output",
+        "-o",
+        help="Directory where Reviewpack output files will be written.",
+    ),
+    preview_ai_input: bool = typer.Option(
+        False,
+        "--preview-ai-input",
+        help="Generate a local AI input preview file without calling an AI provider.",
+    ),
+) -> None:
+    """Generate a demo review context pack without requiring input files."""
+
+    reviewpack_input = build_demo_reviewpack_input()
+    result = analyze_reviewpack_input(reviewpack_input)
+    result.metadata["mode"] = "demo"
+    result.metadata["network_used"] = False
+    result.metadata["ai_used"] = False
+
+    write_reviewpack_outputs(result, output)
+
+    if preview_ai_input:
+        write_ai_input_preview(result, output)
+
+    print_success(output, preview_ai_input=preview_ai_input)
 
 
 @app.command("from-fixture")
@@ -49,6 +81,7 @@ def from_fixture(
 
     if not fixture_path.exists():
         console.print(f"[red]Fixture file not found:[/red] {fixture_path}")
+        console.print("Tip: run [bold]reviewpack demo[/bold] for a first-run example without creating files.")
         raise typer.Exit(code=1)
 
     raw_json = fixture_path.read_text(encoding="utf-8")
@@ -197,6 +230,38 @@ def github(
     print_success(output, preview_ai_input=preview_ai_input)
 
 
+@app.command("handoff")
+def handoff(
+    output: Path = typer.Option(
+        Path(".reviewpack"),
+        "--output",
+        "-o",
+        help="Reviewpack output directory.",
+    ),
+) -> None:
+    """Show a short AI handoff instruction for generated Reviewpack files."""
+
+    handoff_file = output / "ai-handoff.md"
+
+    if not handoff_file.exists():
+        console.print(f"[yellow]AI handoff file not found:[/yellow] {handoff_file}")
+        console.print(
+            "Tip: run [bold]reviewpack demo[/bold], "
+            "[bold]reviewpack local[/bold], or "
+            "[bold]reviewpack github PR_URL[/bold] first."
+        )
+        console.print("")
+
+    console.print(render_handoff_terminal_text(output))
+
+
+@app.command("guide")
+def guide() -> None:
+    """Show a short product guide for common Reviewpack workflows."""
+
+    console.print(render_guide_text())
+
+
 @app.command("version")
 def version() -> None:
     """Show Reviewpack version."""
@@ -204,6 +269,50 @@ def version() -> None:
     from reviewpack import __version__
 
     console.print(__version__)
+
+
+def render_guide_text() -> str:
+    """Render a short product-oriented command guide."""
+
+    return "\n".join(
+        [
+            "Reviewpack quick guide",
+            "",
+            "New here?",
+            "  reviewpack demo",
+            "",
+            "Have a GitHub PR?",
+            "  reviewpack github https://github.com/owner/repo/pull/123",
+            "",
+            "Working locally before opening a PR?",
+            "  reviewpack local",
+            "",
+            "Have a fixture JSON?",
+            "  reviewpack from-fixture simple-pr.json",
+            "",
+            "Want AI assistance?",
+            "  1. Run any Reviewpack command.",
+            "  2. Ask your AI assistant:",
+            '     "Please read .reviewpack/ai-handoff.md and follow it."',
+            "",
+            "Default output:",
+            "  Reviewpack writes files to .reviewpack/ by default.",
+            "",
+            "Useful files:",
+            "  .reviewpack/pr-summary.md",
+            "  .reviewpack/risk-checklist.md",
+            "  .reviewpack/reviewer-checklist.md",
+            "  .reviewpack/release-note-hints.md",
+            "  .reviewpack/ai-handoff.md",
+            "  .reviewpack/ai-review-prompt.md",
+            "",
+            "For CLI options:",
+            "  reviewpack --help",
+            "  reviewpack demo --help",
+            "  reviewpack github --help",
+            "",
+        ]
+    )
 
 
 def print_success(output: Path, preview_ai_input: bool = False) -> None:
@@ -215,13 +324,19 @@ def print_success(output: Path, preview_ai_input: bool = False) -> None:
     console.print("Generated files:")
     console.print(f"- {output / 'pr-summary.md'}")
     console.print(f"- {output / 'risk-checklist.md'}")
-    console.print(f"- {output / 'ai-review-prompt.md'}")
-    console.print(f"- {output / 'release-note-hints.md'}")
     console.print(f"- {output / 'reviewer-checklist.md'}")
+    console.print(f"- {output / 'release-note-hints.md'}")
+    console.print(f"- {output / 'ai-review-prompt.md'}")
+    console.print(f"- {output / 'ai-handoff.md'}")
     console.print(f"- {output / 'reviewpack.json'}")
 
     if preview_ai_input:
         console.print(f"- {output / 'ai-input-preview.md'}")
+
+    console.print("")
+    console.print("Next:")
+    console.print(f'- Ask your AI assistant: "Please read {output / "ai-handoff.md"} and follow it."')
+    console.print(f"- Or run: reviewpack handoff --output {output}")
 
 
 if __name__ == "__main__":

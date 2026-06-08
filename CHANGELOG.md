@@ -8,11 +8,22 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- TestPyPI installation verification workflow
+- `reviewpack demo` command
+- `reviewpack handoff` command
+- `reviewpack guide` command
+- AI handoff output file
+- AI handoff documentation
+- Commands guide
+- Demo command tests
+- AI handoff tests
+- CLI guide tests
 
 ### Changed
 
-- Expanded TestPyPI documentation with installation verification workflow instructions
+- README now uses `pip install reviewpack` and `reviewpack demo` as the first-run workflow
+- Installation guide now documents PyPI installation and demo workflow
+- Reviewpack output now includes `ai-handoff.md` by default
+- Fixture mode error message now suggests `reviewpack demo` for first-run usage
 
 ### Fixed
 
