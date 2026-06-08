@@ -5,6 +5,7 @@ from pathlib import Path
 
 from reviewpack.ai_context import render_ai_context
 from reviewpack.ai_handoff import render_ai_handoff
+from reviewpack.config import ReviewpackConfig
 from reviewpack.models import ReviewpackResult, RiskLevel
 from reviewpack.release_notes import render_release_note_hints
 from reviewpack.reviewer_checklist import render_reviewer_checklist
@@ -184,23 +185,43 @@ def render_ai_review_prompt(result: ReviewpackResult) -> str:
     return "\n".join(lines)
 
 
-def write_reviewpack_outputs(result: ReviewpackResult, output_dir: str | Path) -> None:
+def write_reviewpack_outputs(
+    result: ReviewpackResult,
+    output_dir: str | Path,
+    config: ReviewpackConfig | None = None,
+) -> None:
     """Write Reviewpack outputs to an output directory."""
+
+    reviewpack_config = config or ReviewpackConfig()
 
     target_dir = Path(output_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
 
-    (target_dir / "pr-summary.md").write_text(render_pr_summary(result), encoding="utf-8")
-    (target_dir / "risk-checklist.md").write_text(render_risk_checklist(result), encoding="utf-8")
-    (target_dir / "reviewer-checklist.md").write_text(render_reviewer_checklist(result), encoding="utf-8")
-    (target_dir / "release-note-hints.md").write_text(render_release_note_hints(result), encoding="utf-8")
-    (target_dir / "ai-review-prompt.md").write_text(render_ai_review_prompt(result), encoding="utf-8")
-    (target_dir / "ai-handoff.md").write_text(render_ai_handoff(result), encoding="utf-8")
-    (target_dir / "ai-context.md").write_text(render_ai_context(result), encoding="utf-8")
+    if reviewpack_config.outputs.pr_summary:
+        (target_dir / "pr-summary.md").write_text(render_pr_summary(result), encoding="utf-8")
 
-    json_text = json.dumps(
-        result.model_dump(mode="json"),
-        indent=2,
-        ensure_ascii=False,
-    )
-    (target_dir / "reviewpack.json").write_text(json_text + "\n", encoding="utf-8")
+    if reviewpack_config.outputs.risk_checklist:
+        (target_dir / "risk-checklist.md").write_text(render_risk_checklist(result), encoding="utf-8")
+
+    if reviewpack_config.outputs.reviewer_checklist:
+        (target_dir / "reviewer-checklist.md").write_text(render_reviewer_checklist(result), encoding="utf-8")
+
+    if reviewpack_config.outputs.release_note_hints:
+        (target_dir / "release-note-hints.md").write_text(render_release_note_hints(result), encoding="utf-8")
+
+    if reviewpack_config.outputs.ai_review_prompt:
+        (target_dir / "ai-review-prompt.md").write_text(render_ai_review_prompt(result), encoding="utf-8")
+
+    if reviewpack_config.outputs.ai_handoff:
+        (target_dir / "ai-handoff.md").write_text(render_ai_handoff(result), encoding="utf-8")
+
+    if reviewpack_config.outputs.ai_context:
+        (target_dir / "ai-context.md").write_text(render_ai_context(result), encoding="utf-8")
+
+    if reviewpack_config.outputs.json:
+        json_text = json.dumps(
+            result.model_dump(mode="json"),
+            indent=2,
+            ensure_ascii=False,
+        )
+        (target_dir / "reviewpack.json").write_text(json_text + "\n", encoding="utf-8")
