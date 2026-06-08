@@ -82,6 +82,46 @@ If only copy and paste is available, use:
 
     .reviewpack/ai-review-prompt.md
 
+## Verify PyPI installation with GitHub Actions
+
+Reviewpack includes a manual workflow for verifying the officially published PyPI package:
+
+    .github/workflows/pypi-install.yml
+
+Run it from GitHub:
+
+    Actions -> PyPI Install -> Run workflow
+
+Input:
+
+    package-version: 0.5.0
+
+The workflow verifies:
+
+- Reviewpack can be installed from PyPI
+- `reviewpack version` runs
+- `reviewpack guide` runs
+- `reviewpack demo` runs
+- Expected output files are generated
+- `reviewpack handoff` runs
+- `--preview-ai-input` output can be generated
+
+## Verify TestPyPI installation with GitHub Actions
+
+Reviewpack also includes a manual workflow for verifying TestPyPI installation:
+
+    .github/workflows/testpypi-install.yml
+
+Run it from GitHub:
+
+    Actions -> TestPyPI Install -> Run workflow
+
+Input:
+
+    package-version: 0.5.0
+
+The workflow installs Reviewpack from TestPyPI and uses PyPI as an extra index for dependencies.
+
 ## Install from source for development
 
 Clone the repository:
