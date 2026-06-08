@@ -6,86 +6,130 @@ import yaml
 from pydantic import BaseModel, Field
 
 
-class PrivacyConfig(BaseModel):
-    """Privacy controls for Reviewpack.
+class OutputConfig(BaseModel):
+    """Configure which Reviewpack output artifacts should be generated."""
 
-    Reviewpack is local-first and privacy-first by default.
-
-    These defaults intentionally avoid sending branch names, commit messages,
-    raw diffs, or local environment information to any external service.
-    """
-
-    include_branch_name: bool = False
-    include_commit_messages: bool = False
-    include_diff_snippets: bool = False
-    include_file_paths: bool = True
-    redact_secrets: bool = True
+    pr_summary: bool = True
+    risk_checklist: bool = True
+    reviewer_checklist: bool = True
+    release_note_hints: bool = True
+    ai_review_prompt: bool = True
+    ai_handoff: bool = True
+    ai_context: bool = True
+    json: bool = True
 
 
-class AIConfig(BaseModel):
-    """Optional AI configuration.
+class RiskConfig(BaseModel):
+    """Configure deterministic risk thresholds and high-risk paths."""
 
-    AI is disabled by default. v0.1.0 does not call AI providers.
-    These fields reserve a stable configuration shape for future versions.
-    """
+    large_pr_files: int = 20
+    large_pr_lines: int = 500
+    high_risk_paths: list[str] = Field(
+        default_factory=lambda: [
+            "src/auth/",
+            "auth/",
+            "security/",
+            ".github/workflows/",
+            "pyproject.toml",
+        ]
+    )
 
-    enabled: bool = False
-    provider: str | None = None
-    model: str | None = None
-    max_input_chars: int = 12000
 
+class PathConfig(BaseModel):
+    """Configure path classification patterns."""
 
-class LargePRConfig(BaseModel):
-    """Thresholds for large pull request detection."""
-
-    changed_files: int = 20
-    changed_lines: int = 800
+    docs: list[str] = Field(
+        default_factory=lambda: [
+            "docs/",
+            "README.md",
+            "README.zh-CN.md",
+            "CHANGELOG.md",
+        ]
+    )
+    tests: list[str] = Field(
+        default_factory=lambda: [
+            "tests/",
+            "test/",
+        ]
+    )
+    dependencies: list[str] = Field(
+        default_factory=lambda: [
+            "pyproject.toml",
+            "requirements.txt",
+            "requirements-dev.txt",
+            "poetry.lock",
+            "Pipfile",
+            "Pipfile.lock",
+            "package.json",
+            "package-lock.json",
+            "yarn.lock",
+            "pnpm-lock.yaml",
+        ]
+    )
+    ci: list[str] = Field(
+        default_factory=lambda: [
+            ".github/workflows/",
+            ".gitlab-ci.yml",
+            "azure-pipelines.yml",
+            "circle.yml",
+        ]
+    )
+    config: list[str] = Field(
+        default_factory=lambda: [
+            ".reviewpack.yml",
+            "ruff.toml",
+            ".ruff.toml",
+            "mypy.ini",
+            "pytest.ini",
+            "tox.ini",
+            ".pre-commit-config.yaml",
+        ]
+    )
+    infrastructure: list[str] = Field(
+        default_factory=lambda: [
+            "Dockerfile",
+            "docker-compose.yml",
+            "docker-compose.yaml",
+            "k8s/",
+            "deploy/",
+            "infra/",
+            "terraform/",
+        ]
+    )
 
 
 class ReviewpackConfig(BaseModel):
-    """Project-level Reviewpack configuration."""
+    """Top-level Reviewpack configuration."""
 
-    risk_paths_high: list[str] = Field(
-        default_factory=lambda: [
-            "src/auth/**",
-            "src/security/**",
-            "src/payment/**",
-        ]
-    )
-    test_paths: list[str] = Field(
-        default_factory=lambda: [
-            "tests/**",
-            "__tests__/**",
-            "test/**",
-        ]
-    )
-    docs_paths: list[str] = Field(
-        default_factory=lambda: [
-            "README.md",
-            "docs/**",
-        ]
-    )
-    large_pr: LargePRConfig = Field(default_factory=LargePRConfig)
-    privacy: PrivacyConfig = Field(default_factory=PrivacyConfig)
-    ai: AIConfig = Field(default_factory=AIConfig)
+    outputs: OutputConfig = Field(default_factory=OutputConfig)
+    risk: RiskConfig = Field(default_factory=RiskConfig)
+    paths: PathConfig = Field(default_factory=PathConfig)
 
 
-def load_config(path: str | Path | None = None) -> ReviewpackConfig:
-    """Load Reviewpack configuration.
+def load_config(config_path: str | Path | None = None) -> ReviewpackConfig:
+    """Load Reviewpack configuration from YAML.
 
-    If no path is provided, the default configuration is returned.
-    If the file does not exist, the default configuration is returned.
-
-    The first public version keeps configuration loading intentionally simple.
+    If config_path is None, Reviewpack looks for .reviewpack.yml in the current
+    working directory. If no configuration file exists, defaults are used.
     """
 
-    if path is None:
+    if config_path is None:
+        default_path = Path(".reviewpack.yml")
+        if not default_path.exists():
+            return ReviewpackConfig()
+        config_path = default_path
+
+    path = Path(config_path)
+
+    if not path.exists():
         return ReviewpackConfig()
 
-    config_path = Path(path)
+    raw_data = yaml.safe_load(path.read_text(encoding="utf-8"))
 
-    if not config_path.exists():
+    if raw_data is None:
         return ReviewpackConfig()
 
-    data = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
-    return ReviewpackConfig.model_validate(data)
+    if not isinstance(raw_data, dict):
+        raise ValueError(f"Reviewpack config must be a YAML mapping: {path}")
+
+    return ReviewpackConfig.model_validate(raw_data)

@@ -1,70 +1,128 @@
-from reviewpack.config import load_config
+from pathlib import Path
+
+from reviewpack.config import ReviewpackConfig, load_config
 
 
-def test_load_default_config_when_path_is_none() -> None:
-    config = load_config()
+def test_default_config_has_expected_outputs_enabled() -> None:
+    config = ReviewpackConfig()
 
-    assert config.privacy.include_branch_name is False
-    assert config.privacy.include_commit_messages is False
-    assert config.privacy.include_diff_snippets is False
-    assert config.privacy.include_file_paths is True
-    assert config.ai.enabled is False
-    assert config.large_pr.changed_files == 20
-    assert config.large_pr.changed_lines == 800
-
-
-def test_load_default_config_when_file_is_missing(tmp_path) -> None:
-    missing_config = tmp_path / ".reviewpack.yml"
-
-    config = load_config(missing_config)
-
-    assert config.ai.enabled is False
-    assert config.privacy.redact_secrets is True
-    assert "src/auth/**" in config.risk_paths_high
+    assert config.outputs.pr_summary is True
+    assert config.outputs.risk_checklist is True
+    assert config.outputs.reviewer_checklist is True
+    assert config.outputs.release_note_hints is True
+    assert config.outputs.ai_review_prompt is True
+    assert config.outputs.ai_handoff is True
+    assert config.outputs.ai_context is True
+    assert config.outputs.json is True
 
 
-def test_load_custom_config_from_yaml(tmp_path) -> None:
-    config_file = tmp_path / ".reviewpack.yml"
-    config_file.write_text(
-        "\n".join(
-            [
-                "risk_paths_high:",
-                "  - app/security/**",
-                "  - app/billing/**",
-                "test_paths:",
-                "  - spec/**",
-                "docs_paths:",
-                "  - handbook/**",
-                "large_pr:",
-                "  changed_files: 5",
-                "  changed_lines: 200",
-                "privacy:",
-                "  include_branch_name: true",
-                "  include_commit_messages: false",
-                "  include_diff_snippets: false",
-                "  include_file_paths: true",
-                "  redact_secrets: true",
-                "ai:",
-                "  enabled: true",
-                "  provider: openai",
-                "  model: gpt-4.1-mini",
-                "  max_input_chars: 6000",
-            ]
-        ),
+def test_load_config_returns_defaults_when_file_missing(tmp_path) -> None:
+    config_path = tmp_path / "missing.yml"
+
+    config = load_config(config_path)
+
+    assert isinstance(config, ReviewpackConfig)
+    assert config.outputs.ai_context is True
+
+
+def test_load_config_reads_output_settings(tmp_path) -> None:
+    config_path = tmp_path / ".reviewpack.yml"
+    config_path.write_text(
+        """
+outputs:
+  ai_context: false
+  release_note_hints: false
+""",
         encoding="utf-8",
     )
 
-    config = load_config(config_file)
+    config = load_config(config_path)
 
-    assert config.risk_paths_high == ["app/security/**", "app/billing/**"]
-    assert config.test_paths == ["spec/**"]
-    assert config.docs_paths == ["handbook/**"]
-    assert config.large_pr.changed_files == 5
-    assert config.large_pr.changed_lines == 200
-    assert config.privacy.include_branch_name is True
-    assert config.privacy.include_commit_messages is False
-    assert config.privacy.include_diff_snippets is False
-    assert config.ai.enabled is True
-    assert config.ai.provider == "openai"
-    assert config.ai.model == "gpt-4.1-mini"
-    assert config.ai.max_input_chars == 6000
+    assert config.outputs.ai_context is False
+    assert config.outputs.release_note_hints is False
+    assert config.outputs.pr_summary is True
+
+
+def test_load_config_reads_risk_settings(tmp_path) -> None:
+    config_path = tmp_path / ".reviewpack.yml"
+    config_path.write_text(
+        """
+risk:
+  large_pr_files: 5
+  large_pr_lines: 100
+  high_risk_paths:
+    - .github/workflows/
+    - pyproject.toml
+""",
+        encoding="utf-8",
+    )
+
+    config = load_config(config_path)
+
+    assert config.risk.large_pr_files == 5
+    assert config.risk.large_pr_lines == 100
+    assert ".github/workflows/" in config.risk.high_risk_paths
+    assert "pyproject.toml" in config.risk.high_risk_paths
+
+
+def test_load_config_reads_path_settings(tmp_path) -> None:
+    config_path = tmp_path / ".reviewpack.yml"
+    config_path.write_text(
+        """
+paths:
+  docs:
+    - documentation/
+  tests:
+    - spec/
+  dependencies:
+    - uv.lock
+""",
+        encoding="utf-8",
+    )
+
+    config = load_config(config_path)
+
+    assert config.paths.docs == ["documentation/"]
+    assert config.paths.tests == ["spec/"]
+    assert config.paths.dependencies == ["uv.lock"]
+
+
+def test_load_config_uses_default_dotfile_when_present(tmp_path, monkeypatch) -> None:
+    config_path = tmp_path / ".reviewpack.yml"
+    config_path.write_text(
+        """
+outputs:
+  json: false
+""",
+        encoding="utf-8",
+    )
+
+    monkeypatch.chdir(tmp_path)
+
+    config = load_config()
+
+    assert config.outputs.json is False
+
+
+def test_load_config_rejects_non_mapping_yaml(tmp_path) -> None:
+    config_path = tmp_path / ".reviewpack.yml"
+    config_path.write_text(
+        """
+- invalid
+- config
+""",
+        encoding="utf-8",
+    )
+
+    try:
+        load_config(config_path)
+    except ValueError as error:
+        assert "Reviewpack config must be a YAML mapping" in str(error)
+    else:
+        raise AssertionError("Expected ValueError for non-mapping config YAML")
+
+
+def test_example_config_exists() -> None:
+    example_config = Path("examples/.reviewpack.yml")
+
+    assert example_config.exists()

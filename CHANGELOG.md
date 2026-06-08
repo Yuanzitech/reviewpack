@@ -8,17 +8,24 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- GitHub Action local mode example
+- Configuration model for Reviewpack outputs, risk thresholds, and path classification
+- Configurable output generation
+- Configurable large PR thresholds
+- Configurable high-risk paths
+- Configurable docs, tests, dependencies, CI, config, and infrastructure path patterns
+- Configuration guide
+- Example `.reviewpack.yml`
+- Configuration tests
+- Configurable rules tests
 
 ### Changed
 
-- GitHub Action now prints clearer next-step guidance after generation
-- GitHub Action artifact upload now includes hidden Reviewpack output directories
-- GitHub Action documentation now explains artifact download and AI handoff usage
-- GitHub Action examples updated to v0.5.0
-- README now explains GitHub Action artifact usage
-- Simplified Chinese README now explains GitHub Action artifact usage
-- GitHub Action metadata tests now cover next-step guidance and hidden artifact uploads
+- CLI commands now load `.reviewpack.yml` by default when present
+- CLI commands now support `--config` for custom configuration files
+- File classification now uses configurable path patterns
+- Risk detection now uses configurable thresholds and high-risk paths
+- README now documents configuration support
+- Simplified Chinese README now documents configuration support
 
 ### Fixed
 
