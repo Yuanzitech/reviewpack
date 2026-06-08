@@ -3,4 +3,4 @@
 Privacy-first context packs for AI-assisted pull request review.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
