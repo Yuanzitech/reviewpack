@@ -245,7 +245,11 @@ def handoff(
 
     if not handoff_file.exists():
         console.print(f"[yellow]AI handoff file not found:[/yellow] {handoff_file}")
-        console.print("Tip: run [bold]reviewpack demo[/bold], [bold]reviewpack local[/bold], or [bold]reviewpack github PR_URL[/bold] first.")
+        console.print(
+            "Tip: run [bold]reviewpack demo[/bold], "
+            "[bold]reviewpack local[/bold], or "
+            "[bold]reviewpack github PR_URL[/bold] first."
+        )
         console.print("")
 
     console.print(render_handoff_terminal_text(output))
