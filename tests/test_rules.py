@@ -123,4 +123,15 @@ def test_detect_risk_signals_uses_configured_high_risk_paths() -> None:
 
     signals = detect_risk_signals(changed_files, stats, config)
 
-    assert any(signal.title == "Configured high-risk path changed" for signal in signals)
+    assert any(signal.title == "High-risk area changed" for signal in signals)
+
+
+def test_detect_risk_signals_uses_default_high_risk_paths() -> None:
+    changed_files = [
+        ChangedFile(path="src/auth/token.py", additions=10, deletions=2, category=FileCategory.SOURCE),
+    ]
+    stats = compute_change_stats(changed_files)
+
+    signals = detect_risk_signals(changed_files, stats)
+
+    assert any(signal.title == "High-risk area changed" for signal in signals)
