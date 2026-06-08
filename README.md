@@ -1,120 +1,280 @@
-# Changelog
+# Reviewpack
 
-All notable changes to this project will be documented in this file.
+Privacy-first context packs for AI-assisted pull request review.
 
-This project follows a simple changelog format during early development.
+## Language
 
-## Unreleased
+- English: README.md
+- 简体中文: README.zh-CN.md
 
-### Added
+Reviewpack helps open-source maintainers and engineering teams prepare structured, reusable context before reviewing a pull request with a human reviewer or an AI coding assistant.
 
-- Installed wheel smoke test in package workflow
-- Wheel installation smoke test documentation
-- Installation guide
-- PyPI publishing notes
-- Package build workflow
-- Package metadata tests
+It is not another noisy AI reviewer. Reviewpack is a context layer: it collects pull request metadata, changed files, test signals, documentation signals, dependency signals, risk indicators, release note hints, reviewer checklist items, AI handoff instructions, and review focus areas into a clear review pack.
 
-### Changed
+## Quick Start
 
-- README now links to installation documentation
-- Package workflow now verifies that the installed wheel exposes a working `reviewpack` CLI
+Install Reviewpack:
 
-### Fixed
+    pip install reviewpack
 
-- Nothing yet.
+Generate a demo review pack:
 
-## v0.2.0 - 2026-06-03
+    reviewpack demo
 
-### Added
+Reviewpack writes output to `.reviewpack/` by default.
 
-- Reviewer checklist output
-- Reviewer checklist renderer
-- Reviewer checklist tests
-- Reviewer checklist documentation
-- GitHub Action metadata
-- GitHub Action usage guide
-- GitHub Action workflow example
-- GitHub Action metadata tests
-- Release note hints output
-- Release note hints renderer
-- Release note hints tests
-- Release note hints documentation
+Show AI handoff instructions:
 
-### Changed
+    reviewpack handoff
 
-- Package version bumped to 0.2.0
-- CLI version bumped to 0.2.0
-- README now documents reviewer checklist output
-- README now documents GitHub Action usage
-- README now documents release note hints output
-- CLI output now lists `reviewer-checklist.md`
-- CLI output now lists `release-note-hints.md`
-- Reviewpack output now includes `reviewer-checklist.md` by default
-- Reviewpack output now includes `release-note-hints.md` by default
+Ask your AI assistant:
 
-### Fixed
+    Please read .reviewpack/ai-handoff.md and follow it.
 
-- Nothing.
+If your AI assistant cannot access local files, upload or paste:
 
-## v0.1.0 - 2026-06-03
+    .reviewpack/ai-review-prompt.md
 
-### Added
+## Why Reviewpack?
 
-- Simplified Chinese README
-- Language links in README
-- Public roadmap
-- Draft release notes for v0.1.0
-- Example PR summary output
-- Contributing guide
-- Security policy
-- Bug report issue template
-- Feature request issue template
-- Pull request template
-- Release checklist
-- GitHub API metadata collector
-- `reviewpack github` command
-- Optional GitHub token support
-- GitHub metadata collector tests
-- GitHub pull request URL parser
-- GitHub URL parser tests
-- GitHub integration guide
-- Integration principles documentation
-- AI input preview generation through `--preview-ai-input`
-- Local AI input preview renderer
-- Best-effort secret redaction helper
-- Tests for AI input preview rendering
-- Tests for secret redaction behavior
-- AI input preview documentation
-- Local git diff mode through `reviewpack local`
-- Local git numstat parser
-- Tests for local git diff parsing
-- Local git diff mode documentation
-- Configuration loading tests
-- Usage guide
-- Privacy model documentation
-- Design notes
-- Example Reviewpack configuration
-- Examples guide
-- Initial project metadata
-- Privacy-first project positioning
-- Local-first roadmap
-- Planned CLI workflow
-- MIT license
+AI coding tools are powerful, but review quality depends heavily on context.
 
-### Changed
+Direct AI review often starts from raw diffs. That can miss important project-level signals:
 
-- Improved README quick start and public launch messaging
-- Updated project URLs to https://github.com/Yuanzitech/reviewpack
-- Expanded README with GitHub metadata workflow
-- Expanded GitHub documentation with metadata mode
-- Expanded README with AI input preview usage
-- Expanded CLI output to include optional AI input preview file
-- Expanded README with installation, usage, and documentation links
-- CI now opts into Node.js 24 for GitHub Actions
-- Ruff configuration relaxed for early Typer-based CLI development
+- Which files are high risk?
+- Were tests updated?
+- Were docs updated?
+- Did dependencies change?
+- Is the pull request too large?
+- Does the change affect CI, configuration, or release behavior?
+- Should this PR be mentioned in release notes?
+- What should a maintainer focus on first?
 
-### Fixed
+Reviewpack prepares that context before review starts.
 
-- Declared Hatchling wheel package configuration
-- Moved source files into the `reviewpack` package directory
+## Common workflows
+
+### First-time demo
+
+    reviewpack demo
+
+### GitHub pull request
+
+    reviewpack github https://github.com/owner/repo/pull/123
+
+Public repositories usually do not require a token.
+
+Private repositories or rate-limited usage may require:
+
+    REVIEWPACK_GITHUB_TOKEN=YOUR_TOKEN reviewpack github https://github.com/owner/repo/pull/123
+
+### Local development
+
+    reviewpack local
+
+By default, local mode compares:
+
+    main...HEAD
+
+### Fixture input
+
+    reviewpack from-fixture simple-pr.json
+
+The fixture file must already exist.
+
+For first-time usage, prefer:
+
+    reviewpack demo
+
+### Command guide
+
+    reviewpack guide
+
+For CLI options:
+
+    reviewpack --help
+    reviewpack github --help
+    reviewpack local --help
+
+## GitHub Action
+
+Reviewpack can run in GitHub Actions and upload the generated review pack as a workflow artifact.
+
+Example workflow:
+
+    name: Reviewpack
+
+    on:
+      pull_request:
+
+    jobs:
+      reviewpack:
+        runs-on: ubuntu-latest
+
+        permissions:
+          contents: read
+          pull-requests: read
+
+        steps:
+          - name: Check out repository
+            uses: actions/checkout@v4
+
+          - name: Run Reviewpack
+            uses: Yuanzitech/reviewpack@v0.4.0
+            with:
+              mode: github
+              pr-url: ${{ github.event.pull_request.html_url }}
+              github-token: ${{ github.token }}
+
+The first GitHub Action integration does not post PR comments or call AI providers. It generates `.reviewpack/` locally in the workflow and uploads it as an artifact.
+
+See:
+
+    docs/github-action.md
+
+## What Reviewpack generates
+
+A review pack may include:
+
+- PR summary
+- Changed file overview
+- Risk checklist
+- Reviewer checklist
+- Release note hints
+- Suggested review focus
+- AI-ready review prompt
+- AI handoff instructions
+- AI input preview
+- Machine-readable JSON output
+
+Example output directory:
+
+    .reviewpack/pr-summary.md
+    .reviewpack/risk-checklist.md
+    .reviewpack/reviewer-checklist.md
+    .reviewpack/release-note-hints.md
+    .reviewpack/ai-review-prompt.md
+    .reviewpack/ai-handoff.md
+    .reviewpack/ai-input-preview.md
+    .reviewpack/reviewpack.json
+
+## AI handoff
+
+Reviewpack does not call AI providers by default.
+
+Instead, it generates local artifacts that can be inspected and shared intentionally.
+
+If your AI assistant can read files in your workspace, ask:
+
+    Please read .reviewpack/ai-handoff.md and follow it.
+
+If your AI assistant cannot access files, upload or paste:
+
+    .reviewpack/ai-review-prompt.md
+
+See:
+
+    docs/ai-handoff.md
+
+## Privacy-first by default
+
+Reviewpack runs locally by default for demo, fixture, and local git workflows.
+
+By default, it does not send code, diffs, branch names, commit messages, environment variables, repository metadata, or terminal information to any external AI service.
+
+GitHub mode uses network access only to fetch explicitly requested pull request metadata and changed file statistics from the GitHub API.
+
+The GitHub Action integration generates workflow-local artifacts and does not call AI providers.
+
+Current privacy-oriented features include:
+
+- Local demo mode
+- Local fixture mode
+- Local git diff mode
+- GitHub PR metadata mode
+- GitHub Action artifact mode
+- AI-ready prompt generation without AI calls
+- AI handoff without AI calls
+- AI input preview without AI calls
+- Release note hints without AI calls
+- Reviewer checklist without AI calls
+- Best-effort secret redaction for preview text
+- No raw diff upload by default
+- No branch name upload by default
+- No commit message upload by default
+
+## Documentation
+
+- Installation guide: docs/installation.md
+- Commands guide: docs/commands.md
+- Usage guide: docs/usage.md
+- Privacy model: docs/privacy.md
+- Design notes: docs/design.md
+- Local git diff mode: docs/local-git.md
+- GitHub support: docs/github.md
+- GitHub Action: docs/github-action.md
+- AI handoff: docs/ai-handoff.md
+- AI input preview: docs/ai-preview.md
+- Release note hints: docs/release-note-hints.md
+- Reviewer checklist: docs/reviewer-checklist.md
+- Integration principles: docs/integrations.md
+- Roadmap: docs/roadmap.md
+- Release checklist: docs/release-checklist.md
+- Examples guide: examples/README.md
+
+## Core idea
+
+Direct AI review:
+
+    PR diff -> AI -> review comments
+
+Reviewpack workflow:
+
+    PR data -> local analysis -> structured context pack -> human reviewer or AI assistant
+
+## Current status
+
+Reviewpack is in early development.
+
+The current milestone supports:
+
+- PyPI installation
+- Demo mode
+- Local fixture input
+- Local git diff input
+- GitHub PR metadata input
+- GitHub Action artifact output
+- Structured Markdown and JSON output
+- Reviewer checklist
+- Release note hints
+- AI handoff
+- Optional AI input preview generation
+- Secret-like value redaction in preview text
+- No AI calls by default
+
+## Non-goals
+
+Reviewpack does not aim to:
+
+- Automatically approve pull requests
+- Automatically merge pull requests
+- Replace human maintainers
+- Spam line-by-line comments
+- Upload code by default
+- Require AI to be useful
+
+## Design principles
+
+1. Local-first
+2. Privacy-first
+3. AI-optional
+4. Human-readable
+5. Machine-readable
+6. Maintainer-controlled
+7. Tool-agnostic
+
+Reviewpack should work with human reviewers, Codex, Cursor, Cline, OpenCode, Claude Code, GitHub Copilot, and other coding assistants.
+
+## License
+
+MIT
