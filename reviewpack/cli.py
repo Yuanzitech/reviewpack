@@ -292,8 +292,12 @@ def render_guide_text() -> str:
             "",
             "Want AI assistance?",
             "  1. Run any Reviewpack command.",
-            "  2. Ask your AI assistant:",
+            "  2. If your AI assistant can read files, ask:",
             '     "Please read .reviewpack/ai-handoff.md and follow it."',
+            "  3. If your AI assistant cannot read local files, upload:",
+            "     .reviewpack/ai-context.md",
+            "  4. If only copy and paste is available, use:",
+            "     .reviewpack/ai-review-prompt.md",
             "",
             "Default output:",
             "  Reviewpack writes files to .reviewpack/ by default.",
@@ -304,6 +308,7 @@ def render_guide_text() -> str:
             "  .reviewpack/reviewer-checklist.md",
             "  .reviewpack/release-note-hints.md",
             "  .reviewpack/ai-handoff.md",
+            "  .reviewpack/ai-context.md",
             "  .reviewpack/ai-review-prompt.md",
             "",
             "For CLI options:",
@@ -328,6 +333,7 @@ def print_success(output: Path, preview_ai_input: bool = False) -> None:
     console.print(f"- {output / 'release-note-hints.md'}")
     console.print(f"- {output / 'ai-review-prompt.md'}")
     console.print(f"- {output / 'ai-handoff.md'}")
+    console.print(f"- {output / 'ai-context.md'}")
     console.print(f"- {output / 'reviewpack.json'}")
 
     if preview_ai_input:
@@ -336,6 +342,7 @@ def print_success(output: Path, preview_ai_input: bool = False) -> None:
     console.print("")
     console.print("Next:")
     console.print(f'- Ask your AI assistant: "Please read {output / "ai-handoff.md"} and follow it."')
+    console.print(f"- If files cannot be read, upload: {output / 'ai-context.md'}")
     console.print(f"- Or run: reviewpack handoff --output {output}")
 
 

@@ -117,11 +117,15 @@ Custom output directory:
 
     reviewpack handoff --output review-output
 
-Recommended AI instruction:
+Recommended AI instruction when the AI assistant can read local files:
 
     Please read .reviewpack/ai-handoff.md and follow it.
 
-If the AI assistant cannot access local files, upload or paste:
+If the AI assistant cannot read local files but can accept an uploaded file, upload:
+
+    .reviewpack/ai-context.md
+
+If only copy and paste is available, use:
 
     .reviewpack/ai-review-prompt.md
 

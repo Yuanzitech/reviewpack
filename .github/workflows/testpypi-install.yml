@@ -6,7 +6,7 @@ on:
       package-version:
         description: Reviewpack version to install from TestPyPI.
         required: true
-        default: "0.4.0"
+        default: "0.5.0"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -33,39 +33,9 @@ jobs:
         run: |
           reviewpack version
 
-      - name: Create synthetic fixture
+      - name: Run Reviewpack demo
         run: |
-          cat > simple-pr.json <<'JSON'
-          {
-            "pr": {
-              "title": "Verify Reviewpack from TestPyPI",
-              "author": "test-user",
-              "url": "https://github.com/Yuanzitech/reviewpack/pull/1",
-              "description": "Synthetic fixture for TestPyPI installation verification."
-            },
-            "changed_files": [
-              {
-                "path": "reviewpack/cli.py",
-                "additions": 10,
-                "deletions": 2
-              },
-              {
-                "path": "tests/test_cli.py",
-                "additions": 20,
-                "deletions": 0
-              },
-              {
-                "path": "README.md",
-                "additions": 5,
-                "deletions": 1
-              }
-            ]
-          }
-          JSON
-
-      - name: Run Reviewpack from installed package
-        run: |
-          reviewpack from-fixture simple-pr.json --output .reviewpack-testpypi
+          reviewpack demo --output .reviewpack-testpypi
 
       - name: Verify generated outputs
         run: |
@@ -74,11 +44,13 @@ jobs:
           test -f .reviewpack-testpypi/reviewer-checklist.md
           test -f .reviewpack-testpypi/release-note-hints.md
           test -f .reviewpack-testpypi/ai-review-prompt.md
+          test -f .reviewpack-testpypi/ai-handoff.md
+          test -f .reviewpack-testpypi/ai-context.md
           test -f .reviewpack-testpypi/reviewpack.json
 
       - name: Run Reviewpack with AI input preview
         run: |
-          reviewpack from-fixture simple-pr.json --output .reviewpack-testpypi-ai --preview-ai-input
+          reviewpack demo --output .reviewpack-testpypi-ai --preview-ai-input
 
       - name: Verify AI input preview output
         run: |
@@ -89,7 +61,6 @@ jobs:
         with:
           name: testpypi-install-verification
           path: |
-            simple-pr.json
             .reviewpack-testpypi/
             .reviewpack-testpypi-ai/
           if-no-files-found: error

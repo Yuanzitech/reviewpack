@@ -70,11 +70,15 @@ After generating a review pack, run:
 
     reviewpack handoff
 
-Then ask your AI assistant:
+If your AI assistant can read files in your workspace, ask:
 
     Please read .reviewpack/ai-handoff.md and follow it.
 
-If the AI assistant cannot access local files, upload or paste:
+If your AI assistant cannot read local files but can accept one uploaded file, upload:
+
+    .reviewpack/ai-context.md
+
+If only copy and paste is available, use:
 
     .reviewpack/ai-review-prompt.md
 
