@@ -27,11 +27,15 @@ Show AI handoff instructions:
 
     reviewpack handoff
 
-Ask your AI assistant:
+If your AI assistant can read files in your workspace, ask:
 
     Please read .reviewpack/ai-handoff.md and follow it.
 
-If your AI assistant cannot access local files, upload or paste:
+If your AI assistant cannot read local files but can accept one uploaded file, upload:
+
+    .reviewpack/ai-context.md
+
+If only copy and paste is available, use:
 
     .reviewpack/ai-review-prompt.md
 
@@ -144,6 +148,7 @@ A review pack may include:
 - Suggested review focus
 - AI-ready review prompt
 - AI handoff instructions
+- AI context bundle
 - AI input preview
 - Machine-readable JSON output
 
@@ -155,6 +160,7 @@ Example output directory:
     .reviewpack/release-note-hints.md
     .reviewpack/ai-review-prompt.md
     .reviewpack/ai-handoff.md
+    .reviewpack/ai-context.md
     .reviewpack/ai-input-preview.md
     .reviewpack/reviewpack.json
 
@@ -168,7 +174,11 @@ If your AI assistant can read files in your workspace, ask:
 
     Please read .reviewpack/ai-handoff.md and follow it.
 
-If your AI assistant cannot access files, upload or paste:
+If your AI assistant cannot read local files but can accept one uploaded file, upload:
+
+    .reviewpack/ai-context.md
+
+If only copy and paste is available, use:
 
     .reviewpack/ai-review-prompt.md
 
@@ -195,6 +205,7 @@ Current privacy-oriented features include:
 - GitHub Action artifact mode
 - AI-ready prompt generation without AI calls
 - AI handoff without AI calls
+- AI context bundle without AI calls
 - AI input preview without AI calls
 - Release note hints without AI calls
 - Reviewer checklist without AI calls
@@ -248,6 +259,7 @@ The current milestone supports:
 - Reviewer checklist
 - Release note hints
 - AI handoff
+- AI context bundle
 - Optional AI input preview generation
 - Secret-like value redaction in preview text
 - No AI calls by default
