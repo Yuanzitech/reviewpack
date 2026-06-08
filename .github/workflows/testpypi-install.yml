@@ -62,4 +62,6 @@ jobs:
           name: testpypi-install-verification
           path: |
             .reviewpack-testpypi/
-
+            .reviewpack-testpypi-ai/
+          if-no-files-found: error
+          include-hidden-files: true
