@@ -77,13 +77,15 @@ jobs:
           python -m pip install "$WHEEL_FILE"
 
           reviewpack version
-          reviewpack from-fixture examples/fixtures/simple-pr.json --output .reviewpack-smoke
+          reviewpack demo --output .reviewpack-smoke
 
           test -f .reviewpack-smoke/pr-summary.md
           test -f .reviewpack-smoke/risk-checklist.md
           test -f .reviewpack-smoke/reviewer-checklist.md
           test -f .reviewpack-smoke/release-note-hints.md
           test -f .reviewpack-smoke/ai-review-prompt.md
+          test -f .reviewpack-smoke/ai-handoff.md
+          test -f .reviewpack-smoke/ai-context.md
           test -f .reviewpack-smoke/reviewpack.json
 
           echo "Installed wheel smoke test passed."
