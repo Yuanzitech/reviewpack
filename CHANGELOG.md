@@ -8,25 +8,54 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Nothing yet.
+
+### Changed
+
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## v0.5.0 - 2026-06-08
+
+### Added
+
+- `reviewpack demo` command
+- `reviewpack handoff` command
+- `reviewpack guide` command
+- AI handoff output file
 - AI context bundle output file
 - AI context renderer
-- AI context tests
+- AI handoff documentation
 - AI context fallback guidance in AI handoff documentation
+- Commands guide
+- Demo command tests
+- AI handoff tests
+- AI context tests
+- CLI guide tests
 - Chinese README updates for first-run and AI handoff workflows
 
 ### Changed
 
+- Package version bumped to 0.5.0
+- CLI version bumped to 0.5.0
+- README now uses `pip install reviewpack` and `reviewpack demo` as the first-run workflow
+- README now documents `ai-context.md` as the one-file upload fallback
+- Installation guide now documents PyPI installation, demo workflow, and AI handoff fallback options
+- Commands guide now documents AI handoff fallback options
 - `reviewpack handoff` now explains fallback options for AI tools without file access
 - `reviewpack guide` now explains AI handoff fallback options
-- README now documents `ai-context.md` as the one-file upload fallback
-- Installation guide now documents AI handoff fallback options
-- Commands guide now documents AI handoff fallback options
+- Reviewpack output now includes `ai-handoff.md` by default
+- Reviewpack output now includes `ai-context.md` by default
+- Fixture mode error message now suggests `reviewpack demo` for first-run usage
 - Package workflow now verifies `ai-handoff.md` and `ai-context.md`
 - TestPyPI install workflow now verifies `ai-handoff.md` and `ai-context.md`
 
 ### Fixed
 
-- Nothing yet.
+- Nothing.
 
 ## v0.4.0 - 2026-06-03
 
