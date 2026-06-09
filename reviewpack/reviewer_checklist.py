@@ -1,195 +1,119 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from reviewpack.models import FileCategory, ReviewpackResult, RiskLevel
 
 
-@dataclass(frozen=True)
-class ReviewerChecklistItem:
-    """A deterministic checklist item for pull request reviewers."""
-
-    section: str
-    text: str
-    reason: str
-
-
-def generate_reviewer_checklist_items(result: ReviewpackResult) -> list[ReviewerChecklistItem]:
-    """Generate maintainer-facing checklist items from a Reviewpack result."""
+def render_reviewer_checklist(result: ReviewpackResult) -> str:
+    """Render a structured reviewer checklist."""
 
     categories = {changed_file.category for changed_file in result.changed_files}
-    items: list[ReviewerChecklistItem] = []
+    high_risk_signals = [signal for signal in result.risk_signals if signal.level == RiskLevel.HIGH]
+    medium_risk_signals = [signal for signal in result.risk_signals if signal.level == RiskLevel.MEDIUM]
 
-    if FileCategory.SOURCE in categories:
-        items.append(
-            ReviewerChecklistItem(
-                section="Core Review",
-                text="Review behavior changes and edge cases.",
-                reason="Source files changed.",
-            )
-        )
-        items.append(
-            ReviewerChecklistItem(
-                section="Compatibility",
-                text="Check backward compatibility and public API impact.",
-                reason="Source changes may affect existing users or integrations.",
-            )
-        )
-
-    if FileCategory.SOURCE in categories and FileCategory.TEST not in categories:
-        items.append(
-            ReviewerChecklistItem(
-                section="Tests",
-                text="Confirm whether test coverage is sufficient.",
-                reason="Source files changed without test file updates.",
-            )
-        )
-
-    if FileCategory.TEST in categories:
-        items.append(
-            ReviewerChecklistItem(
-                section="Tests",
-                text="Review whether test changes match the intended behavior.",
-                reason="Test files changed.",
-            )
-        )
-
-    if FileCategory.DOCS in categories:
-        items.append(
-            ReviewerChecklistItem(
-                section="Documentation",
-                text="Confirm documentation and examples match the implementation.",
-                reason="Documentation files changed.",
-            )
-        )
-
-    if FileCategory.SOURCE in categories and FileCategory.DOCS not in categories:
-        items.append(
-            ReviewerChecklistItem(
-                section="Documentation",
-                text="Decide whether documentation updates are needed.",
-                reason="Source files changed without documentation updates.",
-            )
-        )
-
-    if FileCategory.DEPENDENCY in categories:
-        items.append(
-            ReviewerChecklistItem(
-                section="Dependencies",
-                text="Review dependency compatibility, security, and lockfile consistency.",
-                reason="Dependency files changed.",
-            )
-        )
-
-    if FileCategory.CI in categories:
-        items.append(
-            ReviewerChecklistItem(
-                section="CI",
-                text="Review workflow triggers, permissions, secrets usage, and required checks.",
-                reason="CI configuration changed.",
-            )
-        )
-
-    if FileCategory.INFRA in categories:
-        items.append(
-            ReviewerChecklistItem(
-                section="Infrastructure",
-                text="Check deployment, runtime, and environment impact.",
-                reason="Infrastructure files changed.",
-            )
-        )
-
-    if result.risk_signals:
-        items.append(
-            ReviewerChecklistItem(
-                section="Risk",
-                text="Review all risk signals before merging.",
-                reason="Reviewpack detected deterministic risk signals.",
-            )
-        )
-
-    if any(signal.level == RiskLevel.HIGH for signal in result.risk_signals):
-        items.append(
-            ReviewerChecklistItem(
-                section="Risk",
-                text="Pay extra attention to high-risk areas and upgrade impact.",
-                reason="At least one high-risk signal was detected.",
-            )
-        )
-
-    items.append(
-        ReviewerChecklistItem(
-            section="Release",
-            text="Decide whether this PR needs a changelog or release note entry.",
-            reason="Maintainers should explicitly decide release note impact.",
-        )
-    )
-
-    items.append(
-        ReviewerChecklistItem(
-            section="Privacy",
-            text="Confirm generated outputs do not include secrets or sensitive project data.",
-            reason="Review artifacts may be shared with maintainers or AI tools.",
-        )
-    )
-
-    if not items:
-        items.append(
-            ReviewerChecklistItem(
-                section="Review",
-                text="Review the changed files manually.",
-                reason="No category-specific checklist items were detected.",
-            )
-        )
-
-    return items
-
-
-def render_reviewer_checklist(result: ReviewpackResult) -> str:
-    """Render reviewer checklist as Markdown."""
-
-    items = generate_reviewer_checklist_items(result)
     lines: list[str] = []
 
     lines.append("# Reviewer Checklist")
     lines.append("")
-    lines.append("This checklist is generated from deterministic Reviewpack analysis.")
+    lines.append("Use this checklist to guide human review.")
     lines.append("")
-    lines.append("It is intended to help maintainers review pull requests more consistently.")
-    lines.append("")
-    lines.append("## Pull Request")
-    lines.append("")
-    lines.append(f"- Title: {result.pr.title}")
-    lines.append(f"- Author: {result.pr.author}")
-
-    if result.pr.url:
-        lines.append(f"- URL: {result.pr.url}")
-
-    lines.append("")
-    lines.append("## Checklist")
+    lines.append("Reviewpack output is deterministic context, not a replacement for maintainer judgment.")
     lines.append("")
 
-    grouped: dict[str, list[ReviewerChecklistItem]] = {}
-
-    for item in items:
-        grouped.setdefault(item.section, []).append(item)
-
-    for section, section_items in grouped.items():
-        lines.append(f"### {section}")
-        lines.append("")
-
-        for item in section_items:
-            lines.append(f"- [ ] {item.text}")
-            lines.append(f"  - Reason: {item.reason}")
-
-        lines.append("")
-
-    lines.append("## Notes")
+    lines.append("## Correctness")
     lines.append("")
-    lines.append("- This checklist does not replace human judgment.")
-    lines.append("- AI was not used to generate this checklist.")
-    lines.append("- Raw diffs and full source code are not required for this output.")
-    lines.append("- Maintainers should adapt the checklist to the project context.")
+    lines.append("- [ ] Confirm the intended behavior is clear from the PR description and changed files.")
+    lines.append("- [ ] Review edge cases and failure modes around the changed areas.")
+    lines.append("- [ ] Check whether the implementation matches the stated PR goal.")
+
+    if FileCategory.SOURCE in categories:
+        lines.append("- [ ] Review source changes for behavior, compatibility, and maintainability.")
+
+    lines.append("")
+
+    lines.append("## Tests")
+    lines.append("")
+
+    if FileCategory.TEST in categories:
+        lines.append("- [ ] Review updated or added tests for meaningful coverage.")
+        lines.append("- [ ] Confirm tests cover the changed behavior, not only happy paths.")
+    elif FileCategory.SOURCE in categories:
+        lines.append("- [ ] Source files changed but no test files were detected.")
+        lines.append("- [ ] Ask whether tests should be added or updated before merging.")
+    else:
+        lines.append("- [ ] Confirm whether test updates are needed for this change.")
+
+    lines.append("")
+
+    lines.append("## Documentation")
+    lines.append("")
+
+    if FileCategory.DOCS in categories:
+        lines.append("- [ ] Review documentation changes for accuracy and completeness.")
+        lines.append("- [ ] Confirm examples, commands, and paths match current behavior.")
+    else:
+        lines.append("- [ ] Confirm whether user-facing behavior changed and needs documentation.")
+
+    lines.append("")
+
+    lines.append("## Dependencies")
+    lines.append("")
+
+    if FileCategory.DEPENDENCY in categories:
+        lines.append("- [ ] Review dependency changes for compatibility and security impact.")
+        lines.append("- [ ] Confirm lock files and package metadata are consistent.")
+    else:
+        lines.append("- [ ] No dependency files were detected, but confirm no implicit dependency behavior changed.")
+
+    lines.append("")
+
+    lines.append("## CI, Configuration, and Infrastructure")
+    lines.append("")
+
+    if FileCategory.CI in categories:
+        lines.append("- [ ] Review CI workflow changes for required checks and release behavior.")
+    if FileCategory.CONFIG in categories:
+        lines.append("- [ ] Review configuration changes for tool behavior and developer workflow impact.")
+    if FileCategory.INFRA in categories:
+        lines.append("- [ ] Review infrastructure changes for deployment, runtime, and environment impact.")
+
+    if not {FileCategory.CI, FileCategory.CONFIG, FileCategory.INFRA}.intersection(categories):
+        lines.append("- [ ] Confirm no CI, configuration, or infrastructure behavior is affected.")
+
+    lines.append("")
+
+    lines.append("## Release Notes")
+    lines.append("")
+    lines.append("- [ ] Check `release-note-hints.md` to decide whether this PR should be mentioned in release notes.")
+    lines.append("- [ ] Confirm whether the change is user-facing, maintainer-facing, or internal only.")
+    lines.append("")
+
+    lines.append("## Risk Review")
+    lines.append("")
+
+    if high_risk_signals:
+        lines.append("- [ ] High risk signals were detected. Review these before merging.")
+        for signal in high_risk_signals:
+            lines.append(f"  - [ ] {signal.title}")
+    elif medium_risk_signals:
+        lines.append("- [ ] Medium risk signals were detected. Confirm mitigations before merging.")
+        for signal in medium_risk_signals:
+            lines.append(f"  - [ ] {signal.title}")
+    else:
+        lines.append("- [ ] No deterministic risk signals were detected.")
+        lines.append("- [ ] Still review the change manually for project-specific risk.")
+
+    lines.append("")
+    lines.append("## AI Handoff")
+    lines.append("")
+    lines.append("- [ ] If using an AI assistant, start with `ai-handoff.md` when file access is available.")
+    lines.append("- [ ] If uploading one file, use `ai-context.md`.")
+    lines.append("- [ ] If only copy and paste is available, use `ai-review-prompt.md`.")
+    lines.append("")
+    lines.append("## Final Maintainer Decision")
+    lines.append("")
+    lines.append("- [ ] Confirm open questions are resolved.")
+    lines.append("- [ ] Confirm required checks pass.")
+    lines.append("- [ ] Confirm the PR is appropriately scoped for merge.")
     lines.append("")
 
     return "\n".join(lines)

@@ -22,8 +22,22 @@ def render_ai_context(result: ReviewpackResult) -> str:
     lines.append("")
     lines.append("Use this file when an AI assistant cannot read the full `.reviewpack/` directory.")
     lines.append("")
-    lines.append("Important constraints for AI assistants:")
+    lines.append("## Review Objective")
     lines.append("")
+    lines.append("Help a human maintainer review this pull request.")
+    lines.append("")
+    lines.append("Focus on:")
+    lines.append("")
+    lines.append("- Correctness")
+    lines.append("- Missing or weak tests")
+    lines.append("- Compatibility")
+    lines.append("- Security-sensitive changes")
+    lines.append("- Documentation and release-note impact")
+    lines.append("- Maintainer questions before merge")
+    lines.append("")
+    lines.append("## Known Limitations")
+    lines.append("")
+    lines.append("- Reviewpack output is context, not ground truth.")
     lines.append("- Do not assume hidden code or files that are not included.")
     lines.append("- Do not claim that raw source code was inspected unless source code was provided separately.")
     lines.append("- Treat this file as review context for a human maintainer to verify.")
@@ -74,17 +88,21 @@ def render_ai_context(result: ReviewpackResult) -> str:
 
     if result.risk_signals:
         for signal in result.risk_signals:
-            lines.append(f"- {signal.level.value}: {signal.title}")
-            lines.append(f"  - {signal.message}")
+            lines.append(f"### {signal.level.value}: {signal.title}")
+            lines.append("")
+            lines.append(signal.message)
+            lines.append("")
 
             if signal.files:
-                lines.append("  - Affected files:")
+                lines.append("Affected files:")
+                lines.append("")
                 for file_path in signal.files:
-                    lines.append(f"    - {file_path}")
+                    lines.append(f"- {file_path}")
+                lines.append("")
     else:
-        lines.append("- No deterministic risk signals were detected.")
+        lines.append("No deterministic risk signals were detected.")
+        lines.append("")
 
-    lines.append("")
     lines.append("## Suggested Review Focus")
     lines.append("")
 

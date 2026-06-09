@@ -7,19 +7,16 @@ from reviewpack.models import FileCategory, ReviewpackResult, RiskLevel
 
 @dataclass(frozen=True)
 class ReleaseNoteHint:
-    """A deterministic hint for maintainers preparing release notes."""
+    """A deterministic release note hint."""
 
     category: str
     title: str
-    message: str
+    reason: str
+    suggested_action: str
 
 
 def generate_release_note_hints(result: ReviewpackResult) -> list[ReleaseNoteHint]:
-    """Generate deterministic release note hints from a Reviewpack result.
-
-    These hints are not final release notes. They are maintainer-facing prompts
-    to help decide whether a pull request should be mentioned in release notes.
-    """
+    """Generate deterministic release note hints from a Reviewpack result."""
 
     categories = {changed_file.category for changed_file in result.changed_files}
     hints: list[ReleaseNoteHint] = []
@@ -28,8 +25,12 @@ def generate_release_note_hints(result: ReviewpackResult) -> list[ReleaseNoteHin
         hints.append(
             ReleaseNoteHint(
                 category="Changed",
-                title="Source files changed",
-                message="Consider whether this PR changes user-visible behavior or public APIs.",
+                title="Source behavior may have changed",
+                reason="Source files were changed.",
+                suggested_action=(
+                    "Decide whether this change affects users, maintainers, APIs, CLI behavior, "
+                    "or runtime behavior."
+                ),
             )
         )
 
@@ -37,8 +38,12 @@ def generate_release_note_hints(result: ReviewpackResult) -> list[ReleaseNoteHin
         hints.append(
             ReleaseNoteHint(
                 category="Dependencies",
-                title="Dependency files changed",
-                message="Check whether dependency updates affect compatibility, security, or installation.",
+                title="Dependency metadata changed",
+                reason="Dependency files were changed.",
+                suggested_action=(
+                    "Review whether dependency changes should be mentioned in release notes, "
+                    "migration notes, or compatibility notes."
+                ),
             )
         )
 
@@ -47,16 +52,11 @@ def generate_release_note_hints(result: ReviewpackResult) -> list[ReleaseNoteHin
             ReleaseNoteHint(
                 category="CI",
                 title="CI workflow changed",
-                message="Review whether CI behavior, required checks, or release automation changed.",
-            )
-        )
-
-    if FileCategory.INFRA in categories:
-        hints.append(
-            ReleaseNoteHint(
-                category="Infrastructure",
-                title="Infrastructure files changed",
-                message="Check whether deployment, runtime, or environment behavior should be mentioned.",
+                reason="CI workflow files were changed.",
+                suggested_action=(
+                    "Mention this only if it affects contributors, maintainers, release behavior, "
+                    "or required checks."
+                ),
             )
         )
 
@@ -65,35 +65,43 @@ def generate_release_note_hints(result: ReviewpackResult) -> list[ReleaseNoteHin
             ReleaseNoteHint(
                 category="Documentation",
                 title="Documentation changed",
-                message="Confirm whether documentation updates should be referenced in release notes.",
+                reason="Documentation files were changed.",
+                suggested_action="Mention this if the documentation update is user-facing or release-relevant.",
             )
         )
 
-    if FileCategory.TEST in categories and FileCategory.SOURCE not in categories:
+    if FileCategory.CONFIG in categories:
         hints.append(
             ReleaseNoteHint(
-                category="Tests",
-                title="Test-only change",
-                message="This may not need user-facing release notes unless it affects quality or reliability.",
+                category="Configuration",
+                title="Configuration changed",
+                reason="Configuration files were changed.",
+                suggested_action=(
+                    "Check whether tool behavior, contributor workflow, or project defaults changed."
+                ),
             )
         )
 
-    high_risk_signals = [signal for signal in result.risk_signals if signal.level == RiskLevel.HIGH]
-    if high_risk_signals:
+    if FileCategory.INFRA in categories:
+        hints.append(
+            ReleaseNoteHint(
+                category="Infrastructure",
+                title="Infrastructure changed",
+                reason="Infrastructure files were changed.",
+                suggested_action="Mention this if deployment, runtime, or environment behavior changed.",
+            )
+        )
+
+    if any(signal.level == RiskLevel.HIGH for signal in result.risk_signals):
         hints.append(
             ReleaseNoteHint(
                 category="Risk",
-                title="High-risk area changed",
-                message="Consider whether users need migration notes, compatibility notes, or upgrade guidance.",
-            )
-        )
-
-    if not hints:
-        hints.append(
-            ReleaseNoteHint(
-                category="Review",
-                title="No obvious release note category detected",
-                message="Review the PR manually to decide whether a changelog entry is needed.",
+                title="High-risk changes detected",
+                reason="Reviewpack detected one or more high-risk signals.",
+                suggested_action=(
+                    "Confirm whether release notes, upgrade notes, or maintainer notes should call out "
+                    "the risk area."
+                ),
             )
         )
 
@@ -108,42 +116,37 @@ def render_release_note_hints(result: ReviewpackResult) -> str:
 
     lines.append("# Release Note Hints")
     lines.append("")
-    lines.append("This file contains deterministic hints for maintainers preparing release notes.")
+    lines.append("These hints help maintainers decide whether a PR should be mentioned in release notes.")
     lines.append("")
-    lines.append("These hints are not final release notes.")
-    lines.append("They are intended to help maintainers decide whether a PR should be mentioned in a release.")
+    lines.append("Reviewpack does not generate final release notes automatically.")
     lines.append("")
-    lines.append("## Pull Request")
-    lines.append("")
-    lines.append(f"- Title: {result.pr.title}")
-    lines.append(f"- Author: {result.pr.author}")
 
-    if result.pr.url:
-        lines.append(f"- URL: {result.pr.url}")
+    if not hints:
+        lines.append("No release-note-relevant signals were detected.")
+        lines.append("")
+        lines.append("Maintainers should still decide whether this PR has user-facing impact.")
+        lines.append("")
+        return "\n".join(lines)
 
+    lines.append("## Summary")
     lines.append("")
-    lines.append("## Possible Release Categories")
+    lines.append("Review the categories below and decide whether the PR needs a release note entry.")
     lines.append("")
 
     for hint in hints:
-        lines.append(f"### {hint.category}: {hint.title}")
+        lines.append(f"## {hint.category}: {hint.title}")
         lines.append("")
-        lines.append(hint.message)
+        lines.append(f"Why this might matter: {hint.reason}")
+        lines.append("")
+        lines.append(f"Suggested maintainer action: {hint.suggested_action}")
         lines.append("")
 
-    lines.append("## Maintainer Checklist")
+    lines.append("## Suggested Decision Questions")
     lines.append("")
-    lines.append("- Confirm whether this PR needs a changelog entry.")
-    lines.append("- Check whether behavior changes are user-visible.")
-    lines.append("- Check whether dependency changes affect compatibility or security.")
-    lines.append("- Confirm whether docs and examples match the implementation.")
-    lines.append("- Decide whether migration notes or upgrade notes are needed.")
-    lines.append("")
-    lines.append("## Privacy Notes")
-    lines.append("")
-    lines.append("- This file was generated from local Reviewpack analysis results.")
-    lines.append("- AI was not used to generate these hints.")
-    lines.append("- Raw diffs and full source code are not required for this output.")
+    lines.append("- Is this change visible to users?")
+    lines.append("- Does this change affect installation, configuration, CI, or release behavior?")
+    lines.append("- Does this change affect APIs, CLI commands, output files, or compatibility?")
+    lines.append("- Should this be documented as Added, Changed, Fixed, Deprecated, or Removed?")
     lines.append("")
 
     return "\n".join(lines)

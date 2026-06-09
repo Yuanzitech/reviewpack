@@ -12,6 +12,8 @@ def test_render_ai_context_contains_expected_sections() -> None:
     markdown = render_ai_context(result)
 
     assert "# Reviewpack AI Context" in markdown
+    assert "Review Objective" in markdown
+    assert "Known Limitations" in markdown
     assert "Pull Request" in markdown
     assert "Change Statistics" in markdown
     assert "Risk Signals" in markdown
