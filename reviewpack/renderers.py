@@ -97,16 +97,34 @@ def render_risk_checklist(result: ReviewpackResult) -> str:
     if not result.risk_signals:
         lines.append("No deterministic risk signals were detected.")
         lines.append("")
+        lines.append("Reviewers should still check project-specific risks manually.")
+        lines.append("")
         return "\n".join(lines)
 
     for signal in result.risk_signals:
         lines.append(f"## {risk_icon(signal.level)} {signal.title}")
         lines.append("")
+        lines.append("### Why this matters")
+        lines.append("")
         lines.append(signal.message)
+        lines.append("")
+        lines.append("### What to check")
+        lines.append("")
+
+        if signal.level == RiskLevel.HIGH:
+            lines.append("- Confirm the changed behavior is intentional and well-scoped.")
+            lines.append("- Check edge cases, failure modes, and compatibility impact.")
+            lines.append("- Confirm test coverage is strong enough for the risk area.")
+        elif signal.level == RiskLevel.MEDIUM:
+            lines.append("- Confirm the impact is understood and reviewed by the right maintainer.")
+            lines.append("- Check whether tests, docs, or release notes should be updated.")
+        else:
+            lines.append("- Confirm the signal does not hide a project-specific risk.")
+
         lines.append("")
 
         if signal.files:
-            lines.append("Affected files:")
+            lines.append("### Affected files")
             lines.append("")
             for file_path in signal.files:
                 lines.append(f"- {file_path}")
