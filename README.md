@@ -224,6 +224,14 @@ Example output directory:
     .reviewpack/ai-input-preview.md
     .reviewpack/reviewpack.json
 
+Output artifact details:
+
+    docs/output-artifacts.md
+
+Example output files:
+
+    examples/output/
+
 ## AI handoff
 
 Reviewpack does not call AI providers by default.
@@ -284,6 +292,7 @@ Current privacy-oriented features include:
 - Installation guide: docs/installation.md
 - Commands guide: docs/commands.md
 - Configuration guide: docs/configuration.md
+- Output artifacts: docs/output-artifacts.md
 - Usage guide: docs/usage.md
 - Privacy model: docs/privacy.md
 - Design notes: docs/design.md
@@ -323,6 +332,7 @@ It currently supports:
 - GitHub Action artifact output
 - Structured Markdown and JSON output
 - Configurable rules and outputs
+- Improved review artifacts
 - Reviewer checklist
 - Release note hints
 - AI handoff
