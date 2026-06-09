@@ -8,24 +8,21 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Configuration model for Reviewpack outputs, risk thresholds, and path classification
-- Configurable output generation
-- Configurable large PR thresholds
-- Configurable high-risk paths
-- Configurable docs, tests, dependencies, CI, config, and infrastructure path patterns
-- Configuration guide
-- Example `.reviewpack.yml`
-- Configuration tests
-- Configurable rules tests
+- Output artifacts documentation
+- Example risk checklist output
+- Example reviewer checklist output
+- Example release note hints output
+- Example AI handoff output
+- Example AI context output
 
 ### Changed
 
-- CLI commands now load `.reviewpack.yml` by default when present
-- CLI commands now support `--config` for custom configuration files
-- File classification now uses configurable path patterns
-- Risk detection now uses configurable thresholds and high-risk paths
-- README now documents configuration support
-- Simplified Chinese README now documents configuration support
+- Risk checklist output is now more actionable with why-it-matters and what-to-check sections
+- Reviewer checklist output is now more structured around maintainer review areas
+- Release note hints now include suggested maintainer actions and decision questions
+- AI context output now includes review objective and known limitations sections
+- README now links to output artifact documentation and example outputs
+- Simplified Chinese README now links to output artifact documentation and example outputs
 
 ### Fixed
 
