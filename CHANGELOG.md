@@ -2,7 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
-This4.0This project follows a simple changelog format during early development.
+ to 0.5.0This project follows a simple changelog format during early development.
+- README now uses `pip install reviewpack` and `reviewpack demo` as the first-run workflow
+- README now documents `ai-context.md` as the one-file upload fallback
+- Installation guide now documents PyPI installation, demo workflow, and AI handoff fallback options
+- Commands guide now documents AI handoff fallback options
+- `reviewpack handoff` now explains fallback options for AI tools without file access
+- `reviewpack guide` now explains AI handoff fallback options
+- Reviewpack output now includes `ai-handoff.md` by default
+- Reviewpack output now includes `ai-context.md` by default
+- Fixture mode error message now suggests `reviewpack demo` for first-run usage
+- Package workflow now verifies `ai-handoff.md` and `ai-context.md`
+- TestPyPI install workflow now verifies `ai-handoff.md` and `ai-context.md`
+
+### Fixed
+
+- Nothing.
+
+## v0.4.0 - 2026-06-03
+
+### Added
+
+- Manual PyPI publishing workflow
+- PyPI release checklist
+- TestPyPI verification guide
+- Publish workflow metadata tests
+
+### Changed
+
+- Package version bumped to 0.4.0
+- CLI version bumped to 0.4.0
 - Expanded PyPI publishing notes with manual workflow and TestPyPI guidance
 
 ### Fixed
@@ -130,19 +159,20 @@ This4.0This project follows a simple changelog format during early development.
 
 ### Added
 
-- Minimal `.reviewpack.yml` example
-- Python project `.reviewpack.yml` example
-- JavaScript / TypeScript project `.reviewpack.yml` example
-- Monorepo `.reviewpack.yml` example
-- Tests for loading example configuration files
-- Tests ensuring example configuration files use the public `outputs.json` key
-- Configuration documentation for practical examples
-- Configuration documentation for invalid config guidance
+- Output examples README
+- Example `pr-summary.md` output
+- Example `ai-review-prompt.md` output
+- Example `reviewpack.json` output
+- Tests for example output artifact files
+- Tests for example output Markdown sections
+- Tests for example `reviewpack.json` top-level fields
+- Tests for example `reviewpack.json` nested fields
 
 ### Changed
 
-- Configuration guide now links to practical example config files
-- Configuration schema docs now include practical examples and invalid config guidance
+- Output artifacts documentation now links to `examples/output/`
+- Artifact contract documentation now links to `examples/output/`
+- Example output documentation now explains human review, AI handoff, and integration reading order
 
 ### Fixed
 
@@ -273,32 +303,3 @@ This4.0This project follows a simple changelog format during early development.
 ### Changed
 
 - Package version bumped to 0.5.0
-- CLI version bumped to 0.5.0
-- README now uses `pip install reviewpack` and `reviewpack demo` as the first-run workflow
-- README now documents `ai-context.md` as the one-file upload fallback
-- Installation guide now documents PyPI installation, demo workflow, and AI handoff fallback options
-- Commands guide now documents AI handoff fallback options
-- `reviewpack handoff` now explains fallback options for AI tools without file access
-- `reviewpack guide` now explains AI handoff fallback options
-- Reviewpack output now includes `ai-handoff.md` by default
-- Reviewpack output now includes `ai-context.md` by default
-- Fixture mode error message now suggests `reviewpack demo` for first-run usage
-- Package workflow now verifies `ai-handoff.md` and `ai-context.md`
-- TestPyPI install workflow now verifies `ai-handoff.md` and `ai-context.md`
-
-### Fixed
-
-- Nothing.
-
-## v0.4.0 - 2026-06-03
-
-### Added
-
-- Manual PyPI publishing workflow
-- PyPI release checklist
-- TestPyPI verification guide
-- Publish workflow metadata tests
-
-### Changed
-
-- Package version bumped to 0.4.0
