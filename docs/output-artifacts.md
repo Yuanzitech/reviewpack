@@ -2,28 +2,34 @@
 
 Reviewpack generates structured review artifacts.
 
-By default, output files are written to:
-
-    .reviewpack/
-
-Use `--output PATH` to choose another directory.
-
-## Default output files
-
-A typical Reviewpack output directory includes:
-
-    pr-summary.md
-    risk-checklist.md
-    reviewer-checklist.md
-    release-note-hints.md
-    ai-review-prompt.md
-    ai-handoff.md
-    ai-context.md
-    reviewpack.json
-
-If AI input preview is enabled, Reviewpack also writes:
+ preview is enabled, Reviewpack also writes:By default, output files are written to:
 
     ai-input-preview.md
+
+## Example output files
+
+Reviewpack includes example output artifacts under:
+
+    examples/output/
+
+These examples help users understand Reviewpack output before running the tool.
+
+Example files include:
+
+    examples/output/pr-summary.example.md
+    examples/output/risk-checklist.example.md
+    examples/output/reviewer-checklist.example.md
+    examples/output/release-note-hints.example.md
+    examples/output/ai-review-prompt.example.md
+    examples/output/ai-handoff.example.md
+    examples/output/ai-context.example.md
+    examples/output/reviewpack.example.json
+
+The examples are illustrative. For real pull requests, generate fresh output with:
+
+    reviewpack demo
+    reviewpack github https://github.com/owner/repo/pull/123
+    reviewpack local
 
 ## pr-summary.md
 
@@ -33,6 +39,7 @@ The PR summary provides:
 - Author
 - URL when available
 - Description
+- Optional GitHub PR metadata
 - Change statistics
 - Changed files
 - Suggested review focus
@@ -123,6 +130,12 @@ The JSON output is machine-readable.
 
 It is intended for integrations, automation, and future tooling.
 
+See:
+
+    docs/json-output.md
+    docs/integration-json.md
+    schemas/reviewpack-result.schema.json
+
 ## Recommended reading order
 
 For human review:
@@ -138,6 +151,12 @@ For AI handoff:
 2. If the AI assistant can accept one uploaded file, upload `ai-context.md`.
 3. If only copy and paste is available, use `ai-review-prompt.md`.
 
+For integrations:
+
+1. Use `reviewpack.json`.
+2. Treat the JSON schema as pre-1.0 until a stable schema is documented.
+3. See `docs/integration-json.md` for integration guidance.
+
 ## Privacy notes
 
 Reviewpack does not call AI providers by default.
@@ -145,3 +164,21 @@ Reviewpack does not call AI providers by default.
 Reviewpack does not upload raw diffs or source code by default.
 
 Users remain in control of which artifacts are shared with AI tools.
+
+    .reviewpack/
+
+Use `--output PATH` to choose another directory.
+
+## Default output files
+
+A typical Reviewpack output directory includes:
+
+    pr-summary.md
+    risk-checklist.md
+    reviewer-checklist.md
+    release-note-hints.md
+    ai-review-prompt.md
+    ai-handoff.md
+    ai-context.md
+    reviewpack.json
+
