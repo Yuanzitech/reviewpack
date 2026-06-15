@@ -1,0 +1,134 @@
+{
+  "pr": {
+    "title": "Add token refresh support",
+    "author": "demo-user",
+    "url": "https://github.com/octo-org/example-repo/pull/123",
+    "description": "Adds token refresh support and updates related documentation.",
+    "state": "open",
+    "is_draft": false,
+    "base_branch": "main",
+    "head_branch": "feature/token-refresh",
+    "commit_count": 3,
+    "labels": [
+      "enhancement",
+      "auth"
+    ]
+  },
+  "changed_files": [
+    {
+      "path": "src/auth/token.py",
+      "additions": 120,
+      "deletions": 20,
+      "category": "source",
+      "status": "modified"
+    },
+    {
+      "path": "src/auth/refresh.py",
+      "additions": 80,
+      "deletions": 0,
+      "category": "source",
+      "status": "added"
+    },
+    {
+      "path": "README.md",
+      "additions": 16,
+      "deletions": 4,
+      "category": "docs",
+      "status": "modified"
+    },
+    {
+      "path": "package.json",
+      "additions": 4,
+      "deletions": 2,
+      "category": "dependency",
+      "status": "modified"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "additions": 6,
+      "deletions": 33,
+      "category": "ci",
+      "status": "modified"
+    }
+  ],
+  "stats": {
+    "files_changed": 5,
+    "additions": 226,
+    "deletions": 59,
+    "source_files": 2,
+    "test_files": 0,
+    "docs_files": 1,
+    "dependency_files": 1,
+    "ci_files": 1,
+    "config_files": 0,
+    "infra_files": 0,
+    "unknown_files": 0
+  },
+  "risk_signals": [
+    {
+      "level": "high",
+      "title": "High-risk area changed",
+      "message": "This PR changes paths configured as high risk in Reviewpack configuration.",
+      "files": [
+        "src/auth/token.py",
+        "src/auth/refresh.py"
+      ]
+    },
+    {
+      "level": "medium",
+      "title": "Source changed without tests",
+      "message": "Source files changed, but no test files were detected.",
+      "files": [
+        "src/auth/token.py",
+        "src/auth/refresh.py"
+      ]
+    },
+    {
+      "level": "medium",
+      "title": "Dependency files changed",
+      "message": "Dependency changes can affect installation, compatibility, and security.",
+      "files": [
+        "package.json"
+      ]
+    },
+    {
+      "level": "medium",
+      "title": "CI workflow changed",
+      "message": "CI changes can affect required checks, automation, or release behavior.",
+      "files": [
+        ".github/workflows/ci.yml"
+      ]
+    }
+  ],
+  "review_focus": [
+    {
+      "title": "Review behavior changes",
+      "reason": "Source files changed."
+    },
+    {
+      "title": "Check test coverage",
+      "reason": "Source files changed without detected test updates."
+    },
+    {
+      "title": "Check documentation accuracy",
+      "reason": "Documentation files changed."
+    },
+    {
+      "title": "Review dependency impact",
+      "reason": "Dependency files changed."
+    },
+    {
+      "title": "Review CI behavior",
+      "reason": "CI workflow files changed."
+    },
+    {
+      "title": "Review detected risk signals",
+      "reason": "Reviewpack detected deterministic risk signals."
+    }
+  ],
+  "metadata": {
+    "ai_used": false,
+    "network_used": false,
+    "mode": "demo"
+  }
+}

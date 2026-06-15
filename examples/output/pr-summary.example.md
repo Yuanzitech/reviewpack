@@ -3,12 +3,18 @@
 ## Pull Request
 
 - Title: Add token refresh support
-- Author: alice
+- Author: demo-user
 - URL: https://github.com/octo-org/example-repo/pull/123
+- State: open
+- Draft: false
+- Base branch: main
+- Head branch: feature/token-refresh
+- Commits: 3
+- Labels: enhancement, auth
 
 ## Description
 
-This pull request updates authentication token refresh behavior and adds dependency changes.
+Adds token refresh support and updates related documentation.
 
 ## Change Statistics
 
@@ -26,28 +32,30 @@ This pull request updates authentication token refresh behavior and adds depende
 
 ## Changed Files
 
-- src/auth/token.py (source, +120/-32)
-- src/auth/session.py (source, +80/-18)
-- package.json (dependency, +4/-2)
-- .github/workflows/ci.yml (ci, +10/-4)
-- README.md (docs, +12/-3)
+- src/auth/token.py (modified, source, +120/-20)
+- src/auth/refresh.py (added, source, +80/-0)
+- README.md (modified, docs, +16/-4)
+- package.json (modified, dependency, +4/-2)
+- .github/workflows/ci.yml (modified, ci, +6/-33)
 
 ## Suggested Review Focus
 
-1. Validate behavior changes
-   - Source files changed. Review correctness, edge cases, and backward compatibility.
+1. Review behavior changes
+   - Source files changed.
 2. Check test coverage
-   - Source files changed without test updates. Confirm whether existing tests are sufficient.
-3. Review dependency impact
-   - Dependency files changed. Check version compatibility, security, and lockfile consistency.
-4. Review CI behavior
-   - CI configuration changed. Check triggers, permissions, secrets, and required checks.
-5. Verify documentation accuracy
-   - Documentation changed. Confirm examples and usage notes match the implementation.
+   - Source files changed without detected test updates.
+3. Check documentation accuracy
+   - Documentation files changed.
+4. Review dependency impact
+   - Dependency files changed.
+5. Review CI behavior
+   - CI workflow files changed.
+6. Review detected risk signals
+   - Reviewpack detected deterministic risk signals.
 
 ## Privacy Notes
 
 - This pack was generated locally from provided input data.
-- Network access was not used.
 - AI was not used.
-- Branch names, commit messages, and terminal environment variables were not collected.
+- Raw diffs and full source code were not collected by default.
+- Users remain in control of what Reviewpack artifacts are shared with AI tools.

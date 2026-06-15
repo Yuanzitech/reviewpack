@@ -1,43 +1,12 @@
 # Artifact Contract
 
-This document describes Reviewpack's current output artifact contract.
+This document describes Reviewpack's current output artifact running the tool.This document describes Reviewpack's current output artifact contract.
 
-Reviewpack is not yet a stable 1.0 product, so this contract is considered pre-1.0 and may still evolve.
+For real pull requests, generate fresh artifacts with:
 
-The purpose of this document is to make current expectations explicit for users, maintainers, and integrations.
-
-## Default output directory
-
-Reviewpack writes output to:
-
-    .reviewpack/
-
-by default.
-
-Users can choose another directory with:
-
-    --output PATH
-
-Example:
-
-    reviewpack demo --output reviewpack-output
-
-## Default output files
-
-By default, Reviewpack may generate:
-
-    pr-summary.md
-    risk-checklist.md
-    reviewer-checklist.md
-    release-note-hints.md
-    ai-review-prompt.md
-    ai-handoff.md
-    ai-context.md
-    reviewpack.json
-
-If AI input preview is enabled, Reviewpack also writes:
-
-    ai-input-preview.md
+    reviewpack demo
+    reviewpack github https://github.com/owner/repo/pull/123
+    reviewpack local
 
 ## Configurable output files
 
@@ -240,6 +209,8 @@ The JSON structure is not yet a stable 1.0 schema.
 See:
 
     docs/json-output.md
+    docs/integration-json.md
+    schemas/reviewpack-result.schema.json
 
 ## Artifact reading order
 
@@ -260,6 +231,7 @@ For automation:
 
 1. Use `reviewpack.json`.
 2. Treat the JSON schema as pre-1.0 until a stable schema is documented.
+3. See `docs/integration-json.md`.
 
 ## Compatibility expectations before v1.0
 
@@ -291,3 +263,66 @@ Before a v1.0 release, Reviewpack should define:
 - Deprecation policy
 - Migration policy
 - Breaking change policy
+
+## Privacy notes
+
+Reviewpack does not call AI providers by default.
+
+Reviewpack does not collect raw diffs or full source code by default.
+
+Users remain in control of which artifacts are shared with AI tools.
+
+Reviewpack is not yet a stable 1.0 product, so this contract is considered pre-1.0 and may still evolve.
+
+The purpose of this document is to make current expectations explicit for users, maintainers, and integrations.
+
+## Default output directory
+
+Reviewpack writes output to:
+
+    .reviewpack/
+
+by default.
+
+Users can choose another directory with:
+
+    --output PATH
+
+Example:
+
+    reviewpack demo --output reviewpack-output
+
+## Default output files
+
+By default, Reviewpack may generate:
+
+    pr-summary.md
+    risk-checklist.md
+    reviewer-checklist.md
+    release-note-hints.md
+    ai-review-prompt.md
+    ai-handoff.md
+    ai-context.md
+    reviewpack.json
+
+If AI input preview is enabled, Reviewpack also writes:
+
+    ai-input-preview.md
+
+## Example output files
+
+Reviewpack includes example output artifacts under:
+
+    examples/output/
+
+Example files include:
+
+    examples/output/pr-summary.example.md
+    examples/output/risk-checklist.example.md
+    examples/output/reviewer-checklist.example.md
+    examples/output/release-note-hints.example.md
+    examples/output/ai-review-prompt.example.md
+    examples/output/ai-handoff.example.md
+    examples/output/ai-context.example.md
+    examples/output/reviewpack.example.json
+
