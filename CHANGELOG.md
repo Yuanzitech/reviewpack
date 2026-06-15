@@ -8,26 +8,19 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- GitHub PR state metadata
-- GitHub PR draft status metadata
-- GitHub PR base and head branch metadata
-- GitHub PR commit count metadata
-- GitHub PR labels metadata
-- GitHub changed file status metadata
-- Tests for enriched GitHub metadata collection
-- Tests for enriched GitHub metadata rendering
+- Optional PR comment mode for the GitHub Action
+- GitHub PR comment helper
+- Stable Reviewpack PR comment marker
+- GitHub Action comment mode example
+- Tests for Reviewpack PR comment rendering and marker detection
+- Action metadata tests for optional PR comment mode
 
 ### Changed
 
-- GitHub mode now includes enriched PR metadata in generated artifacts when available
-- PR summary now displays GitHub PR state, draft status, branches, commit count, and labels when available
-- AI review prompt now includes enriched GitHub PR metadata when available
-- AI context now includes enriched GitHub PR metadata when available
-- GitHub API error messages are now more actionable for common authentication, rate limit, and not found cases
-- GitHub documentation now describes enriched metadata collection boundaries
-- Commands guide now documents enriched GitHub metadata behavior
-- README now documents enriched GitHub metadata behavior
-- Simplified Chinese README now documents enriched GitHub metadata behavior
+- GitHub Action now supports `comment: "true"` as an explicit opt-in
+- GitHub Action documentation now explains PR comment permissions and fork limitations
+- README now documents optional PR comment mode
+- Simplified Chinese README now documents optional PR comment mode
 
 ### Fixed
 
