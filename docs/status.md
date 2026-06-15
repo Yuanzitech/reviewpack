@@ -1,6 +1,6 @@
 # Project Status
 
-This document summarizes the current status of Reviewpack after the v0.6.1 patch release.
+This document summarizes the current status of Reviewpack after the v0.7.0 stabilization foundation release.
 
 Reviewpack is an early-stage, PyPI-published, privacy-first CLI and GitHub Action for generating structured pull request review context.
 
@@ -31,9 +31,11 @@ Reviewpack currently supports:
 
 Current latest stable PyPI version:
 
-    0.6.1
+    0.7.0
 
-v0.6.1 fixed a Pydantic warning caused by the internal `OutputConfig.json` field shadowing `BaseModel.json`.
+v0.7.0 is a stabilization foundation release.
+
+It adds clearer artifact contract documentation, configuration schema documentation, JSON output documentation, a draft JSON schema, JSON integration guidance, practical configuration examples, output examples, GitHub Action contract validation, and broader contract tests.
 
 The public configuration key remains:
 
