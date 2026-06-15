@@ -1,18 +1,8 @@
 # Changelog
 
-All notable changes to this project willAll notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file.
 
-### Added
-
-- Manual PyPI publishing workflow
-- PyPI release checklist
-- TestPyPI verification guide
-- Publish workflow metadata tests
-
-### Changed
-
-- Package version bumped to 0.4.0
-- CLI version bumped to 0.4.0
+This4.0This project follows a simple changelog format during early development.
 - Expanded PyPI publishing notes with manual workflow and TestPyPI guidance
 
 ### Fixed
@@ -136,22 +126,23 @@ All notable changes to this project willAll notable changes to this project will
 - Declared Hatchling wheel package configuration
 - Moved source files into the `reviewpack` package directory
 
-This project follows a simple changelog format during early development.
-
 ## Unreleased
 
 ### Added
 
-- Draft JSON schema for `reviewpack.json`
-- JSON integration guidance for consumers of Reviewpack output
-- Tests validating demo `reviewpack.json` output against the draft schema
-- Tests for file category and risk level schema enums
-- README links to draft JSON schema and JSON integration guidance
-- Simplified Chinese README links to draft JSON schema and JSON integration guidance
+- Minimal `.reviewpack.yml` example
+- Python project `.reviewpack.yml` example
+- JavaScript / TypeScript project `.reviewpack.yml` example
+- Monorepo `.reviewpack.yml` example
+- Tests for loading example configuration files
+- Tests ensuring example configuration files use the public `outputs.json` key
+- Configuration documentation for practical examples
+- Configuration documentation for invalid config guidance
 
 ### Changed
 
-- Nothing yet.
+- Configuration guide now links to practical example config files
+- Configuration schema docs now include practical examples and invalid config guidance
 
 ### Fixed
 
@@ -299,3 +290,15 @@ This project follows a simple changelog format during early development.
 
 - Nothing.
 
+## v0.4.0 - 2026-06-03
+
+### Added
+
+- Manual PyPI publishing workflow
+- PyPI release checklist
+- TestPyPI verification guide
+- Publish workflow metadata tests
+
+### Changed
+
+- Package version bumped to 0.4.0
