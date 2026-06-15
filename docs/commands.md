@@ -38,6 +38,10 @@ Custom output directory:
 
     reviewpack demo --output demo-pack
 
+Custom config file:
+
+    reviewpack demo --config path/to/reviewpack.yml
+
 With AI input preview:
 
     reviewpack demo --preview-ai-input
@@ -54,6 +58,10 @@ Custom output directory:
 
     reviewpack github https://github.com/owner/repo/pull/123 --output review-output
 
+Custom config file:
+
+    reviewpack github https://github.com/owner/repo/pull/123 --config path/to/reviewpack.yml
+
 Public repositories usually do not require a token.
 
 Private repositories and rate-limited situations may require a GitHub token.
@@ -62,9 +70,24 @@ Recommended local token usage:
 
     REVIEWPACK_GITHUB_TOKEN=YOUR_TOKEN reviewpack github https://github.com/owner/repo/pull/123
 
-GitHub mode collects pull request metadata and changed file statistics.
+GitHub mode may collect:
 
-It does not collect raw diffs or full source code by default.
+- Pull request title
+- Pull request author
+- Pull request description
+- Pull request URL
+- Pull request state
+- Draft status
+- Base branch name
+- Head branch name
+- Commit count
+- Labels
+- Changed file paths
+- Changed file status
+- Added line counts
+- Deleted line counts
+
+GitHub mode does not collect raw diffs or full source code by default.
 
 ## reviewpack local
 
@@ -79,6 +102,10 @@ By default, this compares:
 Custom refs:
 
     reviewpack local --base main --head feature-branch
+
+Custom config file:
+
+    reviewpack local --config path/to/reviewpack.yml
 
 Local mode does not require GitHub API access.
 
