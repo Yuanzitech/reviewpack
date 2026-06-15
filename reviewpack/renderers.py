@@ -279,7 +279,7 @@ def write_reviewpack_outputs(
     if reviewpack_config.outputs.ai_context:
         (target_dir / "ai-context.md").write_text(render_ai_context(result), encoding="utf-8")
 
-    if reviewpack_config.outputs.json:
+    if reviewpack_config.outputs.json_output:
         json_text = json.dumps(
             result.model_dump(mode="json"),
             indent=2,
