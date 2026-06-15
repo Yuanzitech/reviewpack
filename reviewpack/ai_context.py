@@ -2,9 +2,35 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from reviewpack.models import ReviewpackResult
+from reviewpack.models import PullRequestInfo, ReviewpackResult
 from reviewpack.release_notes import render_release_note_hints
 from reviewpack.reviewer_checklist import render_reviewer_checklist
+
+
+def render_optional_pr_metadata(pr: PullRequestInfo) -> list[str]:
+    """Render optional pull request metadata lines for AI context."""
+
+    lines: list[str] = []
+
+    if pr.state:
+        lines.append(f"- State: {pr.state}")
+
+    if pr.is_draft is not None:
+        lines.append(f"- Draft: {str(pr.is_draft).lower()}")
+
+    if pr.base_branch:
+        lines.append(f"- Base branch: {pr.base_branch}")
+
+    if pr.head_branch:
+        lines.append(f"- Head branch: {pr.head_branch}")
+
+    if pr.commit_count is not None:
+        lines.append(f"- Commits: {pr.commit_count}")
+
+    if pr.labels:
+        lines.append(f"- Labels: {', '.join(pr.labels)}")
+
+    return lines
 
 
 def render_ai_context(result: ReviewpackResult) -> str:
@@ -51,6 +77,10 @@ def render_ai_context(result: ReviewpackResult) -> str:
     if result.pr.url:
         lines.append(f"- URL: {result.pr.url}")
 
+    optional_metadata = render_optional_pr_metadata(result.pr)
+    if optional_metadata:
+        lines.extend(optional_metadata)
+
     if result.pr.description:
         lines.append("")
         lines.append("## Description")
@@ -77,9 +107,10 @@ def render_ai_context(result: ReviewpackResult) -> str:
     lines.append("")
 
     for changed_file in result.changed_files:
+        status = f"{changed_file.status}, " if changed_file.status else ""
         lines.append(
             f"- {changed_file.path} "
-            f"({changed_file.category.value}, +{changed_file.additions}/-{changed_file.deletions})"
+            f"({status}{changed_file.category.value}, +{changed_file.additions}/-{changed_file.deletions})"
         )
 
     lines.append("")
@@ -137,7 +168,7 @@ def render_ai_context(result: ReviewpackResult) -> str:
     lines.append("")
     lines.append("- Reviewpack does not call an AI provider by default.")
     lines.append("- Reviewpack does not upload raw diffs or full source code by default.")
-    lines.append("- Reviewpack does not require branch names or commit messages for this context.")
+    lines.append("- GitHub mode may include PR metadata such as labels, branch names, commit count, and file status.")
     lines.append("- The user remains in control of what is shared with AI tools.")
     lines.append("")
 
