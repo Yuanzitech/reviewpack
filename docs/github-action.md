@@ -32,7 +32,7 @@ Add a workflow file such as:
             uses: actions/checkout@v4
 
           - name: Run Reviewpack
-            uses: Yuanzitech/reviewpack@v0.5.0
+            uses: Yuanzitech/reviewpack@v0.6.1
             with:
               mode: github
               pr-url: ${{ github.event.pull_request.html_url }}
@@ -122,7 +122,7 @@ Example:
             uses: actions/checkout@v4
 
           - name: Run Reviewpack with PR comment
-            uses: Yuanzitech/reviewpack@v0.5.0
+            uses: Yuanzitech/reviewpack@v0.6.1
             with:
               mode: github
               pr-url: ${{ github.event.pull_request.html_url }}
@@ -156,7 +156,7 @@ If no previous Reviewpack comment exists, comment mode creates one.
 
 This avoids duplicate Reviewpack comments on repeated workflow runs.
 
-## Permissions for comment mode
+## Permissions
 
 Artifact-only mode can use:
 
@@ -170,20 +170,99 @@ Comment mode requires:
       contents: read
       pull-requests: write
 
-For pull requests from forks, GitHub may restrict write permissions.
+Comment mode also requires:
 
-If comment mode cannot write a comment, artifact generation can still be used without comment mode.
+    github-token: ${{ github.token }}
+    pr-url: ${{ github.event.pull_request.html_url }}
+
+Reviewpack does not store this token and does not write this token to generated output files.
+
+## Fork pull request limitations
+
+For pull requests from forks, GitHub may restrict write permissions for the workflow token.
+
+This means optional comment mode may fail to create or update a PR comment on forked pull requests.
+
+If that happens, use artifact-only mode instead:
+
+    comment: "false"
+
+Artifact generation can still work without PR comment mode.
+
+Recommended default for broad open-source usage:
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+Recommended setting only when comment mode is intentionally enabled:
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+Avoid using `pull_request_target` unless the workflow security implications are fully understood.
+
+## Troubleshooting
+
+### pr-url is required
+
+GitHub mode requires:
+
+    pr-url: ${{ github.event.pull_request.html_url }}
+
+Comment mode also requires `pr-url`.
+
+### github-token is required for comment mode
+
+Comment mode requires:
+
+    github-token: ${{ github.token }}
+
+If `github-token` is missing, Reviewpack cannot call the GitHub comments API.
+
+### 401 Unauthorized
+
+The token may be missing, invalid, or expired.
+
+### 403 Forbidden
+
+This may be caused by rate limits or insufficient token permissions.
+
+For comment mode, confirm the workflow has:
+
+    pull-requests: write
+
+For artifact-only mode, use:
+
+    pull-requests: read
+
+### 404 Not Found
+
+The pull request may not exist, or the repository may not be accessible with the current token.
+
+### Fork PR comment failures
+
+For forked pull requests, GitHub may restrict write permissions.
+
+Use artifact-only mode if comment mode is not allowed.
+
+### Artifact missing
+
+Confirm artifact upload is enabled:
+
+    upload-artifact: "true"
+
+The action uploads hidden `.reviewpack/` output directories by default.
 
 ## Inputs
 
 ### mode
 
-Reviewpack mode.
-
 Supported values:
 
-- github
-- local
+    github
+    local
 
 Default:
 
@@ -193,13 +272,9 @@ Default:
 
 GitHub pull request URL.
 
-Required when mode is github.
+Required when mode is `github`.
 
 Required when comment mode is enabled.
-
-Example:
-
-    pr-url: ${{ github.event.pull_request.html_url }}
 
 ### github-token
 
@@ -211,8 +286,6 @@ Recommended in GitHub Actions:
 
     github-token: ${{ github.token }}
 
-Reviewpack does not store this token and does not write it to generated output files.
-
 ### comment
 
 Post or update a short Reviewpack summary comment on the pull request.
@@ -221,7 +294,7 @@ Default:
 
     false
 
-Example:
+Enable with:
 
     comment: "true"
 
@@ -256,10 +329,6 @@ Generate a local AI input preview file.
 Default:
 
     false
-
-Example:
-
-    preview-ai-input: "true"
 
 ### upload-artifact
 
@@ -300,15 +369,6 @@ It may collect:
 
 It does not collect raw diffs or full source code by default.
 
-Example:
-
-    - name: Run Reviewpack
-      uses: Yuanzitech/reviewpack@v0.5.0
-      with:
-        mode: github
-        pr-url: ${{ github.event.pull_request.html_url }}
-        github-token: ${{ github.token }}
-
 ## Local mode
 
 Local mode runs Reviewpack using local git diff statistics.
@@ -316,58 +376,20 @@ Local mode runs Reviewpack using local git diff statistics.
 Example:
 
     - name: Run Reviewpack in local mode
-      uses: Yuanzitech/reviewpack@v0.5.0
+      uses: Yuanzitech/reviewpack@v0.6.1
       with:
         mode: local
         base: main
         head: HEAD
 
-Local mode does not require GitHub API access.
+For pull request workflows, local mode depends on checkout depth and available refs.
 
-For pull request workflows, local mode depends on the checkout depth and available refs. If local mode cannot find the base ref, adjust the checkout step.
-
-Example checkout for local mode:
+Recommended checkout for local mode:
 
     - name: Check out repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
-
-## Token behavior
-
-### Public repositories
-
-For public pull requests, GitHub metadata mode usually works with:
-
-    github-token: ${{ github.token }}
-
-No separate personal access token is normally required.
-
-### Private repositories
-
-For private repositories, use:
-
-    github-token: ${{ github.token }}
-
-Recommended permissions for artifact-only mode:
-
-    permissions:
-      contents: read
-      pull-requests: read
-
-Recommended permissions for comment mode:
-
-    permissions:
-      contents: read
-      pull-requests: write
-
-### Local CLI usage
-
-For local CLI usage, prefer the environment variable:
-
-    REVIEWPACK_GITHUB_TOKEN=YOUR_TOKEN reviewpack github https://github.com/owner/repo/pull/123
-
-Avoid putting long-lived tokens directly in command history when possible.
 
 ## AI handoff from artifacts
 
@@ -399,6 +421,14 @@ The action:
 - Does not send raw diffs to AI providers
 - Uploads generated Reviewpack files only as GitHub Actions artifacts by default
 - Posts only a short pointer comment when comment mode is explicitly enabled
+
+## Related examples
+
+See:
+
+    examples/github-action.yml
+    examples/github-action-local.yml
+    examples/github-action-comment.yml
 
 ## Limitations
 
