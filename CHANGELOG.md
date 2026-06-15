@@ -8,14 +8,32 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
+- Nothing yet.
+
+### Changed
+
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## v0.6.1 - 2026-06-15
+
+### Added
+
 - Package smoke test now fails on Reviewpack config import `UserWarning`
 - Test coverage for importing Reviewpack config with `UserWarning` treated as errors
 
 ### Changed
 
+- Package version bumped to 0.6.1
+- CLI version bumped to 0.6.1
 - Internal output config field renamed from `json` to `json_output`
 - Public `.reviewpack.yml` key `outputs.json` remains supported through a Pydantic alias
 - Configuration documentation now clarifies the public `json` output key
+- TestPyPI install verification workflow default package version updated to 0.6.1
+- PyPI install verification workflow default package version updated to 0.6.1
 
 ### Fixed
 
