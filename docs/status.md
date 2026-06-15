@@ -1,6 +1,6 @@
 # Project Status
 
-This document summarizes the current status of Reviewpack after the v0.5.0 release.
+This document summarizes the current status of Reviewpack after the v0.6.0 release.
 
 Reviewpack is an early-stage, PyPI-published, privacy-first CLI and GitHub Action for generating structured pull request review context.
 
@@ -17,10 +17,13 @@ Reviewpack currently supports:
 - GitHub Action usage
 - Demo mode for first-run experience
 - Local git diff analysis
-- GitHub pull request metadata analysis
+- Enriched GitHub pull request metadata analysis
 - Fixture-based input for tests and integrations
 - Structured Markdown output
 - Machine-readable JSON output
+- Configurable rules and outputs
+- Improved review artifacts
+- Optional short PR comment mode
 - AI handoff files without calling AI providers
 - TestPyPI and PyPI installation verification workflows
 
@@ -57,6 +60,30 @@ Command-level help is available through:
     reviewpack github --help
     reviewpack local --help
     reviewpack from-fixture --help
+
+## Current configuration support
+
+Reviewpack can load:
+
+    .reviewpack.yml
+
+Configuration can currently control:
+
+- output generation
+- large PR thresholds
+- high-risk paths
+- docs path patterns
+- tests path patterns
+- dependency path patterns
+- CI path patterns
+- config path patterns
+- infrastructure path patterns
+
+CLI commands load `.reviewpack.yml` by default when present.
+
+Users can also pass:
+
+    --config path/to/reviewpack.yml
 
 ## Current output files
 
@@ -103,6 +130,14 @@ Private repositories or rate-limited usage may require:
 
 Reviewpack can run in pull request workflows and upload generated review packs as artifacts.
 
+Artifact-only mode is the default.
+
+Optional PR comment mode is available with:
+
+    comment: "true"
+
+Comment mode is opt-in and posts a short pointer comment. It does not paste the full review pack into the pull request.
+
 See:
 
     docs/github-action.md
@@ -128,13 +163,15 @@ Current defaults:
 - No AI provider calls by default
 - No raw diff upload by default
 - No full source code upload by default
-- No branch name collection for AI context by default
 - No commit message collection for AI context by default
 - No token storage
 - No token logging
+- No PR comments by default
 - Local-first workflows where possible
 
 GitHub mode uses network access to fetch explicitly requested pull request metadata and changed file statistics from the GitHub API.
+
+GitHub mode may include metadata such as labels, base/head branch names, commit count, draft status, and changed file status in generated local artifacts.
 
 ## Publishing and verification status
 
@@ -168,8 +205,8 @@ The PyPI install workflow verifies:
 Reviewpack does not currently include:
 
 - Direct AI provider integration
-- Automatic PR comments
-- Raw diff analysis
+- Raw diff analysis by default
+- Inline PR review comments
 - IDE plugin integration
 - MCP server integration
 - Automatic approval or merge
@@ -189,15 +226,16 @@ It is suitable for:
 - Generating PR review context
 - Preparing AI handoff artifacts
 - Using GitHub Action artifact output
-- Experimenting with maintainer review workflows
+- Experimenting with opt-in PR comment mode
+- Adapting basic rules and outputs through configuration
 
 It is not yet a stable 1.0 product.
 
 Before 1.0, Reviewpack should further improve:
 
-- GitHub Action UX
-- Configuration support
-- Output artifact quality
-- GitHub PR metadata enrichment
-- Optional PR comment mode
-- JSON schema and artifact stability
+- Artifact contract stability
+- Configuration schema stability
+- GitHub Action validation
+- Optional GitHub Enterprise host support
+- JSON schema documentation
+- Release candidate criteria
