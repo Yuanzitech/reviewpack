@@ -6,7 +6,7 @@ on:
       package-version:
         description: Reviewpack version to install from TestPyPI.
         required: true
-        default: "0.6.0"
+        default: "0.6.1"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -28,6 +28,10 @@ jobs:
             --index-url https://test.pypi.org/simple/ \
             --extra-index-url https://pypi.org/simple/ \
             "reviewpack==${{ inputs.package-version }}"
+
+      - name: Verify config import has no UserWarning
+        run: |
+          python -W error::UserWarning -c "import reviewpack.config"
 
       - name: Verify CLI version
         run: |
