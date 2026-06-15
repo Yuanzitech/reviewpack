@@ -2,7 +2,35 @@ from __future__ import annotations
 
 import json
 import os
-import urllib.errorlist.md`")import urllib.error
+import urllib.error
+import urllib.request
+from typing import Any
+
+from reviewpack.github_client import GitHubAPIError, parse_github_pull_request_url
+
+
+REVIEWPACK_COMMENT_MARKER = "<!-- reviewpack-comment -->"
+
+
+def render_reviewpack_comment(
+    artifact_name: str = "reviewpack-output",
+    output_dir: str = ".reviewpack",
+    workflow_run_url: str | None = None,
+) -> str:
+    """Render a short Reviewpack pull request comment body."""
+
+    lines: list[str] = []
+
+    lines.append(REVIEWPACK_COMMENT_MARKER)
+    lines.append("")
+    lines.append("## Reviewpack Summary")
+    lines.append("")
+    lines.append("Reviewpack generated a pull request review context pack for this PR.")
+    lines.append("")
+    lines.append("Recommended files in the workflow artifact:")
+    lines.append("")
+    lines.append("- `pr-summary.md`")
+    lines.append("- `risk-checklist.md`")
     lines.append("- `reviewer-checklist.md`")
     lines.append("- `release-note-hints.md`")
     lines.append("- `ai-handoff.md`")
@@ -176,31 +204,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-import urllib.request
-from typing import Any
-
-from reviewpack.github_client import GitHubAPIError, parse_github_pull_request_url
-
-
-REVIEWPACK_COMMENT_MARKER = "<!-- reviewpack-comment -->"
-
-
-def render_reviewpack_comment(
-    artifact_name: str = "reviewpack-output",
-    output_dir: str = ".reviewpack",
-    workflow_run_url: str | None = None,
-) -> str:
-    """Render a short Reviewpack pull request comment body."""
-
-    lines: list[str] = []
-
-    lines.append(REVIEWPACK_COMMENT_MARKER)
-    lines.append("")
-    lines.append("## Reviewpack Summary")
-    lines.append("")
-    lines.append("Reviewpack generated a pull request review context pack for this PR.")
-    lines.append("")
-    lines.append("Recommended files in the workflow artifact:")
-    lines.append("")
-    lines.append("- `pr-summary.md`")
