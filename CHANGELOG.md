@@ -159,20 +159,22 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Output examples README
-- Example `pr-summary.md` output
-- Example `ai-review-prompt.md` output
-- Example `reviewpack.json` output
-- Tests for example output artifact files
-- Tests for example output Markdown sections
-- Tests for example `reviewpack.json` top-level fields
-- Tests for example `reviewpack.json` nested fields
+- Final v0.7 stabilization docs and link coverage
+- GitHub Action troubleshooting and permission guidance
+- Fork pull request limitation guidance for optional comment mode
+- Extended JSON integration guidance for pre-1.0 schema usage
+- Documentation link tests for schema files
+- Documentation link tests for key configuration examples
+- Documentation link tests for key output examples
 
 ### Changed
 
-- Output artifacts documentation now links to `examples/output/`
-- Artifact contract documentation now links to `examples/output/`
-- Example output documentation now explains human review, AI handoff, and integration reading order
+- GitHub Action documentation now clarifies artifact-only and comment mode permissions
+- GitHub Action documentation now includes troubleshooting for token, permission, fork PR, and artifact issues
+- JSON integration guide now more clearly explains pre-1.0 schema expectations
+- Documentation link tests now cover `schemas/reviewpack-result.schema.json`
+- Documentation link tests now cover `examples/config/`
+- Documentation link tests now cover `examples/output/`
 
 ### Fixed
 

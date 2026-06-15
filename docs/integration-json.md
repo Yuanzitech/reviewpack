@@ -46,6 +46,23 @@ It documents the current shape of:
 
 The schema is intended to help integration authors validate assumptions and build safer tooling.
 
+## Pre-1.0 schema status
+
+The draft schema is not a final compatibility guarantee.
+
+Before v1.0, Reviewpack may still refine:
+
+- optional fields
+- metadata fields
+- risk signal wording
+- review focus wording
+- schema strictness
+- future schema versioning
+
+The current draft schema intentionally allows additional fields.
+
+Integration authors should avoid strict rejection of unknown fields.
+
 ## Recommended integration practices
 
 ### Pin Reviewpack versions
@@ -183,23 +200,32 @@ Useful JSON fields:
     stats.config_files
     stats.infra_files
 
-## Pre-1.0 compatibility expectations
+## Validating against the draft schema
 
-Before v1.0, Reviewpack aims to keep these stable where possible:
+Reviewpack includes tests that validate demo JSON output against:
 
-- `reviewpack.json` file name
-- top-level JSON object shape
-- common field names
-- enum values for file categories and risk levels
+    schemas/reviewpack-result.schema.json
 
-Before v1.0, Reviewpack may still refine:
+Integration authors may use this schema as a reference.
 
-- optional fields
-- metadata fields
-- exact risk signal wording
-- review focus wording
-- schema strictness
-- future schema versioning
+Because the schema is pre-1.0, consumers should combine schema validation with tolerant parsing.
+
+Recommended approach:
+
+1. Validate required top-level fields.
+2. Read known fields.
+3. Ignore unknown fields.
+4. Treat nullable or missing optional fields as expected.
+5. Pin the Reviewpack version for production usage.
+
+## Related files
+
+See:
+
+    docs/json-output.md
+    docs/artifact-contract.md
+    schemas/reviewpack-result.schema.json
+    examples/output/reviewpack.example.json
 
 ## Future schema work
 
