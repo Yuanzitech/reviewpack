@@ -8,15 +8,18 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Nothing yet.
+- Package smoke test now fails on Reviewpack config import `UserWarning`
+- Test coverage for importing Reviewpack config with `UserWarning` treated as errors
 
 ### Changed
 
-- Nothing yet.
+- Internal output config field renamed from `json` to `json_output`
+- Public `.reviewpack.yml` key `outputs.json` remains supported through a Pydantic alias
+- Configuration documentation now clarifies the public `json` output key
 
 ### Fixed
 
-- Nothing yet.
+- Fixed Pydantic warning caused by `OutputConfig.json` shadowing `BaseModel.json`
 
 ## v0.6.0 - 2026-06-15
 
