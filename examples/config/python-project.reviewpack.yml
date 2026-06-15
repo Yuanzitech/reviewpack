@@ -1,0 +1,61 @@
+outputs:
+  pr_summary: true
+  risk_checklist: true
+  reviewer_checklist: true
+  release_note_hints: true
+  ai_review_prompt: true
+  ai_handoff: true
+  ai_context: true
+  json: true
+
+risk:
+  large_pr_files: 20
+  large_pr_lines: 500
+  high_risk_paths:
+    - .github/workflows/
+    - pyproject.toml
+    - setup.py
+    - setup.cfg
+    - reviewpack/
+    - src/auth/
+    - auth/
+    - security/
+
+paths:
+  docs:
+    - docs/
+    - README.md
+    - README.zh-CN.md
+    - CHANGELOG.md
+
+  tests:
+    - tests/
+    - test/
+
+  dependencies:
+    - pyproject.toml
+    - requirements.txt
+    - requirements-dev.txt
+    - poetry.lock
+    - Pipfile
+    - Pipfile.lock
+
+  ci:
+    - .github/workflows/
+    - .gitlab-ci.yml
+
+  config:
+    - .reviewpack.yml
+    - ruff.toml
+    - .ruff.toml
+    - mypy.ini
+    - pytest.ini
+    - tox.ini
+    - .pre-commit-config.yaml
+
+  infrastructure:
+    - Dockerfile
+    - docker-compose.yml
+    - docker-compose.yaml
+    - deploy/
+    - infra/
