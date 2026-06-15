@@ -1,6 +1,6 @@
 # Project Status
 
-This document summarizes the current status of Reviewpack after the v0.6.0 release.
+This document summarizes the current status of Reviewpack after the v0.6.1 patch release.
 
 Reviewpack is an early-stage, PyPI-published, privacy-first CLI and GitHub Action for generating structured pull request review context.
 
@@ -26,6 +26,19 @@ Reviewpack currently supports:
 - Optional short PR comment mode
 - AI handoff files without calling AI providers
 - TestPyPI and PyPI installation verification workflows
+
+## Latest stable version
+
+Current latest stable PyPI version:
+
+    0.6.1
+
+v0.6.1 fixed a Pydantic warning caused by the internal `OutputConfig.json` field shadowing `BaseModel.json`.
+
+The public configuration key remains:
+
+    outputs:
+      json: true
 
 ## Installation status
 
@@ -85,9 +98,16 @@ Users can also pass:
 
     --config path/to/reviewpack.yml
 
-## Current output files
+See:
 
-A Reviewpack output directory may include:
+    docs/config-schema.md
+    docs/configuration.md
+
+## Current artifact contract
+
+Reviewpack currently generates a pre-1.0 artifact contract.
+
+Default output files may include:
 
     .reviewpack/pr-summary.md
     .reviewpack/risk-checklist.md
@@ -101,6 +121,12 @@ A Reviewpack output directory may include:
 If AI input preview is enabled, Reviewpack also writes:
 
     .reviewpack/ai-input-preview.md
+
+See:
+
+    docs/artifact-contract.md
+    docs/output-artifacts.md
+    docs/json-output.md
 
 ## Recommended workflows
 
@@ -189,10 +215,12 @@ The package workflow verifies:
 - Package metadata checks
 - Wheel contents
 - Installed wheel CLI smoke test
+- Config import without `UserWarning`
 
 The PyPI install workflow verifies:
 
 - Installation from PyPI
+- Config import without `UserWarning`
 - `reviewpack version`
 - `reviewpack guide`
 - `reviewpack demo`
@@ -239,3 +267,7 @@ Before 1.0, Reviewpack should further improve:
 - Optional GitHub Enterprise host support
 - JSON schema documentation
 - Release candidate criteria
+
+See:
+
+    docs/v1-readiness.md

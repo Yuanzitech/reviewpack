@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap outlines the planned direction for Reviewpack after the v0.6.0 release.
+This roadmap outlines the planned direction for Reviewpack after the v0.6.1 patch release.
 
 Reviewpack is a privacy-first context generator for AI-assisted pull request review. The roadmap focuses on improving maintainer workflows without requiring AI or uploading code by default.
 
@@ -64,26 +64,30 @@ See:
 
 ## Near-term priorities
 
-After v0.6.0, the next stage should focus on stabilization, validation, and preparing a stronger artifact contract.
+After v0.6.1, the next stage should focus on stabilization, validation, and preparing a stronger artifact contract.
+
+The next major development theme should be v0.7 stabilization rather than rapid feature expansion.
 
 ## v0.7.x: Configuration and artifact contract refinement
 
 Focus areas:
 
-- Stronger `.reviewpack.yml` documentation
-- Configuration schema stability
+- Artifact contract documentation
+- Configuration schema documentation
+- JSON output documentation
+- Configuration compatibility expectations
 - Output selection stability
-- JSON output structure documentation
-- Backward compatibility expectations
-- More realistic configuration examples
+- JSON output structure expectations
+- Better integration guidance
 
 Potential additions:
 
-- JSON schema documentation
+- Published JSON schema draft
 - Configuration examples for Python projects
 - Configuration examples for JavaScript projects
 - More explicit artifact stability notes
 - Migration notes for future breaking changes
+- Improved invalid config error messages
 
 ## v0.8.x: GitHub workflow validation
 
@@ -119,7 +123,7 @@ Focus areas:
 Potential additions:
 
 - 1.0 readiness checklist
-- Artifact contract documentation
+- Artifact contract documentation updates
 - Configuration compatibility policy
 - Deprecation policy
 - More complete example gallery
@@ -139,6 +143,10 @@ Reviewpack should consider v1.0.0 when these are stable:
 - Release and publishing process
 
 A v1.0.0 release should clearly document stability guarantees and migration expectations.
+
+See:
+
+    docs/v1-readiness.md
 
 ## Out of scope for now
 

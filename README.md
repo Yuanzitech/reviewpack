@@ -143,6 +143,7 @@ Use a custom config file:
 See:
 
     docs/configuration.md
+    docs/config-schema.md
     examples/.reviewpack.yml
 
 ## GitHub Action
@@ -169,7 +170,7 @@ Example workflow:
             uses: actions/checkout@v4
 
           - name: Run Reviewpack
-            uses: Yuanzitech/reviewpack@v0.6.0
+            uses: Yuanzitech/reviewpack@v0.6.1
             with:
               mode: github
               pr-url: ${{ github.event.pull_request.html_url }}
@@ -245,6 +246,11 @@ Example output directory:
 Output artifact details:
 
     docs/output-artifacts.md
+    docs/artifact-contract.md
+
+JSON output details:
+
+    docs/json-output.md
 
 Example output files:
 
@@ -314,7 +320,11 @@ Current privacy-oriented features include:
 - Installation guide: docs/installation.md
 - Commands guide: docs/commands.md
 - Configuration guide: docs/configuration.md
+- Configuration schema: docs/config-schema.md
 - Output artifacts: docs/output-artifacts.md
+- Artifact contract: docs/artifact-contract.md
+- JSON output: docs/json-output.md
+- v1.0 readiness: docs/v1-readiness.md
 - Usage guide: docs/usage.md
 - Privacy model: docs/privacy.md
 - Design notes: docs/design.md
@@ -378,15 +388,18 @@ For a detailed status overview, see:
 
 Near-term roadmap:
 
-- v0.6.x: GitHub workflow, configuration, and artifact quality stabilization
-- v0.7.x: Config-driven workflow refinement
-- v0.8.x: GitHub PR workflow enrichment and validation
-- v0.9.x: Stable artifact contract preparation
+- v0.7.x: Configuration and artifact contract refinement
+- v0.8.x: GitHub workflow validation
+- v0.9.x: Stabilization before 1.0
 - v1.0.0: Stable CLI and artifact contract
 
 Detailed roadmap:
 
     docs/roadmap.md
+
+v1.0 readiness checklist:
+
+    docs/v1-readiness.md
 
 ## Non-goals
 
