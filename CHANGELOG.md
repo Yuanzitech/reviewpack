@@ -8,17 +8,12 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Contract tests for default output artifact generation
-- Contract tests for configurable output artifact generation
-- Contract tests for `reviewpack.json` top-level structure
-- Contract tests for pull request JSON fields
-- Contract tests for changed file JSON fields
-- Contract tests for stats JSON fields
-- Contract tests for risk signal JSON fields
-- Contract tests for review focus JSON fields
-- Contract tests for public `.reviewpack.yml` configuration keys
-- Contract tests for `outputs.json` compatibility
-- Documentation link contract tests for README-linked files
+- GitHub Action contract tests for stable inputs and defaults
+- GitHub Action contract tests for opt-in comment mode
+- GitHub Action contract tests for artifact upload behavior
+- GitHub Action contract tests for next-step guidance
+- GitHub Action example workflow tests
+- GitHub Action documentation permission and fork limitation tests
 
 ### Changed
 
