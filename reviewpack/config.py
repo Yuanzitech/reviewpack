@@ -3,11 +3,19 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class OutputConfig(BaseModel):
-    """Configure which Reviewpack output artifacts should be generated."""
+    """Configure which Reviewpack output artifacts should be generated.
+
+    The public YAML key for JSON output is `json`.
+
+    Internally, Reviewpack uses `json_output` to avoid shadowing Pydantic
+    BaseModel.json.
+    """
+
+    model_config = ConfigDict(populate_by_name=True)
 
     pr_summary: bool = True
     risk_checklist: bool = True
@@ -16,7 +24,7 @@ class OutputConfig(BaseModel):
     ai_review_prompt: bool = True
     ai_handoff: bool = True
     ai_context: bool = True
-    json: bool = True
+    json_output: bool = Field(default=True, alias="json")
 
 
 class RiskConfig(BaseModel):
