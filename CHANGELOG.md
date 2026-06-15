@@ -8,17 +8,21 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Artifact contract documentation
-- Configuration schema documentation
-- JSON output documentation
-- v1.0 readiness checklist
+- Contract tests for default output artifact generation
+- Contract tests for configurable output artifact generation
+- Contract tests for `reviewpack.json` top-level structure
+- Contract tests for pull request JSON fields
+- Contract tests for changed file JSON fields
+- Contract tests for stats JSON fields
+- Contract tests for risk signal JSON fields
+- Contract tests for review focus JSON fields
+- Contract tests for public `.reviewpack.yml` configuration keys
+- Contract tests for `outputs.json` compatibility
+- Documentation link contract tests for README-linked files
 
 ### Changed
 
-- Project status updated after v0.6.1
-- Roadmap updated for v0.7 stabilization planning
-- README now links to artifact contract, config schema, JSON output, and v1.0 readiness docs
-- Simplified Chinese README now links to artifact contract, config schema, JSON output, and v1.0 readiness docs
+- Nothing yet.
 
 ### Fixed
 
