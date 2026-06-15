@@ -6,7 +6,7 @@ from pathlib import Path
 from reviewpack.ai_context import render_ai_context
 from reviewpack.ai_handoff import render_ai_handoff
 from reviewpack.config import ReviewpackConfig
-from reviewpack.models import ReviewpackResult, RiskLevel
+from reviewpack.models import PullRequestInfo, ReviewpackResult, RiskLevel
 from reviewpack.release_notes import render_release_note_hints
 from reviewpack.reviewer_checklist import render_reviewer_checklist
 
@@ -19,6 +19,32 @@ def risk_icon(level: RiskLevel) -> str:
     if level == RiskLevel.MEDIUM:
         return "[MEDIUM]"
     return "[LOW]"
+
+
+def render_optional_pr_metadata(pr: PullRequestInfo) -> list[str]:
+    """Render optional pull request metadata lines."""
+
+    lines: list[str] = []
+
+    if pr.state:
+        lines.append(f"- State: {pr.state}")
+
+    if pr.is_draft is not None:
+        lines.append(f"- Draft: {str(pr.is_draft).lower()}")
+
+    if pr.base_branch:
+        lines.append(f"- Base branch: {pr.base_branch}")
+
+    if pr.head_branch:
+        lines.append(f"- Head branch: {pr.head_branch}")
+
+    if pr.commit_count is not None:
+        lines.append(f"- Commits: {pr.commit_count}")
+
+    if pr.labels:
+        lines.append(f"- Labels: {', '.join(pr.labels)}")
+
+    return lines
 
 
 def render_pr_summary(result: ReviewpackResult) -> str:
@@ -35,6 +61,10 @@ def render_pr_summary(result: ReviewpackResult) -> str:
 
     if result.pr.url:
         lines.append(f"- URL: {result.pr.url}")
+
+    optional_metadata = render_optional_pr_metadata(result.pr)
+    if optional_metadata:
+        lines.extend(optional_metadata)
 
     if result.pr.description:
         lines.append("")
@@ -62,9 +92,10 @@ def render_pr_summary(result: ReviewpackResult) -> str:
     lines.append("")
 
     for changed_file in result.changed_files:
+        status = f"{changed_file.status}, " if changed_file.status else ""
         lines.append(
             f"- {changed_file.path} "
-            f"({changed_file.category.value}, +{changed_file.additions}/-{changed_file.deletions})"
+            f"({status}{changed_file.category.value}, +{changed_file.additions}/-{changed_file.deletions})"
         )
 
     lines.append("")
@@ -80,7 +111,8 @@ def render_pr_summary(result: ReviewpackResult) -> str:
     lines.append("")
     lines.append("- This pack was generated locally from provided input data.")
     lines.append("- AI was not used.")
-    lines.append("- Branch names, commit messages, and terminal environment variables were not collected.")
+    lines.append("- Raw diffs and full source code were not collected by default.")
+    lines.append("- Users remain in control of what Reviewpack artifacts are shared with AI tools.")
     lines.append("")
 
     return "\n".join(lines)
@@ -157,6 +189,16 @@ def render_ai_review_prompt(result: ReviewpackResult) -> str:
     lines.append(f"Title: {result.pr.title}")
     lines.append(f"Author: {result.pr.author}")
 
+    if result.pr.url:
+        lines.append(f"URL: {result.pr.url}")
+
+    optional_metadata = render_optional_pr_metadata(result.pr)
+    if optional_metadata:
+        lines.append("")
+        lines.append("Metadata:")
+        for item in optional_metadata:
+            lines.append(item)
+
     if result.pr.description:
         lines.append("")
         lines.append("Description:")
@@ -167,8 +209,9 @@ def render_ai_review_prompt(result: ReviewpackResult) -> str:
     lines.append("")
 
     for changed_file in result.changed_files:
+        status = f"{changed_file.status}, " if changed_file.status else ""
         lines.append(
-            f"- {changed_file.path}: {changed_file.category.value}, "
+            f"- {changed_file.path}: {status}{changed_file.category.value}, "
             f"+{changed_file.additions}/-{changed_file.deletions}"
         )
 
