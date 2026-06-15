@@ -63,6 +63,69 @@ Example:
         - docker-compose.yml
         - infra/
 
+## Practical examples
+
+Reviewpack includes practical example configuration files:
+
+    examples/.reviewpack.yml
+    examples/config/minimal.reviewpack.yml
+    examples/config/python-project.reviewpack.yml
+    examples/config/javascript-typescript-project.reviewpack.yml
+    examples/config/monorepo.reviewpack.yml
+
+Use these files as starting points.
+
+### Minimal example
+
+Use this when you want a small configuration that keeps Reviewpack defaults mostly intact:
+
+    examples/config/minimal.reviewpack.yml
+
+### Python project example
+
+Use this for Python packages or services that use common files such as:
+
+    pyproject.toml
+    requirements.txt
+    requirements-dev.txt
+    poetry.lock
+    pytest.ini
+    ruff.toml
+    mypy.ini
+
+Example:
+
+    examples/config/python-project.reviewpack.yml
+
+### JavaScript / TypeScript project example
+
+Use this for JavaScript or TypeScript projects that use common files such as:
+
+    package.json
+    package-lock.json
+    pnpm-lock.yaml
+    yarn.lock
+    tsconfig.json
+    eslint.config.js
+
+Example:
+
+    examples/config/javascript-typescript-project.reviewpack.yml
+
+### Monorepo example
+
+Use this for repositories with multiple apps, packages, or services.
+
+Example:
+
+    examples/config/monorepo.reviewpack.yml
+
+The monorepo example uses broader path patterns such as:
+
+    apps/*/tests/
+    packages/*/tests/
+    services/*/tests/
+
 ## outputs
 
 The `outputs` section controls which files Reviewpack writes.
@@ -99,6 +162,10 @@ Users should normally keep using:
 
     outputs:
       json: true
+
+The output file name remains:
+
+    reviewpack.json
 
 ## risk
 
@@ -169,9 +236,11 @@ Example:
 
 ## Pattern behavior
 
-Reviewpack supports simple path matching:
+Reviewpack supports simple path matching.
 
 ### Directory prefix
+
+Pattern:
 
     docs/
 
@@ -182,6 +251,8 @@ Matches:
 
 ### Exact file path
 
+Pattern:
+
     pyproject.toml
 
 Matches:
@@ -190,11 +261,81 @@ Matches:
 
 ### Glob
 
+Pattern:
+
     src/*.py
 
 Matches:
 
     src/app.py
+
+## Invalid configuration guidance
+
+Reviewpack currently expects the configuration file to be a YAML mapping.
+
+Valid top-level example:
+
+    outputs:
+      json: true
+
+Invalid top-level example:
+
+    - outputs
+    - json
+
+If a configuration file is not a YAML mapping, Reviewpack raises an error similar to:
+
+    Reviewpack config must be a YAML mapping
+
+Current public top-level sections are:
+
+    outputs
+    risk
+    paths
+
+Users should prefer documented keys.
+
+Reviewpack is still pre-1.0, so validation behavior may become stricter before v1.0.
+
+## Common configuration mistakes
+
+### Using json_output instead of json
+
+The public key should normally be:
+
+    outputs:
+      json: true
+
+The internal field name `json_output` exists to avoid a Pydantic conflict, but user-facing configuration should prefer `json`.
+
+### Forgetting that config is optional
+
+You do not need a config file to use Reviewpack.
+
+A config file is useful when you want to customize:
+
+- output files
+- risk thresholds
+- high-risk paths
+- path classification
+
+### Using path patterns that are too broad
+
+For example:
+
+    paths:
+      docs:
+        - src/
+
+This would classify everything under `src/` as documentation.
+
+Prefer more specific patterns.
+
+### Expecting raw diff analysis
+
+Configuration does not enable raw diff analysis.
+
+Reviewpack does not collect raw diffs by default.
 
 ## Privacy behavior
 
@@ -206,8 +347,20 @@ Reviewpack still does not upload raw diffs or full source code by default.
 
 Configuration affects local analysis and output generation behavior.
 
-## Example file
+## Future configuration work
+
+Potential future improvements:
+
+- `reviewpack validate` command
+- published machine-readable config schema
+- better invalid config error messages
+- more project-specific examples
+- compatibility and deprecation policy before v1.0
+
+## Related docs
 
 See:
 
-    examples/.reviewpack.yml
+    docs/config-schema.md
+    docs/artifact-contract.md
+    docs/json-output.md

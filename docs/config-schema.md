@@ -327,13 +327,68 @@ Matches:
 
     src/app.py
 
+## Practical example files
+
+Reviewpack includes these example configuration files:
+
+    examples/.reviewpack.yml
+    examples/config/minimal.reviewpack.yml
+    examples/config/python-project.reviewpack.yml
+    examples/config/javascript-typescript-project.reviewpack.yml
+    examples/config/monorepo.reviewpack.yml
+
+These examples are validated by tests.
+
+## Invalid configuration guidance
+
+Reviewpack currently expects configuration files to be YAML mappings.
+
+Valid shape:
+
+    outputs:
+      json: true
+
+Invalid shape:
+
+    - outputs
+    - json
+
+If the root YAML value is not a mapping, Reviewpack raises an error similar to:
+
+    Reviewpack config must be a YAML mapping
+
 ## Unknown keys
 
 Reviewpack currently uses Pydantic validation for configuration.
 
+Users should prefer documented keys.
+
 Unknown or unsupported behavior may become stricter before v1.0.
 
-Users should prefer documented keys.
+Future versions may add:
+
+- stronger validation
+- better error messages
+- a `reviewpack validate` command
+- a machine-readable config schema
+
+## Common compatibility expectations
+
+Before v1.0, Reviewpack aims to keep these stable where possible:
+
+- `.reviewpack.yml` default file name
+- `--config` CLI option
+- public `outputs` keys
+- public `risk` keys
+- public `paths` keys
+- public `outputs.json` key
+
+The internal `json_output` field is implementation detail compatibility support.
+
+Users should normally use:
+
+    outputs:
+      json: true
 
 ## Pre-1.0 stability
 

@@ -1,0 +1,65 @@
+outputs:
+  pr_summary: true
+  risk_checklist: true
+  reviewer_checklist: true
+  release_note_hints: true
+  ai_review_prompt: true
+  ai_handoff: true
+  ai_context: true
+  json: true
+
+risk:
+  large_pr_files: 25
+  large_pr_lines: 700
+  high_risk_paths:
+    - .github/workflows/
+    - package.json
+    - package-lock.json
+    - pnpm-lock.yaml
+    - yarn.lock
+    - src/auth/
+    - src/security/
+    - auth/
+    - security/
+
+paths:
+  docs:
+    - docs/
+    - README.md
+    - CHANGELOG.md
+
+  tests:
+    - tests/
+    - test/
+    - __tests__/
+    - specs/
+    - spec/
+
+  dependencies:
+    - package.json
+    - package-lock.json
+    - pnpm-lock.yaml
+    - yarn.lock
+    - npm-shrinkwrap.json
+
+  ci:
+    - .github/workflows/
+    - .gitlab-ci.yml
+
+  config:
+    - .reviewpack.yml
+    - tsconfig.json
+    - jsconfig.json
+    - eslint.config.js
+    - .eslintrc
+    - .eslintrc.js
+    - .eslintrc.json
+    - prettier.config.js
+    - .prettierrc
+
+  infrastructure:
+    - Dockerfile
+    - docker-compose.yml
+    - docker-compose.yaml
+    - deploy/
+    - infra/
