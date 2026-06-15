@@ -6,16 +6,8 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
-class RiskLevel(str, Enum):
-    """Risk level for a review signal."""
-
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-
-
 class FileCategory(str, Enum):
-    """High-level file category used by Reviewpack rules."""
+    """High-level category for a changed file."""
 
     SOURCE = "source"
     TEST = "test"
@@ -23,63 +15,53 @@ class FileCategory(str, Enum):
     DEPENDENCY = "dependency"
     CI = "ci"
     CONFIG = "config"
-    INFRA = "infra"
+    INFRA = "infrastructure"
     UNKNOWN = "unknown"
 
 
-class PullRequestInfo(BaseModel):
-    """Basic pull request metadata.
+class RiskLevel(str, Enum):
+    """Risk signal level."""
 
-    This model intentionally avoids requiring branch names, commit messages,
-    local paths, or environment information. Those fields may be sensitive and
-    should only be added through explicit opt-in features in future versions.
-    """
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+class PullRequestInfo(BaseModel):
+    """Pull request metadata used by Reviewpack."""
 
     title: str
     author: str
     url: str | None = None
     description: str | None = None
 
+    state: str | None = None
+    is_draft: bool | None = None
+    base_branch: str | None = None
+    head_branch: str | None = None
+    commit_count: int | None = None
+    labels: list[str] = Field(default_factory=list)
+
 
 class ChangedFile(BaseModel):
-    """A file changed by a pull request."""
+    """Changed file metadata used by Reviewpack."""
 
     path: str
     additions: int = 0
     deletions: int = 0
-    patch: str | None = None
     category: FileCategory = FileCategory.UNKNOWN
-
-
-class RiskSignal(BaseModel):
-    """A deterministic review signal produced by Reviewpack."""
-
-    level: RiskLevel
-    title: str
-    message: str
-    files: list[str] = Field(default_factory=list)
-
-
-class ReviewFocusItem(BaseModel):
-    """A suggested focus area for human or AI-assisted review."""
-
-    title: str
-    reason: str
+    status: str | None = None
 
 
 class ReviewpackInput(BaseModel):
-    """Input data for generating a review context pack.
-
-    v0.1.0 supports fixture-based input. Later versions may add GitHub API,
-    local git diff, or other integrations.
-    """
+    """Input data for Reviewpack analysis."""
 
     pr: PullRequestInfo
     changed_files: list[ChangedFile]
 
 
 class ChangeStats(BaseModel):
-    """Aggregated change statistics."""
+    """Aggregate change statistics."""
 
     files_changed: int = 0
     additions: int = 0
@@ -94,8 +76,24 @@ class ChangeStats(BaseModel):
     unknown_files: int = 0
 
 
+class RiskSignal(BaseModel):
+    """A deterministic review risk signal."""
+
+    level: RiskLevel
+    title: str
+    message: str
+    files: list[str] = Field(default_factory=list)
+
+
+class ReviewFocusItem(BaseModel):
+    """A suggested focus area for human or AI-assisted review."""
+
+    title: str
+    reason: str
+
+
 class ReviewpackResult(BaseModel):
-    """Structured output produced by Reviewpack analysis."""
+    """Structured Reviewpack analysis result."""
 
     pr: PullRequestInfo
     changed_files: list[ChangedFile]
