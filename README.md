@@ -169,7 +169,7 @@ Example workflow:
             uses: actions/checkout@v4
 
           - name: Run Reviewpack
-            uses: Yuanzitech/reviewpack@v0.5.0
+            uses: Yuanzitech/reviewpack@v0.6.0
             with:
               mode: github
               pr-url: ${{ github.event.pull_request.html_url }}
@@ -378,10 +378,10 @@ For a detailed status overview, see:
 
 Near-term roadmap:
 
-- v0.6.x: GitHub Action UX, configuration, and artifact quality
-- v0.7.x: Config-driven workflows
-- v0.8.x: Review artifact quality improvements
-- v0.9.x: GitHub PR workflow enrichment
+- v0.6.x: GitHub workflow, configuration, and artifact quality stabilization
+- v0.7.x: Config-driven workflow refinement
+- v0.8.x: GitHub PR workflow enrichment and validation
+- v0.9.x: Stable artifact contract preparation
 - v1.0.0: Stable CLI and artifact contract
 
 Detailed roadmap:
