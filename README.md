@@ -251,6 +251,11 @@ Output artifact details:
 JSON output details:
 
     docs/json-output.md
+    docs/integration-json.md
+
+Draft JSON schema:
+
+    schemas/reviewpack-result.schema.json
 
 Example output files:
 
@@ -324,6 +329,7 @@ Current privacy-oriented features include:
 - Output artifacts: docs/output-artifacts.md
 - Artifact contract: docs/artifact-contract.md
 - JSON output: docs/json-output.md
+- JSON integration guide: docs/integration-json.md
 - v1.0 readiness: docs/v1-readiness.md
 - Usage guide: docs/usage.md
 - Privacy model: docs/privacy.md
@@ -364,6 +370,8 @@ It currently supports:
 - GitHub Action artifact output
 - Optional short PR comment mode
 - Structured Markdown and JSON output
+- Draft JSON schema for `reviewpack.json`
+- JSON integration guidance
 - Configurable rules and outputs
 - Improved review artifacts
 - Reviewer checklist
