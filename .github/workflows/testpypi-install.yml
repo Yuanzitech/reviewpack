@@ -6,7 +6,7 @@ on:
       package-version:
         description: Reviewpack version to install from TestPyPI.
         required: true
-        default: "0.5.0"
+        default: "0.6.0"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -33,6 +33,10 @@ jobs:
         run: |
           reviewpack version
 
+      - name: Run Reviewpack guide
+        run: |
+          reviewpack guide
+
       - name: Run Reviewpack demo
         run: |
           reviewpack demo --output .reviewpack-testpypi
@@ -47,6 +51,10 @@ jobs:
           test -f .reviewpack-testpypi/ai-handoff.md
           test -f .reviewpack-testpypi/ai-context.md
           test -f .reviewpack-testpypi/reviewpack.json
+
+      - name: Run Reviewpack handoff
+        run: |
+          reviewpack handoff --output .reviewpack-testpypi
 
       - name: Run Reviewpack with AI input preview
         run: |
