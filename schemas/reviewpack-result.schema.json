@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Yuanzitech/reviewpack/schemas/reviewpack-result.schema.json",
+  "title": "Reviewpack Result",
+  "description": "Draft pre-1.0 JSON schema for Reviewpack reviewpack.json output.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "pr",
+    "changed_files",
+    "stats",
+    "risk_signals",
+    "review_focus",
+    "metadata"
+  ],
+  "properties": {
+    "pr": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "title",
+        "author",
+        "labels"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_draft": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "base_branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "head_branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "commit_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "path",
+          "additions",
+          "deletions",
+          "category"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "additions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "deletions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "source",
+              "test",
+              "docs",
+              "dependency",
+              "ci",
+              "config",
+              "infrastructure",
+              "unknown"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "files_changed",
+        "additions",
+        "deletions",
+        "source_files",
+        "test_files",
+        "docs_files",
+        "dependency_files",
+        "ci_files",
+        "config_files",
+        "infra_files",
+        "unknown_files"
+      ],
+      "properties": {
+        "files_changed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "additions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deletions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "test_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "docs_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dependency_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ci_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "config_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "infra_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown_files": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "risk_signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "level",
+          "title",
+          "message",
+          "files"
+        ],
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "review_focus": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "title",
+          "reason"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "ai_used": {
+          "type": "boolean"
+        },
+        "network_used": {
+          "type": "boolean"
+        },
+        "mode": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
