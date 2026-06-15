@@ -92,6 +92,88 @@ If only copy and paste is available, use:
 
     ai-review-prompt.md
 
+## Optional PR comment mode
+
+Reviewpack can optionally post or update a short PR comment.
+
+This is disabled by default.
+
+Enable it with:
+
+    comment: "true"
+
+Example:
+
+    name: Reviewpack
+
+    on:
+      pull_request:
+
+    jobs:
+      reviewpack:
+        runs-on: ubuntu-latest
+
+        permissions:
+          contents: read
+          pull-requests: write
+
+        steps:
+          - name: Check out repository
+            uses: actions/checkout@v4
+
+          - name: Run Reviewpack with PR comment
+            uses: Yuanzitech/reviewpack@v0.5.0
+            with:
+              mode: github
+              pr-url: ${{ github.event.pull_request.html_url }}
+              github-token: ${{ github.token }}
+              comment: "true"
+
+The comment is intentionally short.
+
+It points maintainers to:
+
+    reviewpack-output
+    pr-summary.md
+    risk-checklist.md
+    reviewer-checklist.md
+    release-note-hints.md
+    ai-handoff.md
+    ai-context.md
+    ai-review-prompt.md
+
+It does not paste the full review pack into the pull request.
+
+## Comment update behavior
+
+Reviewpack comments include a stable hidden marker:
+
+    <!-- reviewpack-comment -->
+
+If a previous Reviewpack comment exists, comment mode updates it.
+
+If no previous Reviewpack comment exists, comment mode creates one.
+
+This avoids duplicate Reviewpack comments on repeated workflow runs.
+
+## Permissions for comment mode
+
+Artifact-only mode can use:
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+Comment mode requires:
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+For pull requests from forks, GitHub may restrict write permissions.
+
+If comment mode cannot write a comment, artifact generation can still be used without comment mode.
+
 ## Inputs
 
 ### mode
@@ -113,6 +195,8 @@ GitHub pull request URL.
 
 Required when mode is github.
 
+Required when comment mode is enabled.
+
 Example:
 
     pr-url: ${{ github.event.pull_request.html_url }}
@@ -121,11 +205,25 @@ Example:
 
 Optional GitHub token for GitHub API requests.
 
+Required when comment mode is enabled.
+
 Recommended in GitHub Actions:
 
     github-token: ${{ github.token }}
 
 Reviewpack does not store this token and does not write it to generated output files.
+
+### comment
+
+Post or update a short Reviewpack summary comment on the pull request.
+
+Default:
+
+    false
+
+Example:
+
+    comment: "true"
 
 ### base
 
@@ -183,13 +281,20 @@ Default:
 
 GitHub mode fetches pull request metadata and changed file statistics from the GitHub API.
 
-It collects:
+It may collect:
 
 - Pull request title
 - Pull request author
 - Pull request description
 - Pull request URL
+- Pull request state
+- Draft status
+- Base branch name
+- Head branch name
+- Commit count
+- Labels
 - Changed file paths
+- Changed file status
 - Added line counts
 - Deleted line counts
 
@@ -244,11 +349,17 @@ For private repositories, use:
 
     github-token: ${{ github.token }}
 
-Recommended permissions:
+Recommended permissions for artifact-only mode:
 
     permissions:
       contents: read
       pull-requests: read
+
+Recommended permissions for comment mode:
+
+    permissions:
+      contents: read
+      pull-requests: write
 
 ### Local CLI usage
 
@@ -286,23 +397,13 @@ The action:
 - Does not merge PRs
 - Does not upload source code to external AI services
 - Does not send raw diffs to AI providers
-- Uploads generated Reviewpack files only as GitHub Actions artifacts
-
-## Permissions
-
-Recommended workflow permissions:
-
-    permissions:
-      contents: read
-      pull-requests: read
-
-These permissions are enough for the metadata-focused GitHub workflow.
+- Uploads generated Reviewpack files only as GitHub Actions artifacts by default
+- Posts only a short pointer comment when comment mode is explicitly enabled
 
 ## Limitations
 
 The current GitHub Action integration does not yet support:
 
-- Posting PR comments
 - Inline review comments
 - GitHub Enterprise hosts
 - AI provider calls
