@@ -6,7 +6,7 @@ on:
       package-version:
         description: Reviewpack version to install from TestPyPI.
         required: true
-        default: "0.6.1"
+        default: "0.7.0"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
