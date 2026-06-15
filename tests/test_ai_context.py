@@ -1,6 +1,7 @@
 from reviewpack.ai_context import render_ai_context, write_ai_context
 from reviewpack.analyzer import analyze_reviewpack_input
 from reviewpack.demo import build_demo_reviewpack_input
+from reviewpack.models import PullRequestInfo, ReviewpackInput
 
 
 def make_result():
@@ -29,6 +30,33 @@ def test_render_ai_context_includes_demo_pr_metadata() -> None:
 
     assert "Add token refresh support" in markdown
     assert "demo-user" in markdown
+
+
+def test_render_ai_context_includes_optional_github_metadata() -> None:
+    reviewpack_input = ReviewpackInput(
+        pr=PullRequestInfo(
+            title="Improve docs",
+            author="octocat",
+            url="https://github.com/owner/repo/pull/123",
+            state="open",
+            is_draft=False,
+            base_branch="main",
+            head_branch="docs-update",
+            commit_count=3,
+            labels=["documentation"],
+        ),
+        changed_files=[],
+    )
+    result = analyze_reviewpack_input(reviewpack_input)
+
+    markdown = render_ai_context(result)
+
+    assert "- State: open" in markdown
+    assert "- Draft: false" in markdown
+    assert "- Base branch: main" in markdown
+    assert "- Head branch: docs-update" in markdown
+    assert "- Commits: 3" in markdown
+    assert "- Labels: documentation" in markdown
 
 
 def test_render_ai_context_does_not_claim_raw_source_was_inspected() -> None:

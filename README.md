@@ -66,6 +66,10 @@ Reviewpack prepares that context before review starts.
 
     reviewpack github https://github.com/owner/repo/pull/123
 
+GitHub mode may collect PR metadata such as state, draft status, base/head branch names, commit count, labels, changed file status, and changed file statistics.
+
+GitHub mode does not collect raw diffs or full source code by default.
+
 Public repositories usually do not require a token.
 
 Private repositories or rate-limited usage may require:
@@ -258,9 +262,11 @@ See:
 
 Reviewpack runs locally by default for demo, fixture, and local git workflows.
 
-By default, it does not send code, diffs, branch names, commit messages, environment variables, repository metadata, or terminal information to any external AI service.
+By default, it does not send code, diffs, commit messages, environment variables, repository secrets, or terminal information to any external AI service.
 
 GitHub mode uses network access only to fetch explicitly requested pull request metadata and changed file statistics from the GitHub API.
+
+GitHub mode may include PR metadata such as labels, base/head branch names, commit count, draft status, and changed file status in generated local artifacts.
 
 The GitHub Action integration generates workflow-local artifacts and does not call AI providers.
 
@@ -283,7 +289,7 @@ Current privacy-oriented features include:
 - Reviewer checklist without AI calls
 - Best-effort secret redaction for preview text
 - No raw diff upload by default
-- No branch name upload by default
+- No full source code upload by default
 - No commit message upload by default
 
 ## Documentation
@@ -328,7 +334,7 @@ It currently supports:
 - Demo mode
 - Local fixture input
 - Local git diff input
-- GitHub PR metadata input
+- Enriched GitHub PR metadata input
 - GitHub Action artifact output
 - Structured Markdown and JSON output
 - Configurable rules and outputs

@@ -1,105 +1,132 @@
-# GitHub Pull Request Support
+# GitHub Pull Request Mode
 
-Reviewpack supports GitHub pull request workflows in stages.
+Reviewpack can generate review context from a GitHub pull request URL.
 
-The current GitHub mode can fetch pull request metadata and changed file statistics from the GitHub API.
+Example:
 
-## Supported URL format
+    reviewpack github https://github.com/owner/repo/pull/123
 
-Reviewpack supports GitHub pull request URLs in this format:
-
-    https://github.com/owner/repo/pull/123
-
-## Command
-
-Generate a review pack from GitHub PR metadata:
-
-    reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack
-
-Generate a review pack with AI input preview:
-
-    reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack --preview-ai-input
-
-Use a GitHub token explicitly:
-
-    reviewpack github https://github.com/owner/repo/pull/123 --token YOUR_TOKEN --output .reviewpack
-
-Or use an environment variable:
-
-    REVIEWPACK_GITHUB_TOKEN=YOUR_TOKEN reviewpack github https://github.com/owner/repo/pull/123 --output .reviewpack
+Reviewpack writes output to `.reviewpack/` by default.
 
 ## What GitHub mode collects
 
-The current GitHub mode collects:
+GitHub mode collects metadata from the GitHub API.
+
+It may collect:
 
 - Pull request title
 - Pull request author
-- Pull request description
 - Pull request URL
+- Pull request description
+- Pull request state
+- Draft status
+- Base branch name
+- Head branch name
+- Commit count
+- Labels
 - Changed file paths
+- Changed file status
 - Added line counts
 - Deleted line counts
 
-## What GitHub mode does not collect
+## What GitHub mode does not collect by default
 
-The current GitHub mode does not collect:
+GitHub mode does not collect by default:
 
 - Raw diffs
 - Full source code
-- Branch names
-- Commit messages
 - Review comments
-- Repository secrets
-- Environment variables
-- Terminal history
+- Commit messages
+- Secrets
+- Local environment variables
 
-## Token policy
+Reviewpack does not call AI providers by default.
 
-GitHub tokens are optional for public repositories, but they may be needed for private repositories or rate limits.
+The user remains in control of which generated artifacts are shared with AI tools.
 
-Reviewpack follows these rules:
+## Public repositories
 
-- Tokens are user-provided
-- Tokens are not stored by Reviewpack
-- Tokens are not written to generated review packs
-- Tokens are not printed in normal CLI output
-- Tokens can be provided with `--token`
-- Tokens can be provided with `REVIEWPACK_GITHUB_TOKEN`
-- `GITHUB_TOKEN` is supported as a fallback for CI environments
+For public repositories, GitHub mode usually works without a token.
 
-## Privacy behavior
+Example:
 
-GitHub mode uses network access because it calls the GitHub API.
+    reviewpack github https://github.com/owner/repo/pull/123
 
-It does not call AI providers.
+However, unauthenticated GitHub API requests may be rate-limited.
 
-It does not upload code to Reviewpack services because Reviewpack has no hosted service.
+## Private repositories and rate limits
 
-It only reads explicitly requested pull request metadata and changed file statistics from GitHub.
+Private repositories or rate-limited usage require a GitHub token.
 
-## Output
+Recommended local usage:
 
-The command writes:
+    REVIEWPACK_GITHUB_TOKEN=YOUR_TOKEN reviewpack github https://github.com/owner/repo/pull/123
 
-    .reviewpack/pr-summary.md
-    .reviewpack/risk-checklist.md
-    .reviewpack/ai-review-prompt.md
-    .reviewpack/reviewpack.json
+Avoid putting long-lived tokens directly into shell history when possible.
 
-When `--preview-ai-input` is enabled, it also writes:
+## GitHub Actions
 
-    .reviewpack/ai-input-preview.md
+In GitHub Actions, pass the workflow token:
 
-## Limitations
+    github-token: ${{ github.token }}
 
-The current GitHub mode does not yet support:
+Recommended permissions:
 
-- GitHub Enterprise hosts
-- GitLab or Bitbucket
-- Linked issue collection
-- CI status collection
-- Review comment collection
-- Raw diff analysis
-- GitHub Action PR comments
+    permissions:
+      contents: read
+      pull-requests: read
 
-These may be added later with explicit privacy controls.
+See:
+
+    docs/github-action.md
+
+## Output metadata
+
+When available, GitHub metadata is included in:
+
+    pr-summary.md
+    ai-review-prompt.md
+    ai-context.md
+    reviewpack.json
+
+Example metadata:
+
+    State: open
+    Draft: false
+    Base branch: main
+    Head branch: feature/docs
+    Commits: 3
+    Labels: documentation, enhancement
+
+Changed files may include status information such as:
+
+    added
+    modified
+    removed
+    renamed
+
+## Error handling
+
+Reviewpack provides friendlier error messages for common GitHub API failures.
+
+### 401 Unauthorized
+
+The token may be missing, invalid, or expired.
+
+### 403 Forbidden
+
+This may be caused by API rate limits or insufficient token permissions.
+
+### 404 Not Found
+
+The pull request may not exist, or the repository may not be accessible with the current token.
+
+## Privacy notes
+
+GitHub mode uses network access to fetch the explicitly requested pull request metadata.
+
+It does not send data to AI providers.
+
+It does not upload source code.
+
+It does not collect raw diffs by default.

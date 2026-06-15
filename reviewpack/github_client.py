@@ -2,49 +2,100 @@ from __future__ import annotations
 
 import json
 import os
-from urllib.error import HTTPError, URLError
-from urllib.parse import quote
-from urllib.request import Request, urlopen
+import re
+import urllib.error
+import urllib.request
+from dataclasses import dataclass
+from typing import Any
 
-from reviewpack.github import GitHubPullRequestRef, parse_github_pr_url
 from reviewpack.models import ChangedFile, PullRequestInfo, ReviewpackInput
 
 
-GITHUB_API_BASE_URL = "https://api.github.com"
+GITHUB_PR_URL_PATTERN = re.compile(
+    r"^https://github\.com/(?P<owner>[^/]+)/(?P<repo>[^/]+)/pull/(?P<number>\d+)/?$"
+)
 
 
 class GitHubAPIError(RuntimeError):
-    """Raised when GitHub API collection fails."""
+    """Raised when GitHub API requests fail."""
 
 
-def get_github_token(explicit_token: str | None = None) -> str | None:
-    """Return a GitHub token from explicit input or supported environment variables.
+@dataclass(frozen=True)
+class GitHubPullRequestRef:
+    """Parsed GitHub pull request URL reference."""
 
-    Reviewpack never stores tokens and never includes them in generated output.
-    """
-
-    if explicit_token:
-        return explicit_token
-
-    return os.getenv("REVIEWPACK_GITHUB_TOKEN") or os.getenv("GITHUB_TOKEN")
+    owner: str
+    repo: str
+    number: int
 
 
-def build_github_api_url(ref: GitHubPullRequestRef, path: str) -> str:
-    """Build a GitHub API URL for a pull request resource."""
+def parse_github_pull_request_url(pr_url: str) -> GitHubPullRequestRef:
+    """Parse a GitHub pull request URL."""
 
-    owner = quote(ref.owner, safe="")
-    repo = quote(ref.repo, safe="")
-    clean_path = path.lstrip("/")
+    match = GITHUB_PR_URL_PATTERN.match(pr_url.strip())
 
-    return f"{GITHUB_API_BASE_URL}/repos/{owner}/{repo}/{clean_path}"
+    if not match:
+        raise ValueError(
+            "Invalid GitHub pull request URL. Expected format: "
+            "https://github.com/owner/repo/pull/123"
+        )
+
+    return GitHubPullRequestRef(
+        owner=match.group("owner"),
+        repo=match.group("repo"),
+        number=int(match.group("number")),
+    )
 
 
-def build_github_request(url: str, token: str | None = None) -> Request:
-    """Build a GitHub API request.
+def build_github_api_url(ref: GitHubPullRequestRef) -> str:
+    """Build GitHub API URL for pull request metadata."""
 
-    The token, when provided, is only sent as an Authorization header. It is not
-    written to Reviewpack output files.
-    """
+    return f"https://api.github.com/repos/{ref.owner}/{ref.repo}/pulls/{ref.number}"
+
+
+def build_github_files_api_url(ref: GitHubPullRequestRef) -> str:
+    """Build GitHub API URL for pull request changed files."""
+
+    return f"https://api.github.com/repos/{ref.owner}/{ref.repo}/pulls/{ref.number}/files"
+
+
+def get_github_token(token: str | None = None) -> str | None:
+    """Return GitHub token from explicit input or environment."""
+
+    if token:
+        return token
+
+    return os.getenv("REVIEWPACK_GITHUB_TOKEN")
+
+
+def github_error_message(status_code: int, url: str) -> str:
+    """Return a friendly GitHub API error message."""
+
+    if status_code == 401:
+        return (
+            "GitHub API request failed with 401 Unauthorized. "
+            "The token may be missing, invalid, or expired. "
+            "For private repositories or rate-limited usage, set REVIEWPACK_GITHUB_TOKEN."
+        )
+
+    if status_code == 403:
+        return (
+            "GitHub API request failed with 403 Forbidden. "
+            "This may be caused by rate limits or insufficient token permissions. "
+            "For private repositories or rate-limited usage, set REVIEWPACK_GITHUB_TOKEN."
+        )
+
+    if status_code == 404:
+        return (
+            "GitHub API request failed with 404 Not Found. "
+            "The pull request may not exist, or the repository may not be accessible with the current token."
+        )
+
+    return f"GitHub API request failed with HTTP {status_code}: {url}"
+
+
+def fetch_github_json(url: str, token: str | None = None) -> Any:
+    """Fetch JSON from GitHub API."""
 
     headers = {
         "Accept": "application/vnd.github+json",
@@ -52,117 +103,72 @@ def build_github_request(url: str, token: str | None = None) -> Request:
         "X-GitHub-Api-Version": "2022-11-28",
     }
 
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
+    github_token = get_github_token(token)
+    if github_token:
+        headers["Authorization"] = f"Bearer {github_token}"
 
-    return Request(url, headers=headers)
-
-
-def read_github_json(url: str, token: str | None = None) -> object:
-    """Read JSON from the GitHub API."""
-
-    request = build_github_request(url, token)
+    request = urllib.request.Request(url, headers=headers)
 
     try:
-        with urlopen(request, timeout=20) as response:
-            payload = response.read().decode("utf-8")
-    except HTTPError as error:
-        message = error.read().decode("utf-8", errors="replace")
-        raise GitHubAPIError(f"GitHub API request failed with HTTP {error.code}: {message}") from error
-    except URLError as error:
-        raise GitHubAPIError(f"GitHub API request failed: {error.reason}") from error
+        with urllib.request.urlopen(request, timeout=20) as response:
+            raw_body = response.read().decode("utf-8")
+    except urllib.error.HTTPError as error:
+        raise GitHubAPIError(github_error_message(error.code, url)) from error
+    except urllib.error.URLError as error:
+        raise GitHubAPIError(f"GitHub API request failed: {error}") from error
 
-    return json.loads(payload)
-
-
-def fetch_github_pull_request(ref: GitHubPullRequestRef, token: str | None = None) -> dict:
-    """Fetch pull request metadata from the GitHub API."""
-
-    url = build_github_api_url(ref, f"pulls/{ref.pull_number}")
-    data = read_github_json(url, token)
-
-    if not isinstance(data, dict):
-        raise GitHubAPIError("GitHub pull request response was not an object.")
-
-    return data
+    return json.loads(raw_body)
 
 
-def fetch_github_pull_request_files(ref: GitHubPullRequestRef, token: str | None = None) -> list[dict]:
-    """Fetch changed files for a pull request from the GitHub API."""
+def collect_reviewpack_input_from_github_url(pr_url: str, token: str | None = None) -> ReviewpackInput:
+    """Collect Reviewpack input from a GitHub pull request URL."""
 
-    files: list[dict] = []
-    page = 1
+    ref = parse_github_pull_request_url(pr_url)
 
-    while True:
-        url = build_github_api_url(ref, f"pulls/{ref.pull_number}/files?per_page=100&page={page}")
-        data = read_github_json(url, token)
+    pr_data = fetch_github_json(build_github_api_url(ref), token=token)
+    files_data = fetch_github_json(build_github_files_api_url(ref), token=token)
 
-        if not isinstance(data, list):
-            raise GitHubAPIError("GitHub pull request files response was not a list.")
+    if not isinstance(pr_data, dict):
+        raise GitHubAPIError("GitHub pull request response was not a JSON object.")
 
-        files.extend(item for item in data if isinstance(item, dict))
+    if not isinstance(files_data, list):
+        raise GitHubAPIError("GitHub pull request files response was not a JSON array.")
 
-        if len(data) < 100:
-            break
+    labels = [
+        label.get("name")
+        for label in pr_data.get("labels", [])
+        if isinstance(label, dict) and isinstance(label.get("name"), str)
+    ]
 
-        page += 1
-
-    return files
-
-
-def github_pr_to_reviewpack_input(
-    ref: GitHubPullRequestRef,
-    pr_data: dict,
-    file_data: list[dict],
-) -> ReviewpackInput:
-    """Convert GitHub API data into Reviewpack input."""
-
-    user = pr_data.get("user") or {}
-    author = user.get("login") or "unknown"
-    title = pr_data.get("title") or f"GitHub PR #{ref.pull_number}"
-    description = pr_data.get("body") or None
-    html_url = pr_data.get("html_url") or ref.url
+    pull_request = PullRequestInfo(
+        title=str(pr_data.get("title") or ""),
+        author=str((pr_data.get("user") or {}).get("login") or "unknown"),
+        url=str(pr_data.get("html_url") or pr_url),
+        description=pr_data.get("body"),
+        state=pr_data.get("state"),
+        is_draft=pr_data.get("draft"),
+        base_branch=(pr_data.get("base") or {}).get("ref"),
+        head_branch=(pr_data.get("head") or {}).get("ref"),
+        commit_count=pr_data.get("commits"),
+        labels=labels,
+    )
 
     changed_files: list[ChangedFile] = []
 
-    for item in file_data:
-        path = item.get("filename")
-        if not path:
+    for file_data in files_data:
+        if not isinstance(file_data, dict):
             continue
 
         changed_files.append(
             ChangedFile(
-                path=str(path),
-                additions=int(item.get("additions") or 0),
-                deletions=int(item.get("deletions") or 0),
+                path=str(file_data.get("filename") or ""),
+                additions=int(file_data.get("additions") or 0),
+                deletions=int(file_data.get("deletions") or 0),
+                status=file_data.get("status"),
             )
         )
 
     return ReviewpackInput(
-        pr=PullRequestInfo(
-            title=str(title),
-            author=str(author),
-            url=str(html_url),
-            description=description,
-        ),
+        pr=pull_request,
         changed_files=changed_files,
     )
-
-
-def collect_reviewpack_input_from_github_url(
-    pr_url: str,
-    token: str | None = None,
-) -> ReviewpackInput:
-    """Collect Reviewpack input from a GitHub pull request URL.
-
-    This function fetches GitHub PR metadata and changed file statistics. It does
-    not fetch raw diffs, full source code, branch names, or commit messages.
-    """
-
-    ref = parse_github_pr_url(pr_url)
-    resolved_token = get_github_token(token)
-
-    pr_data = fetch_github_pull_request(ref, resolved_token)
-    file_data = fetch_github_pull_request_files(ref, resolved_token)
-
-    return github_pr_to_reviewpack_input(ref, pr_data, file_data)
