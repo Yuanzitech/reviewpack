@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap outlines the planned direction for Reviewpack after the v0.5.0 release.
+This roadmap outlines the planned direction for Reviewpack after the v0.6.0 release.
 
 Reviewpack is a privacy-first context generator for AI-assisted pull request review. The roadmap focuses on improving maintainer workflows without requiring AI or uploading code by default.
 
@@ -14,11 +14,17 @@ It already supports:
 - Demo mode
 - Fixture-based input
 - Local git diff input
-- GitHub pull request metadata input
+- Enriched GitHub pull request metadata input
 - GitHub Action artifact output
+- Optional short PR comment mode
 - Markdown and JSON outputs
-- Reviewer checklist output
-- Release note hints output
+- Configurable output generation
+- Configurable risk thresholds
+- Configurable high-risk paths
+- Configurable path classification
+- Improved risk checklist output
+- Improved reviewer checklist output
+- Improved release note hints output
 - AI-ready prompt generation
 - AI handoff file generation
 - Single-file AI context bundle generation
@@ -48,108 +54,75 @@ It already supports:
 
 Use Reviewpack in pull request workflows and download the generated artifact.
 
+Optional short PR comment mode is available through:
+
+    comment: "true"
+
 See:
 
     docs/github-action.md
 
 ## Near-term priorities
 
-The next stage should focus on making Reviewpack more useful for real maintainers and teams.
+After v0.6.0, the next stage should focus on stabilization, validation, and preparing a stronger artifact contract.
 
-## v0.6.x: GitHub workflow, configuration, and artifact quality
+## v0.7.x: Configuration and artifact contract refinement
 
 Focus areas:
 
-- GitHub Action UX polish
-- Configuration-driven rules and outputs
-- Review artifact quality improvements
-- Better output examples
-- Clearer project status and roadmap documentation
+- Stronger `.reviewpack.yml` documentation
+- Configuration schema stability
+- Output selection stability
+- JSON output structure documentation
+- Backward compatibility expectations
+- More realistic configuration examples
 
 Potential additions:
 
-- Improved GitHub Action examples
-- Local mode GitHub Action example
-- Clearer artifact download instructions
-- More visible AI handoff guidance in GitHub Action workflows
-- Configurable output selection
-- Configurable risk thresholds
-- Configurable high-risk paths
-- More structured reviewer checklist output
-- More useful release note hints
-- More example output files
+- JSON schema documentation
+- Configuration examples for Python projects
+- Configuration examples for JavaScript projects
+- More explicit artifact stability notes
+- Migration notes for future breaking changes
 
-## v0.7.x: Config-driven workflows
+## v0.8.x: GitHub workflow validation
 
 Focus areas:
 
-- Stronger `.reviewpack.yml` support
-- Team-specific rules
-- Configurable path classification
-- Configurable output generation
-- Configurable thresholds
-
-Potential configuration areas:
-
-    outputs
-    risk
-    paths
-    github
-    ai_handoff
-
-Example future configuration:
-
-    outputs:
-      ai_context: true
-      ai_handoff: true
-      reviewer_checklist: true
-      release_note_hints: true
-
-    risk:
-      large_pr_files: 20
-      large_pr_lines: 500
-      high_risk_paths:
-        - .github/workflows/
-        - pyproject.toml
-
-## v0.8.x: Review artifact quality
-
-Focus areas:
-
-- Better risk signal quality
-- Better reviewer checklist quality
-- Better release note hints
-- Better AI context structure
-- More realistic examples
-
-Potential improvements:
-
-- More explicit risk reasons
-- Suggested reviewer actions
-- Better docs/test/dependency impact detection
-- More structured release note categories
-- More output examples under `examples/output/`
-
-## v0.9.x: GitHub PR workflow enrichment
-
-Focus areas:
-
-- Better GitHub PR metadata support
-- Better GitHub API error handling
-- Better rate limit guidance
-- Optional safe metadata enrichment
+- Broader GitHub Action validation
+- Fork pull request behavior documentation
+- Comment mode failure handling
+- GitHub Enterprise host design
+- More robust token and permission guidance
 
 Potential additions:
 
-- PR draft status
-- Labels
-- Changed file status
-- Commit count
-- Base branch metadata
-- Friendlier rate limit errors
-- Clearer token guidance
+- Optional GitHub Enterprise host support
+- Better fork PR guidance
+- Safer comment mode fallback behavior
+- More examples for private repositories
+- More examples for monorepos
 
 Reviewpack should continue to avoid raw diff collection by default.
+
+## v0.9.x: Stabilization before 1.0
+
+Focus areas:
+
+- Stable command surface
+- Stable output file names
+- Stable JSON artifact expectations
+- Stable GitHub Action inputs
+- Stable privacy model
+- Documentation completeness
+
+Potential additions:
+
+- 1.0 readiness checklist
+- Artifact contract documentation
+- Configuration compatibility policy
+- Deprecation policy
+- More complete example gallery
 
 ## v1.0.0: Stable CLI and artifact contract
 
@@ -213,27 +186,34 @@ Future AI provider support should be:
 
 ## Optional PR comment mode
 
-Optional PR comment mode may be useful later.
+Optional PR comment mode is available and intentionally opt-in.
 
-It should be opt-in.
+It should remain:
 
-It should not post comments by default.
+- disabled by default
+- short and non-noisy
+- artifact-oriented
+- free of full review pack content
+- free of AI-generated claims
 
-Potential behavior:
+Future work may improve:
 
-- Post a short summary
-- Link to workflow artifact
-- Mention generated handoff files
-- Avoid noisy line-by-line comments
+- fork PR behavior
+- comment failure handling
+- artifact link guidance
+- GitHub Enterprise compatibility
 
-Before implementation, Reviewpack should define:
+## Raw diff analysis
 
-- Comment permissions
-- Update strategy
-- Duplicate comment prevention
-- Fork PR behavior
-- Markdown length limits
-- Privacy guidance
+Raw diff analysis is intentionally not enabled by default.
+
+If added later, it should be:
+
+- explicit
+- opt-in
+- clearly documented
+- previewable
+- privacy-aware
 
 ## Guiding principles
 
