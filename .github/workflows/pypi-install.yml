@@ -6,7 +6,7 @@ on:
       package-version:
         description: Reviewpack version to install from PyPI.
         required: true
-        default: "0.5.0"
+        default: "0.6.0"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
