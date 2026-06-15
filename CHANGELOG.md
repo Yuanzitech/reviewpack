@@ -8,21 +8,26 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Output artifacts documentation
-- Example risk checklist output
-- Example reviewer checklist output
-- Example release note hints output
-- Example AI handoff output
-- Example AI context output
+- GitHub PR state metadata
+- GitHub PR draft status metadata
+- GitHub PR base and head branch metadata
+- GitHub PR commit count metadata
+- GitHub PR labels metadata
+- GitHub changed file status metadata
+- Tests for enriched GitHub metadata collection
+- Tests for enriched GitHub metadata rendering
 
 ### Changed
 
-- Risk checklist output is now more actionable with why-it-matters and what-to-check sections
-- Reviewer checklist output is now more structured around maintainer review areas
-- Release note hints now include suggested maintainer actions and decision questions
-- AI context output now includes review objective and known limitations sections
-- README now links to output artifact documentation and example outputs
-- Simplified Chinese README now links to output artifact documentation and example outputs
+- GitHub mode now includes enriched PR metadata in generated artifacts when available
+- PR summary now displays GitHub PR state, draft status, branches, commit count, and labels when available
+- AI review prompt now includes enriched GitHub PR metadata when available
+- AI context now includes enriched GitHub PR metadata when available
+- GitHub API error messages are now more actionable for common authentication, rate limit, and not found cases
+- GitHub documentation now describes enriched metadata collection boundaries
+- Commands guide now documents enriched GitHub metadata behavior
+- README now documents enriched GitHub metadata behavior
+- Simplified Chinese README now documents enriched GitHub metadata behavior
 
 ### Fixed
 
