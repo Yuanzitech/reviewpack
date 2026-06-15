@@ -192,15 +192,29 @@ workflow 完成后，可以在 GitHub Actions run 页面下载这个 artifact。
     ai-handoff.md
     ai-context.md
 
-当前 GitHub Action 集成不会自动评论 PR，也不会调用 AI provider。
+当前 GitHub Action 集成默认不会自动评论 PR，也不会调用 AI provider。
+
+可以显式开启可选 PR comment mode：
+
+    comment: "true"
+
+comment mode 会发布或更新一条短的指引评论。它不会把完整 review pack 粘贴到 PR 评论里。
+
+comment mode 需要：
+
+    permissions:
+      contents: read
+      pull-requests: write
 
 更多说明：
 
     docs/github-action.md
 
-local mode 示例：
+示例：
 
+    examples/github-action.yml
     examples/github-action-local.yml
+    examples/github-action-comment.yml
 
 ## Reviewpack 会生成什么？
 
@@ -277,6 +291,7 @@ GitHub 模式可能会把 labels、base/head branch 名称、commit count、draf
 - 本地 git diff 模式
 - GitHub PR metadata 模式
 - GitHub Action artifact 模式
+- 可选短 PR comment mode
 - 可配置输出文件
 - 可配置风险阈值
 - 可配置高风险路径
@@ -291,6 +306,7 @@ GitHub 模式可能会把 labels、base/head branch 名称、commit count、draf
 - 默认不上传 raw diff
 - 默认不上传完整源代码
 - 默认不包含 commit message
+- 默认不评论 PR
 
 ## 文档
 
@@ -338,6 +354,7 @@ Reviewpack 目前是一个已发布到 PyPI 的早期产品。
 - 本地 git diff 输入
 - 增强的 GitHub PR metadata 输入
 - GitHub Action artifact 输出
+- 可选短 PR comment mode
 - Markdown 和 JSON 结构化输出
 - 可配置规则和输出
 - 改进后的 Review artifacts

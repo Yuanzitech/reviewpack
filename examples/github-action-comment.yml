@@ -1,0 +1,25 @@
+name: Reviewpack Comment Mode
+
+on:
+  pull_request:
+
+jobs:
+  reviewpack:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run Reviewpack with PR comment
+        uses: Yuanzitech/reviewpack@v0.5.0
+        with:
+          mode: github
+          pr-url: ${{ github.event.pull_request.html_url }}
+          github-token: ${{ github.token }}
+          comment: "true"
+          preview-ai-input: "true"

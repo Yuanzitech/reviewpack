@@ -13,7 +13,7 @@ inputs:
     default: github
 
   pr-url:
-    description: GitHub pull request URL. Required when mode is github.
+    description: GitHub pull request URL. Required when mode is github. Required for comment mode.
     required: false
     default: ""
 
@@ -51,6 +51,11 @@ inputs:
     description: Optional GitHub token for GitHub API requests. Prefer passing github.token from workflow context.
     required: false
     default: ""
+
+  comment:
+    description: Post or update a short Reviewpack summary comment on the pull request. Disabled by default.
+    required: false
+    default: "false"
 
 runs:
   using: composite
@@ -129,6 +134,9 @@ runs:
         echo ""
         echo "If artifact upload is enabled, download the artifact named:"
         echo "  $ARTIFACT_NAME"
+        echo ""
+        echo "Optional PR comment mode:"
+        echo "  Set comment: \"true\" to post or update a short Reviewpack summary comment."
 
     - name: Upload Reviewpack artifact
       if: ${{ inputs.upload-artifact == 'true' }}
@@ -138,3 +146,27 @@ runs:
         path: ${{ inputs.output }}
         if-no-files-found: error
         include-hidden-files: true
+
+    - name: Post Reviewpack PR comment
+      if: ${{ inputs.comment == 'true' }}
+      shell: bash
+      env:
+        REVIEWPACK_GITHUB_TOKEN: ${{ inputs.github-token }}
+        REVIEWPACK_PR_URL: ${{ inputs.pr-url }}
+        REVIEWPACK_OUTPUT_DIR: ${{ inputs.output }}
+        REVIEWPACK_ARTIFACT_NAME: ${{ inputs.artifact-name }}
+        REVIEWPACK_WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      run: |
+        set -euo pipefail
+
+        if [ -z "$REVIEWPACK_GITHUB_TOKEN" ]; then
+          echo "Reviewpack action error: github-token is required when comment mode is enabled."
+          exit 1
+        fi
+
+        if [ -z "$REVIEWPACK_PR_URL" ]; then
+          echo "Reviewpack action error: pr-url is required when comment mode is enabled."
+          exit 1
+        fi
+
+        python -m reviewpack.github_comment

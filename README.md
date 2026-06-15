@@ -192,13 +192,27 @@ Recommended files:
 
 The GitHub Action does not post PR comments or call AI providers by default.
 
+Optional PR comment mode is available through:
+
+    comment: "true"
+
+Comment mode posts or updates a short pointer comment. It does not paste the full review pack into the pull request.
+
+Comment mode requires:
+
+    permissions:
+      contents: read
+      pull-requests: write
+
 See:
 
     docs/github-action.md
 
-Local mode example:
+Examples:
 
+    examples/github-action.yml
     examples/github-action-local.yml
+    examples/github-action-comment.yml
 
 ## What Reviewpack generates
 
@@ -277,6 +291,7 @@ Current privacy-oriented features include:
 - Local git diff mode
 - GitHub PR metadata mode
 - GitHub Action artifact mode
+- Optional short PR comment mode
 - Configurable output generation
 - Configurable risk thresholds
 - Configurable high-risk paths
@@ -291,6 +306,7 @@ Current privacy-oriented features include:
 - No raw diff upload by default
 - No full source code upload by default
 - No commit message upload by default
+- No PR comments by default
 
 ## Documentation
 
@@ -336,6 +352,7 @@ It currently supports:
 - Local git diff input
 - Enriched GitHub PR metadata input
 - GitHub Action artifact output
+- Optional short PR comment mode
 - Structured Markdown and JSON output
 - Configurable rules and outputs
 - Improved review artifacts

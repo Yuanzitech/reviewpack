@@ -37,6 +37,7 @@ def test_action_metadata_defines_expected_inputs() -> None:
         "upload-artifact",
         "artifact-name",
         "github-token",
+        "comment",
     }
 
     assert expected_inputs.issubset(set(inputs))
@@ -49,6 +50,7 @@ def test_action_metadata_defaults_to_github_mode() -> None:
     assert inputs["mode"]["default"] == "github"
     assert inputs["output"]["default"] == ".reviewpack"
     assert inputs["upload-artifact"]["default"] == "true"
+    assert inputs["comment"]["default"] == "false"
 
 
 def test_action_metadata_has_expected_steps() -> None:
@@ -61,6 +63,7 @@ def test_action_metadata_has_expected_steps() -> None:
     assert "Run Reviewpack" in step_names
     assert "Show Reviewpack next steps" in step_names
     assert "Upload Reviewpack artifact" in step_names
+    assert "Post Reviewpack PR comment" in step_names
 
 
 def test_action_metadata_uploads_hidden_reviewpack_outputs() -> None:
@@ -78,7 +81,7 @@ def test_action_metadata_uploads_hidden_reviewpack_outputs() -> None:
     assert upload_with["include-hidden-files"] is True
 
 
-def test_action_metadata_next_steps_mentions_handoff_files() -> None:
+def test_action_metadata_next_steps_mentions_handoff_files_and_comment_mode() -> None:
     data = load_action_metadata()
     steps = data["runs"]["steps"]
 
@@ -91,3 +94,18 @@ def test_action_metadata_next_steps_mentions_handoff_files() -> None:
     assert "ai-handoff.md" in run_text
     assert "ai-context.md" in run_text
     assert "reviewpack-output" in run_text or "ARTIFACT_NAME" in run_text
+    assert "comment" in run_text
+
+
+def test_action_metadata_comment_step_is_opt_in() -> None:
+    data = load_action_metadata()
+    steps = data["runs"]["steps"]
+
+    comment_steps = [step for step in steps if step["name"] == "Post Reviewpack PR comment"]
+
+    assert len(comment_steps) == 1
+
+    comment_step = comment_steps[0]
+
+    assert comment_step["if"] == "${{ inputs.comment == 'true' }}"
+    assert "python -m reviewpack.github_comment" in comment_step["run"]
