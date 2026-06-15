@@ -67,7 +67,7 @@ Example:
 
 The `outputs` section controls which files Reviewpack writes.
 
-Supported values:
+Supported public configuration keys:
 
     outputs:
       pr_summary: true
@@ -86,6 +86,19 @@ Example:
     outputs:
       ai_context: false
       release_note_hints: false
+
+### json output key
+
+The public configuration key is:
+
+    json
+
+Internally, Reviewpack maps this to `json_output` to avoid a Pydantic BaseModel field-name conflict.
+
+Users should normally keep using:
+
+    outputs:
+      json: true
 
 ## risk
 
