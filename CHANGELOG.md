@@ -8,11 +8,17 @@ This project follows a simple changelog format during early development.
 
 ### Added
 
-- Nothing yet.
+- Artifact contract documentation
+- Configuration schema documentation
+- JSON output documentation
+- v1.0 readiness checklist
 
 ### Changed
 
-- Nothing yet.
+- Project status updated after v0.6.1
+- Roadmap updated for v0.7 stabilization planning
+- README now links to artifact contract, config schema, JSON output, and v1.0 readiness docs
+- Simplified Chinese README now links to artifact contract, config schema, JSON output, and v1.0 readiness docs
 
 ### Fixed
 
