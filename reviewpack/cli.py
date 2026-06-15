@@ -358,7 +358,7 @@ def print_success(
         console.print(f"- {output / 'ai-handoff.md'}")
     if config.outputs.ai_context:
         console.print(f"- {output / 'ai-context.md'}")
-    if config.outputs.json:
+    if config.outputs.json_output:
         console.print(f"- {output / 'reviewpack.json'}")
 
     if preview_ai_input:
