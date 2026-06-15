@@ -76,6 +76,12 @@ jobs:
           echo "Installing $WHEEL_FILE"
           python -m pip install "$WHEEL_FILE"
 
+          python -W error::UserWarning - <<'PY'
+          import reviewpack.config
+
+          print("Reviewpack config import warning check passed.")
+          PY
+
           reviewpack version
           reviewpack demo --output .reviewpack-smoke
 

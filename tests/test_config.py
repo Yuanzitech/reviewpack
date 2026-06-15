@@ -1,3 +1,5 @@
+import subprocess
+import sys
 from pathlib import Path
 
 from reviewpack.config import ReviewpackConfig, load_config
@@ -13,7 +15,7 @@ def test_default_config_has_expected_outputs_enabled() -> None:
     assert config.outputs.ai_review_prompt is True
     assert config.outputs.ai_handoff is True
     assert config.outputs.ai_context is True
-    assert config.outputs.json is True
+    assert config.outputs.json_output is True
 
 
 def test_load_config_returns_defaults_when_file_missing(tmp_path) -> None:
@@ -41,6 +43,36 @@ outputs:
     assert config.outputs.ai_context is False
     assert config.outputs.release_note_hints is False
     assert config.outputs.pr_summary is True
+
+
+def test_load_config_keeps_public_json_key_compatible(tmp_path) -> None:
+    config_path = tmp_path / ".reviewpack.yml"
+    config_path.write_text(
+        """
+outputs:
+  json: false
+""",
+        encoding="utf-8",
+    )
+
+    config = load_config(config_path)
+
+    assert config.outputs.json_output is False
+
+
+def test_load_config_accepts_internal_json_output_name(tmp_path) -> None:
+    config_path = tmp_path / ".reviewpack.yml"
+    config_path.write_text(
+        """
+outputs:
+  json_output: false
+""",
+        encoding="utf-8",
+    )
+
+    config = load_config(config_path)
+
+    assert config.outputs.json_output is False
 
 
 def test_load_config_reads_risk_settings(tmp_path) -> None:
@@ -101,7 +133,7 @@ outputs:
 
     config = load_config()
 
-    assert config.outputs.json is False
+    assert config.outputs.json_output is False
 
 
 def test_load_config_rejects_non_mapping_yaml(tmp_path) -> None:
@@ -120,6 +152,23 @@ def test_load_config_rejects_non_mapping_yaml(tmp_path) -> None:
         assert "Reviewpack config must be a YAML mapping" in str(error)
     else:
         raise AssertionError("Expected ValueError for non-mapping config YAML")
+
+
+def test_importing_config_with_user_warnings_as_errors_succeeds() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-W",
+            "error::UserWarning",
+            "-c",
+            "import reviewpack.config",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
 
 
 def test_example_config_exists() -> None:
