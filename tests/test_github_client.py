@@ -1,96 +1,103 @@
-from reviewpack.github import GitHubPullRequestRef
+import pytest
+
 from reviewpack.github_client import (
+    GitHubPullRequestRef,
     build_github_api_url,
-    build_github_request,
-    get_github_token,
-    github_pr_to_reviewpack_input,
+    build_github_files_api_url,
+    collect_reviewpack_input_from_github_url,
+    github_error_message,
+    parse_github_pull_request_url,
 )
 
 
-def make_ref() -> GitHubPullRequestRef:
-    return GitHubPullRequestRef(
-        owner="octo-org",
-        repo="example-repo",
-        pull_number=123,
-        url="https://github.com/octo-org/example-repo/pull/123",
+def test_parse_github_pull_request_url() -> None:
+    ref = parse_github_pull_request_url("https://github.com/owner/repo/pull/123")
+
+    assert ref == GitHubPullRequestRef(
+        owner="owner",
+        repo="repo",
+        number=123,
     )
+
+
+def test_parse_github_pull_request_url_rejects_invalid_url() -> None:
+    with pytest.raises(ValueError):
+        parse_github_pull_request_url("https://github.com/owner/repo/issues/123")
 
 
 def test_build_github_api_url() -> None:
-    ref = make_ref()
+    ref = GitHubPullRequestRef(owner="owner", repo="repo", number=123)
 
-    url = build_github_api_url(ref, "pulls/123")
-
-    assert url == "https://api.github.com/repos/octo-org/example-repo/pulls/123"
+    assert build_github_api_url(ref) == "https://api.github.com/repos/owner/repo/pulls/123"
 
 
-def test_build_github_request_without_token() -> None:
-    request = build_github_request("https://api.github.com/repos/octo-org/example-repo/pulls/123")
+def test_build_github_files_api_url() -> None:
+    ref = GitHubPullRequestRef(owner="owner", repo="repo", number=123)
 
-    assert request.get_header("Accept") == "application/vnd.github+json"
-    assert request.get_header("User-agent") == "reviewpack"
-    assert request.get_header("Authorization") is None
+    assert build_github_files_api_url(ref) == "https://api.github.com/repos/owner/repo/pulls/123/files"
 
 
-def test_build_github_request_with_token() -> None:
-    request = build_github_request(
-        "https://api.github.com/repos/octo-org/example-repo/pulls/123",
-        token="test-token",
-    )
-
-    assert request.get_header("Authorization") == "Bearer test-token"
+def test_github_error_message_for_common_status_codes() -> None:
+    assert "401 Unauthorized" in github_error_message(401, "https://api.github.com/example")
+    assert "403 Forbidden" in github_error_message(403, "https://api.github.com/example")
+    assert "404 Not Found" in github_error_message(404, "https://api.github.com/example")
+    assert "HTTP 500" in github_error_message(500, "https://api.github.com/example")
 
 
-def test_get_github_token_prefers_explicit_token(monkeypatch) -> None:
-    monkeypatch.setenv("REVIEWPACK_GITHUB_TOKEN", "env-token")
-
-    assert get_github_token("explicit-token") == "explicit-token"
-
-
-def test_get_github_token_reads_reviewpack_env(monkeypatch) -> None:
-    monkeypatch.setenv("REVIEWPACK_GITHUB_TOKEN", "reviewpack-token")
-    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
-
-    assert get_github_token() == "reviewpack-token"
-
-
-def test_get_github_token_falls_back_to_github_token(monkeypatch) -> None:
-    monkeypatch.delenv("REVIEWPACK_GITHUB_TOKEN", raising=False)
-    monkeypatch.setenv("GITHUB_TOKEN", "github-token")
-
-    assert get_github_token() == "github-token"
-
-
-def test_github_pr_to_reviewpack_input_maps_metadata_and_files() -> None:
-    ref = make_ref()
-    pr_data = {
-        "title": "Add token refresh support",
-        "body": "Update authentication token refresh behavior.",
-        "html_url": "https://github.com/octo-org/example-repo/pull/123",
-        "user": {
-            "login": "alice",
-        },
+def test_collect_reviewpack_input_from_github_url_reads_enriched_metadata(monkeypatch) -> None:
+    pr_response = {
+        "title": "Improve docs",
+        "user": {"login": "octocat"},
+        "html_url": "https://github.com/owner/repo/pull/123",
+        "body": "This updates documentation.",
+        "state": "open",
+        "draft": False,
+        "base": {"ref": "main"},
+        "head": {"ref": "docs-update"},
+        "commits": 3,
+        "labels": [
+            {"name": "documentation"},
+            {"name": "good first issue"},
+        ],
     }
-    file_data = [
-        {
-            "filename": "src/auth/token.py",
-            "additions": 120,
-            "deletions": 32,
-        },
+    files_response = [
         {
             "filename": "README.md",
-            "additions": 12,
-            "deletions": 3,
+            "additions": 10,
+            "deletions": 2,
+            "status": "modified",
+        },
+        {
+            "filename": "docs/usage.md",
+            "additions": 20,
+            "deletions": 1,
+            "status": "added",
         },
     ]
 
-    reviewpack_input = github_pr_to_reviewpack_input(ref, pr_data, file_data)
+    def fake_fetch(url: str, token: str | None = None):
+        if url.endswith("/files"):
+            return files_response
+        return pr_response
 
-    assert reviewpack_input.pr.title == "Add token refresh support"
-    assert reviewpack_input.pr.author == "alice"
-    assert reviewpack_input.pr.url == "https://github.com/octo-org/example-repo/pull/123"
-    assert reviewpack_input.pr.description == "Update authentication token refresh behavior."
+    monkeypatch.setattr("reviewpack.github_client.fetch_github_json", fake_fetch)
+
+    reviewpack_input = collect_reviewpack_input_from_github_url(
+        "https://github.com/owner/repo/pull/123",
+        token="token",
+    )
+
+    assert reviewpack_input.pr.title == "Improve docs"
+    assert reviewpack_input.pr.author == "octocat"
+    assert reviewpack_input.pr.state == "open"
+    assert reviewpack_input.pr.is_draft is False
+    assert reviewpack_input.pr.base_branch == "main"
+    assert reviewpack_input.pr.head_branch == "docs-update"
+    assert reviewpack_input.pr.commit_count == 3
+    assert reviewpack_input.pr.labels == ["documentation", "good first issue"]
+
     assert len(reviewpack_input.changed_files) == 2
-    assert reviewpack_input.changed_files[0].path == "src/auth/token.py"
-    assert reviewpack_input.changed_files[0].additions == 120
-    assert reviewpack_input.changed_files[0].deletions == 32
+    assert reviewpack_input.changed_files[0].path == "README.md"
+    assert reviewpack_input.changed_files[0].status == "modified"
+    assert reviewpack_input.changed_files[1].path == "docs/usage.md"
+    assert reviewpack_input.changed_files[1].status == "added"
