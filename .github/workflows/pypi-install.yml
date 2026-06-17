@@ -1,4 +1,12 @@
-name: PyPI Installname: PyPI Install default: "0.7.0"
+name: PyPI Install
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-version:
+        description: Reviewpack version to install from PyPI.
+        required: true
+        default: "0.7.0"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -66,10 +74,3 @@ jobs:
             .reviewpack-pypi-ai/
           if-no-files-found: error
           include-hidden-files: true
-
-on:
-  workflow_dispatch:
-    inputs:
-      package-version:
-        description: Reviewpack version to install from PyPI.
-        required: true
