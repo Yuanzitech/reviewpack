@@ -159,26 +159,84 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Final v0.7 stabilization docs and link coverage
-- GitHub Action troubleshooting and permission guidance
-- Fork pull request limitation guidance for optional comment mode
-- Extended JSON integration guidance for pre-1.0 schema usage
-- Documentation link tests for schema files
-- Documentation link tests for key configuration examples
-- Documentation link tests for key output examples
+- Nothing yet.
 
 ### Changed
 
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## v0.7.0 - 2026-06-15
+
+### Added
+
+- Artifact contract documentation
+- Configuration schema documentation
+- JSON output documentation
+- v1.0 readiness checklist
+- Contract tests for default output artifact generation
+- Contract tests for configurable output artifact generation
+- Contract tests for `reviewpack.json` top-level structure
+- Contract tests for pull request JSON fields
+- Contract tests for changed file JSON fields
+- Contract tests for stats JSON fields
+- Contract tests for risk signal JSON fields
+- Contract tests for review focus JSON fields
+- Contract tests for public `.reviewpack.yml` configuration keys
+- Contract tests for `outputs.json` compatibility
+- Documentation link contract tests for README-linked files
+- GitHub Action contract tests for stable inputs and defaults
+- GitHub Action contract tests for opt-in comment mode
+- GitHub Action contract tests for artifact upload behavior
+- GitHub Action contract tests for next-step guidance
+- GitHub Action example workflow tests
+- GitHub Action documentation permission and fork limitation tests
+- Draft JSON schema for `reviewpack.json`
+- JSON integration guidance for consumers of Reviewpack output
+- Tests validating demo `reviewpack.json` output against the draft schema
+- Tests for file category and risk level schema enums
+- Minimal `.reviewpack.yml` example
+- Python project `.reviewpack.yml` example
+- JavaScript / TypeScript project `.reviewpack.yml` example
+- Monorepo `.reviewpack.yml` example
+- Tests for loading example configuration files
+- Tests ensuring example configuration files use the public `outputs.json` key
+- Output examples README
+- Example `pr-summary.md` output
+- Example `ai-review-prompt.md` output
+- Example `reviewpack.json` output
+- Tests for example output artifact files
+- Tests for example output Markdown sections
+- Tests for example `reviewpack.json` top-level and nested fields
+- Final v0.7 stabilization docs and link coverage
+
+### Changed
+
+- Package version bumped to 0.7.0
+- CLI version bumped to 0.7.0
+- Project status updated for v0.7.0 stabilization foundation
+- Roadmap updated after v0.7.0 stabilization foundation
+- README now links to artifact contract, config schema, JSON output, JSON integration, and v1.0 readiness docs
+- Simplified Chinese README now links to artifact contract, config schema, JSON output, JSON integration, and v1.0 readiness docs
+- Output artifacts documentation now links to `examples/output/`
+- Artifact contract documentation now links to `examples/output/`
+- Configuration guide now links to practical example config files
+- Configuration schema docs now include practical examples and invalid config guidance
 - GitHub Action documentation now clarifies artifact-only and comment mode permissions
 - GitHub Action documentation now includes troubleshooting for token, permission, fork PR, and artifact issues
 - JSON integration guide now more clearly explains pre-1.0 schema expectations
 - Documentation link tests now cover `schemas/reviewpack-result.schema.json`
 - Documentation link tests now cover `examples/config/`
 - Documentation link tests now cover `examples/output/`
+- TestPyPI install verification workflow default package version updated to 0.7.0
+- PyPI install verification workflow default package version updated to 0.7.0
 
 ### Fixed
 
-- Nothing yet.
+- Nothing.
 
 ## v0.6.1 - 2026-06-15
 

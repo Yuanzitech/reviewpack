@@ -170,7 +170,7 @@ Example workflow:
             uses: actions/checkout@v4
 
           - name: Run Reviewpack
-            uses: Yuanzitech/reviewpack@v0.6.1
+            uses: Yuanzitech/reviewpack@v0.7.0
             with:
               mode: github
               pr-url: ${{ github.event.pull_request.html_url }}

@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap outlines the planned direction for Reviewpack after the v0.6.1 patch release.
+This roadmap outlines the planned direction for Reviewpack after the v0.7.0 stabilization foundation release.
 
 Reviewpack is a privacy-first context generator for AI-assisted pull request review. The roadmap focuses on improving maintainer workflows without requiring AI or uploading code by default.
 
@@ -64,11 +64,13 @@ See:
 
 ## Near-term priorities
 
-After v0.6.1, the next stage should focus on stabilization, validation, and preparing a stronger artifact contract.
+After v0.7.0, the next stage should focus on GitHub workflow hardening.
 
-The next major development theme should be v0.7 stabilization rather than rapid feature expansion.
+The next major development theme should be v0.8.0 GitHub Workflow Hardening rather than rapid feature expansion.
 
 ## v0.7.x: Configuration and artifact contract refinement
+
+The v0.7.0 release established the initial stabilization foundation for artifact contracts, configuration schema documentation, JSON output documentation, draft JSON schema guidance, examples, and contract tests.
 
 Focus areas:
 
@@ -89,7 +91,7 @@ Potential additions:
 - Migration notes for future breaking changes
 - Improved invalid config error messages
 
-## v0.8.x: GitHub workflow validation
+## v0.8.x: GitHub workflow hardening
 
 Focus areas:
 
