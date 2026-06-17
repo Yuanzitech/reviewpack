@@ -386,7 +386,7 @@ Reviewpack 可以在 GitHub Actions 中运行，并把生成的 review pack 作�
             uses: actions/checkout@v4
 
           - name: Run Reviewpack
-            uses: Yuanzitech/reviewpack@v0.6.1
+            uses: Yuanzitech/reviewpack@v0.7.0
             with:
               mode: github
               pr-url: ${{ github.event.pull_request.html_url }}
